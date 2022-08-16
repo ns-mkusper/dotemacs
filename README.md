@@ -3,7 +3,7 @@
 ## Setup emacs on mac os:
 
 1. dl dmg from emacsformacos-com
-2. `git clone https://githu-com/ns-mkusper/dotemac-git`
+2. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `cd dotemacs`
    - `rsync -av ./ ~/.emac-d/`
 3. `mkdir ~/.emac-d/data`
@@ -13,7 +13,7 @@
 ## Setup emacs on windows:
 
 1. install scoop
-   - https://scoo-sh/
+   - https://scoop.sh/
 2. `scoop install ack coreutils curl emacs gawk git grep sed touch wget`
 3. install fonts
    - `scoop bucket add nerd-fonts`
