@@ -17,10 +17,6 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-;; fonts
-(custom-set-faces
- '(default ((t (:family "Fira Code" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
-
 ;; highlight current lines
 (global-hl-line-mode 1)
 (set-face-background hl-line-face "grey20")

@@ -21,6 +21,7 @@
   )
 
 (use-package cargo
+  :ensure t
   :commands (cargo-minor-mode)
   :if (executable-find "cargo")
   :after (rust-mode)

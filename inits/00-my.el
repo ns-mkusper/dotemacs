@@ -1,20 +1,20 @@
 ;; safe loading of configs
 (defmacro exec-if-bound (sexplist)
-  " Only run the function if it exists (just check fboundp of car) "
+  "Only run the function if it exists (just check fboundp of car)."
   `(if (fboundp (car ',sexplist))
        ,sexplist))
 (defmacro defun-add-hook (hookname &rest sexplist)
-  " Alias ??for add-hook. Adds arguments back to a function to hook. "
-  `( add-hook  , hookname
+  "Alias for add-hook. Adds arguments back to a function to hook."
+  `(add-hook  ,hookname
              (function (lambda () ,@sexplist))))
 (defun load-safe (loadlib)
-  " Safe load. Don't stop if load fails. "
+  "Safe load. Don't stop if load fails."
   (let ((load-status (load loadlib t)))
     (or load-status
         (message (format "[load-safe] failed %s" loadlib)))
     load-status))
 (defun my-load-path (path)
-  " Function for adding load-path. "
+  "Function for adding load-path."
   (let ((epath (expand-file-name path)))
     (unless (member epath load-path)
       (setq load-path (cons epath load-path)))))
