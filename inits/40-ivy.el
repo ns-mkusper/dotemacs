@@ -56,6 +56,7 @@
 
 (use-package all-the-icons-ivy-rich
   :ensure  t
+  :after (counsel-projectile)
   :config
   ;; counsel-projectile-find-file
   (plist-put all-the-icons-ivy-rich-display-transformers-list

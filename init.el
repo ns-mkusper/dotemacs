@@ -26,6 +26,7 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (require 'use-package)
+;; enable on first run otherwise run manually
 (package-refresh-contents)
 ;; install packages and suppress output
 (setq custom-file (expand-file-name

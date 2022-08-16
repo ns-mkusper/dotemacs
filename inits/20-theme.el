@@ -18,12 +18,6 @@
   (doom-themes-org-config))
 
 ;; fonts
-;; windows font naming is dumb
-(if (eq system-type 'windows-nt)
-    (setq default-monospaced-emacs-font "Inconsolata NF")
-  (setq default-monospaced-emacs-font "Inconsolata")
-  )
-
 (custom-set-faces
  '(default ((t (:family "Fira Code" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
 
@@ -32,6 +26,8 @@
 (set-face-background hl-line-face "grey20")
 
 ;; powerline and doom require full icon pack
+;; run M-x all-the-icons-install-fonts to enable (and then install the downloaded font files if on windows)
+;; TODO: automate ^
 (use-package all-the-icons
   :ensure t)
 

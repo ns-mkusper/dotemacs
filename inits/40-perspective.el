@@ -18,6 +18,7 @@
         )
   :custom
   (persp-state-default-file "~/.emacs.d/data/persp-state-file")
+  (persp-mode-prefix-key (kbd "C-c M-p"))
   :hook
   (kill-emacs . persp-state-save)
   :config
