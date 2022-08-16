@@ -1,5 +1,4 @@
-;; customize file for cocoa emacs
-
+;; Custom init.el emacs config
 (global-unset-key (kbd "C-z"))
 
 ;; user-emacs-directory
@@ -25,6 +24,16 @@
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
+;; include all installed packages so far to load-path
+(let ((base package-user-dir))
+  (add-to-list 'load-path base)
+  (dolist (f (directory-files base))
+    (let ((name (concat base "/" f)))
+      (when (and (file-directory-p name) 
+                 (not (equal f ".."))
+                 (not (equal f ".")))
+        (add-to-list 'load-path name)))))
+
 (require 'use-package)
 ;; enable on first run otherwise run manually
 (package-refresh-contents)
@@ -46,3 +55,5 @@
   (init-loader-load "~/.emacs.d/inits"))
 
 (global-font-lock-mode  t)
+
+(provide 'init)
