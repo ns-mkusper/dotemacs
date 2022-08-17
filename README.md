@@ -28,4 +28,3 @@
 7. `rustup component add rls rust-analysis rust-src`
 8. `mkdir ~/.emac-d/data`
 9. `pip install 'python-lsp-server[all]'`
-10. M-x lsp-install-server
