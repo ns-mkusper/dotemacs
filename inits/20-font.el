@@ -6,7 +6,7 @@
  ((eq system-type 'windows-nt)     (custom-set-faces
                                     '(default ((t (:family "Fira Code" :slant normal :weight normal :height 113 :width normal))))))
  (t     (custom-set-faces
-         '(default ((t (:family "Fira Code" :slant normal :weight normal :height 130 :width normal))))))
+         '(default ((t (:family "Fira Code" :slant normal :weight normal :height 120 :width normal))))))
  )
 
 (provide '20-font)
