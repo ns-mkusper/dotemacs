@@ -9,7 +9,8 @@
 (when load-file-name
   (setq user-emacs-directory (file-name-directory load-file-name)))
 
-(setq package-user-dir (locate-user-emacs-file (concat "elpa/" emacs-version)))
+(if (file-directory-p (concat "elpa/" emacs-version))
+    (setq package-user-dir (locate-user-emacs-file (concat "elpa/" emacs-version))))
 
 ;; Don't warn `Package cl is deprecated' when using (require 'cl)
 (setq byte-compile-warnings '(not cl-functions obsolete))
