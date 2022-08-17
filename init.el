@@ -1,4 +1,5 @@
 ;; No garbage collection at startup
+(setq gc-cons-threshold-default gc-cons-threshold)
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;; Custom init.el emacs config
@@ -58,8 +59,8 @@
 (global-font-lock-mode  t)
 
 ;; GARBAGE COLLECTING
-;; reset GC back to optimized-for-normal-use levels
-(setq gc-cons-threshold 800000)
+;; reset GC back to default to reverse startup workaround
+(setq gc-cons-threshold gc-cons-threshold-default)
 ;; larger mark-ring ceiling since we have typically have more than
 ;; enough memory
 (setq global-mark-ring-max 256
