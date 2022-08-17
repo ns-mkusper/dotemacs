@@ -5,7 +5,8 @@
 1. dl dmg from emacsformacos-com
 2. install homebrew
    - https://brew.sh/
-3. `git clone https://githu.com/ns-mkusper/dotemac-git`
+3. `brew install emacs`
+4. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `rsync -av dotemacs/ ~/.emac-d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rls rust-analysis rust-src`
