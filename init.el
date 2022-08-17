@@ -9,7 +9,7 @@
 (when load-file-name
   (setq user-emacs-directory (file-name-directory load-file-name)))
 
-(if (file-directory-p (concat "elpa/" emacs-version))
+(if (file-directory-p (locate-user-emacs-file (concat "elpa/" emacs-version)))
     (setq package-user-dir (locate-user-emacs-file (concat "elpa/" emacs-version))))
 
 ;; Don't warn `Package cl is deprecated' when using (require 'cl)
@@ -27,9 +27,6 @@
         ("gnu" . "https://elpa.gnu.org/packages/")))
 
 
-;; use-package setup
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
 ;; include all installed packages so far to load-path
 (let ((base package-user-dir))
   (add-to-list 'load-path base)
@@ -39,6 +36,10 @@
                  (not (equal f ".."))
                  (not (equal f ".")))
         (add-to-list 'load-path name)))))
+
+;; use-package setup
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
 (require 'use-package)
 (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
