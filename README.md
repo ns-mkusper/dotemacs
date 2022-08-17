@@ -6,8 +6,7 @@
 2. install homebrew
    - https://brew.sh/
 3. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `cd dotemacs`
-   - `rsync -av ./ ~/.emac-d/`
+   - `rsync -av dotemacs/ ~/.emac-d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rls rust-analysis rust-src`
 6. `brew install firacode`
@@ -18,12 +17,14 @@
 1. install scoop
    - https://scoop.sh/
 2. `scoop install ack coreutils curl emacs gawk git grep sed touch wget`
-3. install fonts
+3. `git clone https://githu.com/ns-mkusper/dotemac-git`
+   - `rsync -av dotemacs/ ~/.emac-d/`
+4. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode`
-4. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
-5. `scoop install rust rustup`
-6. `rustup component add rls rust-analysis rust-src`
-7. `mkdir ~/.emac-d/data`
-8. `pip install 'python-lsp-server[all]'`
-9. M-x lsp-install-server
+5. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
+6. `scoop install rust rustup`
+7. `rustup component add rls rust-analysis rust-src`
+8. `mkdir ~/.emac-d/data`
+9. `pip install 'python-lsp-server[all]'`
+10. M-x lsp-install-server
