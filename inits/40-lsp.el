@@ -36,11 +36,12 @@
   (lsp-ui-doc-enable t)
   (lsp-ui-doc-header t)
   (lsp-ui-doc-include-signature t)
-  (lsp-ui-doc-position 'bottom) ;; top, bottom, or at-point
+  (lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
   (lsp-ui-doc-max-width 300)
   (lsp-ui-doc-max-height 50)
   (lsp-ui-doc-use-childframe t)
   (lsp-ui-doc-use-webkit t)
+  (lsp-ui-doc-delay 1.4)
   ;; (lsp-ui-doc-alignment 'window) ;; window or frame
   (lsp-ui-doc-show-with-cursor t)
   ;; (lsp-ui-doc-show-with-mouse nil)
