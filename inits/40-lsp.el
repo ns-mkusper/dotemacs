@@ -5,11 +5,9 @@
   :custom
   ;; (create-lockfiles nil)
   (lsp-auto-guess-root t)
-
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
-  (setq gc-cons-threshold 100000000)
   (setq read-process-output-max (* 1024 1024)) ; 1mb
   :hook
   ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
@@ -35,19 +33,19 @@
   :custom
   ;; (scroll-margin 0)
   ;; lsp-ui-doc
-  ;; (lsp-ui-doc-enable t)
-  ;; (lsp-ui-doc-header t)
-  ;; (lsp-ui-doc-include-signature t)
-  ;; (lsp-ui-doc-position 'bottom) ;; top, bottom, or at-point
-  ;; (lsp-ui-doc-max-width 150)
-  ;; (lsp-ui-doc-max-height 30)
-  ;; (lsp-ui-doc-use-childframe t)
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-position 'bottom) ;; top, bottom, or at-point
+  (lsp-ui-doc-max-width 300)
+  (lsp-ui-doc-max-height 50)
+  (lsp-ui-doc-use-childframe t)
   (lsp-ui-doc-use-webkit t)
   ;; (lsp-ui-doc-alignment 'window) ;; window or frame
-  ;; (lsp-ui-doc-show-with-cursor t)
+  (lsp-ui-doc-show-with-cursor t)
   ;; (lsp-ui-doc-show-with-mouse nil)
   ;; lsp-ui-flycheck
-  ;; (lsp-ui-flycheck-enable nil)
+  (lsp-ui-flycheck-enable t)
   ;; lsp-ui-sideline
   ;; (lsp-ui-sideline-enable nil)
   ;; (lsp-ui-sideline-ignore-duplicate t)
@@ -73,6 +71,8 @@
         ("C-c m" . lsp-ui-imenu)
         ("C-c s" . lsp-ui-sideline-mode)
         ("C-c d" . lsp-ui-doc-show)
+        ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+        ([remap xref-find-references] . lsp-ui-peek-find-references)
         )
   :commands lsp-ui-mode)
 ;; if you are helm user

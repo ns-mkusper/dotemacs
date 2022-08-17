@@ -18,7 +18,7 @@
 2. `scoop install ack coreutils curl emacs gawk git grep sed touch wget`
 3. install fonts
    - `scoop bucket add nerd-fonts`
-   - `brew install firacode`
+   - `scoop install firacode`
 4. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 5. `scoop install rust rustup`
 6. `rustup component add rls rust-analysis rust-src`

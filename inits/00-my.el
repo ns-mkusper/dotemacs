@@ -19,7 +19,7 @@
     (unless (member epath load-path)
       (setq load-path (cons epath load-path)))))
 ;; modeline fix
-(defun which-active-modes ()
+(defun my-which-active-modes ()
   "Give a message of which minor modes are enabled in the current buffer."
   (interactive)
   (let ((active-modes))
@@ -37,6 +37,7 @@
 (setq inhibit-startup-message t)
 (transient-mark-mode t)
 (menu-bar-mode -1)
+(savehist-mode 1) ;; save shell history
 (setq-default save-place t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
 (setq compilation-window-height 45)

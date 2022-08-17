@@ -1,3 +1,6 @@
+;; No garbage collection at startup
+(setq gc-cons-threshold most-positive-fixnum)
+
 ;; Custom init.el emacs config
 (global-unset-key (kbd "C-z"))
 
@@ -22,6 +25,7 @@
         ("gnu" . "https://elpa.gnu.org/packages/")))
 
 
+;; use-package setup
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 ;; include all installed packages so far to load-path
@@ -29,25 +33,22 @@
   (add-to-list 'load-path base)
   (dolist (f (directory-files base))
     (let ((name (concat base "/" f)))
-      (when (and (file-directory-p name) 
+      (when (and (file-directory-p name)
                  (not (equal f ".."))
                  (not (equal f ".")))
         (add-to-list 'load-path name)))))
 
 (require 'use-package)
-;; enable on first run otherwise run manually
-(package-refresh-contents)
-;; install packages and suppress output
+(package-refresh-contents) ;; can be disabled and ran manually to speed up boot
+(package-initialize)
 (setq custom-file (expand-file-name
                    (concat user-emacs-directory "my-custom-vars.el")))
-(load custom-file)
-(package-initialize)
-
-(package-refresh-contents)
+(load custom-file) ;; install packages and suppress output
 
 (use-package s
   :ensure  t )
 (use-package use-package)
+;; load all our sub-config packages
 (use-package init-loader
   :ensure  t
   :config
@@ -55,5 +56,28 @@
   (init-loader-load "~/.emacs.d/inits"))
 
 (global-font-lock-mode  t)
+
+;; GARBAGE COLLECTING
+;; reset GC back to optimized-for-normal-use levels
+(setq gc-cons-threshold 800000)
+;; larger mark-ring ceiling since we have typically have more than
+;; enough memory
+(setq global-mark-ring-max 256
+      mark-ring-max 256
+      kill-ring-max 256)
+;; enable gcmh which is a gc hack that sensibly adjusts the gc size
+;; widnow and defers gc'n to idle time
+(use-package gcmh
+  :ensure t
+  :demand t
+  :config (progn
+            (setq gcmh-high-cons-threshold (* 256 1024 1024)
+                  gcmh-low-cons-threshold (* 1 1024 1024))
+            (defun my-enable-gcmh ()
+              (setq gc-cons-threshold (* 256 1024 1024))
+              (gcmh-mode 1))
+            (add-hook 'emacs-startup-hook #'my-enable-gcmh)
+            )
+  )
 
 (provide 'init)

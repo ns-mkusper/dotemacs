@@ -7,5 +7,6 @@
 (global-set-key "\M-R" 'replace-regexp)
 (global-set-key "\M-G" 'goto-line)
 (global-set-key "\M-h" 'help-command)
+(global-set-key "C-;" 'comment-or-uncomment-region)
 
 (provide '01-custom-keys)

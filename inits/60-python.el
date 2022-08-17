@@ -1,6 +1,9 @@
 (use-package elpy
   :ensure t
-  :bind (("M-." . elpy-goto-definition))
+  :bind
+  (:map elpy-mode-map
+        ("M-." . elpy-goto-definition)
+        )
   :init
   (elpy-enable)
   :config
@@ -42,7 +45,7 @@
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
 
 (provide '60-python)
