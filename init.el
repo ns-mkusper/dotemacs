@@ -58,6 +58,7 @@
   (setq init-loader-show-log-after-init nil)
   (init-loader-load "~/.emacs.d/inits"))
 
+;; fontify all buffers
 (global-font-lock-mode  t)
 
 ;; GARBAGE COLLECTING

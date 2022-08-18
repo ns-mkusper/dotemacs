@@ -1,15 +1,14 @@
 (use-package magit
   :ensure t
   :bind
-  (("C-x g" . magit-status))
+  (("C-x g" . magit-status)
+   ("C-x C-g" . magit-status))
   :config
-  )
-(use-package magit-popup
-  :ensure t
   )
 (use-package magit-find-file
   :ensure t
   )
+
 (use-package git-gutter+
   :ensure t
   :bind

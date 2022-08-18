@@ -1,4 +1,5 @@
-# Emacs config
+# Semi-portable Emacs config
+
 
 ## Setup emacs on Mac:
 
