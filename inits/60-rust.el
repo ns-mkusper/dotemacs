@@ -12,10 +12,11 @@
   (rustic-mode . cargo-minor-mode)
   (rustic-mode . lsp-mode)
   (rustic-mode . flycheck-mode)
-                                        ;  (flycheck-mode . flycheck-rust-setup)
+  ;; (flycheck-mode . flycheck-rust-setup)
   (rustic-mode . (lambda () (setq indent-tabs-mode nil))) ;; set indent
   :init
-  (setq rustic-lsp-server 'rls
+  (setq rustic-lsp-server 'rust-analyzer
+        rustic-lsp-client 'lsp-mode
         rustic-format-on-save t)
   )
 

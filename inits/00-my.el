@@ -29,6 +29,12 @@
                            (error nil) ))
           minor-mode-list)
     (message "Active modes are %s" active-modes)))
+;; eval-last-sexp if no region selected, eval-region if selected
+(defun my-eval ()
+  (interactive)
+  (if (region-active-p)
+      (eval-region (region-beginning) (region-end) t)
+    (call-interactively #'eval-last-sexp)))
 
 (my-load-path "~/.emacs.d/lisp")
 ;(my-load-path "/usr/share/emacs/site-lisp/")

@@ -8,5 +8,6 @@
 (global-set-key "\M-G" 'goto-line)
 (global-set-key "\M-h" 'help-command)
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-x C-e") 'my-eval)
 
 (provide '01-custom-keys)
