@@ -1,7 +1,7 @@
 ;; RUST
 (use-package rustic
   :ensure t
-  :after (flycheck)
+  :after (flycheck lsp-mode)
   :mode
   ("\\.rs\\'" . rustic-mode)
   :hook
@@ -14,9 +14,8 @@
   (rustic-mode . flycheck-mode)
                                         ;  (flycheck-mode . flycheck-rust-setup)
   (rustic-mode . (lambda () (setq indent-tabs-mode nil))) ;; set indent
-  :config
-  (setq rust-format-on-save t) ;; set format
-  (setq rustic-lsp-client 'lsp
+  :init
+  (setq rustic-lsp-server 'rls
         rustic-format-on-save t)
   )
 
