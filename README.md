@@ -20,7 +20,7 @@
    - https://scoop.sh/
 2. `scoop install ack coreutils curl emacs gawk git grep sed touch wget`
 3. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av dotemacs/ ~/.emac-d/`
+   - `robocopy dotemacs\ %EMACS_HOME%\.emac-d\ /MIR`
 4. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode`
