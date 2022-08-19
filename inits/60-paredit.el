@@ -9,4 +9,9 @@
 	 (geiser-repl-mode . enable-paredit-mode)
 	 (slime-repl-mode . enable-paredit-mode)))
 
+(use-package paredit-everywhere
+  :ensure t
+  :disabled t
+  :init (add-hook 'prog-mode-hook 'paredit-everywhere-mode))
+
 (provide '60-paredit)
