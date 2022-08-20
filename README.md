@@ -10,7 +10,7 @@
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `rsync -av dotemacs/ ~/.emacs.d/`
 4. `mkdir ~/.emac-d/data`
-5. `rustup component add rls rust-analysis rust-src`
+5. `rustup component add rust-analysis rust-src`
 6. `brew install firacode`
 7. `pip install 'python-lsp-server[all]'`
 
@@ -27,6 +27,6 @@
    - `scoop install firacode`
 6. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 7. `scoop install rust rustup`
-8. `rustup component add rls rust-analysis rust-src`
+8. `rustup component add rust-analysis rust-src`
 9. `mkdir ~/.emac-d/data`
 10. `pip install 'python-lsp-server[all]'`
