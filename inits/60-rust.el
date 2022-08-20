@@ -49,9 +49,9 @@
   (if (and (executable-find "cargo-check"))
       ;; cargo install cargo-check
       (setq cargo-process--command-check "cargo check"))
-  ;; (if (and (executable-find "cargo-clippy") (executable-find "clippy-driver"))
-  ;;     ;; cargo install clippy
-  ;;     (setq cargo-process--command-clippy "cargo clippy"))
+  (if (and (executable-find "cargo-clippy") (executable-find "clippy-driver"))
+      ;; cargo install clippy
+      (setq cargo-process--command-clippy "cargo clippy"))
   )
 
 

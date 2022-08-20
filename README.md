@@ -8,7 +8,7 @@
    - https://brew.sh/
 3. `brew install emacs`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av dotemacs/ ~/.emac-d/`
+   - `rsync -av dotemacs/ ~/.emacs.d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rls rust-analysis rust-src`
 6. `brew install firacode`
@@ -21,7 +21,7 @@
 2. `scoop bucket add extras`
 3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `robocopy dotemacs\ %EMACS_HOME%\.emac-d\ /MIR`
+   - `rsync -av dotemacs/ ~/.emacs.d/`
 5. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode`
