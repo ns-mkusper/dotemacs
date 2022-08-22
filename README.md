@@ -11,7 +11,7 @@
    - `rsync -av dotemacs/ ~/.emacs.d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rust-analysis rust-src`
-6. `brew install firacode`
+6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code`
 7. `pip install 'python-lsp-server[all]'`
 
 ## Setup emacs on Windows:
