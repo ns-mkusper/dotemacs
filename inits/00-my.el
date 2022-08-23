@@ -6,7 +6,7 @@
 (defmacro defun-add-hook (hookname &rest sexplist)
   "Alias for add-hook. Adds arguments back to a function to hook."
   `(add-hook  ,hookname
-             (function (lambda () ,@sexplist))))
+              (function (lambda () ,@sexplist))))
 (defun load-safe (loadlib)
   "Safe load. Don't stop if load fails."
   (let ((load-status (load loadlib t)))
@@ -37,7 +37,7 @@
     (call-interactively #'eval-last-sexp)))
 
 (my-load-path "~/.emacs.d/lisp")
-;(my-load-path "/usr/share/emacs/site-lisp/")
+;;(my-load-path "/usr/share/emacs/site-lisp/")
 
 ;;; General Settings
 (setq inhibit-startup-message t)
@@ -77,7 +77,7 @@
 (setq interprogram-paste-function 'x-selection-value)
 (setq truncate-partial-width-windows nil)
 (setq initial-scratch-message nil) ;; Eliminate *scratch* strings
-;(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+;;(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 (setq display-time-24hr-format t)
 (display-time)
 ;; avoid encoding issues (so long as we always use utf-8)
@@ -88,7 +88,7 @@
 (prefer-coding-system 'utf-8)
 (setq transient-mark-mode t)
 (setq frame-title-format
-	  (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar
+      (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar
 ;; remove window decoration
 (set-frame-parameter nil 'undecorated t)
 ;; resize window to full screen dimensions
