@@ -42,7 +42,8 @@
   (package-install 'use-package))
 
 (require 'use-package)
-(package-refresh-contents) ;; can be disabled and ran manually to speed up boot
+;; TODO: run only when stale
+;; (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
 (package-initialize)
 (setq custom-file (expand-file-name
                    (concat user-emacs-directory "my-custom-vars.el")))
