@@ -31,4 +31,3 @@
 8. `rustup component add rust-analysis rust-src rls clippy`
 9. `mkdir ~/.emac-d/data`
 10. `pip install 'python-lsp-server[all]'`
-11. `scoop install cmake make vterm term`
