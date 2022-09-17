@@ -15,7 +15,10 @@
   (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
   (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  :custom-face
+  (org-ellipsis ((t (:height 0.8 :inherit 'shadow))))
+  (org-scheduled-previously ((t (:background "red")))))
 
 ;; highlight current lines
 (global-hl-line-mode 1)

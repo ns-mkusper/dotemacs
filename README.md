@@ -11,7 +11,7 @@
    - `rsync -av dotemacs/ ~/.emacs.d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rust-analysis rust-src rls  clippy`
-6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code`
+6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code font-gnu-unifont`
 7. `pip install 'python-lsp-server[all]'`
 8. `brew install cmake vterm term`
 
@@ -25,7 +25,7 @@
    - `rsync -av dotemacs/ ~/.emacs.d/`
 5. install fonts
    - `scoop bucket add nerd-fonts`
-   - `scoop install firacode`
+   - `scoop install firacode unifont`
 6. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 7. `scoop install rust rustup`
 8. `rustup component add rust-analysis rust-src rls clippy`
