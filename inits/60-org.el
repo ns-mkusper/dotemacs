@@ -104,6 +104,11 @@
                                    (tags . " %i %-12:c")
                                    (search . " %i %-12:c"))))
 
+(use-package toc-org
+  :ensure t
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
+
 (use-package org-super-agenda
   :ensure t
   :after org
