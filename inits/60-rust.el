@@ -9,7 +9,7 @@
   :after (flycheck lsp-mode)
   :mode
   ("\\.rs\\'" . rustic-mode)
-  :preface
+  ;; :preface
   ;; (defun my/rustic-mode-hook-fn ()
   ;;   "Needed for lsp-format-buffer to indent with 4 spaces"
   ;;   (setq tab-width 4
@@ -32,7 +32,7 @@
   ;; (flycheck-mode . flycheck-rust-setup)
   (rustic-mode . (lambda () (setq indent-tabs-mode nil))) ;; set indent
   ;; (rustic-mode . my/rustic-mode-hook-fn)
-  (rustic-before-save . my/before-save-fn)
+  (rustic-before-save . my/before-save-fn) ;; use lsp format
 
   :config
   (setq rustic-lsp-server 'rust-analyzer

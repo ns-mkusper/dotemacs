@@ -10,16 +10,9 @@
   (setq lsp-keymap-prefix "C-c l")
   (setq read-process-output-max (* 1024 1024)) ; 1mb
   :hook
-  ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
   (prog-major-mode . lsp-prog-major-mode-enable)
-  (rust-mode . lsp)
-  (rustic-mode . lsp)
-  (python-mode . lsp)
-  (go-mode . lsp)
-  (java-mode . lsp)
-  (c++-mode . lsp)
-  (bash-mode . lsp)
-  (c-mode . lsp)
+  ;; add new modes here to enable lsp integration
+  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode bash-mode c-mode) . lsp)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind
