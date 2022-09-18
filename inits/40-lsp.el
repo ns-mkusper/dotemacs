@@ -1,5 +1,5 @@
 ;;; LSP
-;; lsp-install-server all the below languages
+;; IMPORTANT: lsp-install-server all the below languages
 (use-package lsp-mode
   :ensure t
   :custom
@@ -25,7 +25,8 @@
   :bind
   (:map lsp-mode-map
         ("C-c r" . lsp-rename))
-  :commands lsp)
+  :commands lsp
+  )
 
 ;; optional integrations
 (use-package lsp-ui
@@ -77,7 +78,7 @@
         )
   :commands lsp-ui-mode)
 ;; if you are helm user
-                                        ;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
 (use-package lsp-ivy
   :ensure t

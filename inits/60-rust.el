@@ -1,4 +1,9 @@
 ;; RUST
+(defun my/rustic-before-save-fn ()
+  "Format buffer and organize imports when saving anything using lsp-mode."
+  (lsp-organize-imports)
+    (lsp-format-buffer))
+
 (use-package rustic
   :ensure t
   :after (flycheck lsp-mode)
@@ -12,9 +17,6 @@
   (defun my/switch-to-cargo-window ()
     "Switch to the *cargo* window."
     (other-window 1))
-  (defun my/rustic-mode-hook-fn ()
-    "Makes running C-c C-c C-r without having to confirm"
-    (setq-local buffer-save-without-query t))
   :init
   ;; to use rustic-mode even if rust-mode also installed
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)
@@ -29,19 +31,21 @@
   (rustic-mode . flycheck-mode)
   ;; (flycheck-mode . flycheck-rust-setup)
   (rustic-mode . (lambda () (setq indent-tabs-mode nil))) ;; set indent
-  (rustic-mode . my/rustic-mode-hook-fn)
+  ;; (rustic-mode . my/rustic-mode-hook-fn)
+  (rustic-before-save . my/before-save-fn)
+
   :config
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'lsp-mode
-        rustic-format-on-save t)
+        rustic-format-on-save nil) ;; lsp-format-buffer is way less intrusive
   (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
-  ;; (add-hook 'before-save-hook (lambda () (when (eq 'rust-mode major-mode)
-  ;; 					   (lsp-format-buffer))))
-  ;; (add-hook 'lsp-after-open-hook (lambda ()
-  ;; 				   (when (lsp-find-workspace 'rust-analyzer nil)
-  ;; 				     (lsp-rust-analyzer-inlay-hints-mode))))
+  (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
+        				   (my/rustic-before-save-fn))))
+  (add-hook 'lsp-after-open-hook (lambda ()
+				   (when (lsp-find-workspace 'rust-analyzer nil)
+				     (lsp-rust-analyzer-inlay-hints-mode))))
   :bind (:map rustic-mode-map
               ("M-j" . lsp-ui-imenu)
               ("M-?" . lsp-find-references)
