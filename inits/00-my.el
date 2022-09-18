@@ -71,6 +71,16 @@
 (setq c-default-style "bsd")
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq-default indent-tabs-mode nil) ;; only use space indenting
+(setq completion-cycle-threshold 3) ;; TAB cycle if there are only few candidates
+
+;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+;; (setq read-extended-command-predicate
+;;       #'command-completion-default-include-p)
+
+;; Enable indentation+completion using the TAB key.
+;; `completion-at-point' is often bound to M-TAB.
+(setq tab-always-indent 'complete)
 (setq font-lock-maximum-decoration t) ;; enable bold-italic styles
 (setq select-enable-clipboard t) ;; combine clipboards
 ;; copy to x clipboard
