@@ -6,4 +6,4 @@ SET EMACS_BIN=%HOME%\scoop\apps\emacs\%EMACS_VERSION%\bin\emacs.exe
 REM custom HOME environment variable only for emacs and sub-procs
 SET HOME=%EMACS_HOME%
 
-START "Start Emacs" %EMACS_BIN%	
+START "Start Emacs" %EMACS_BIN%
