@@ -12,7 +12,15 @@
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
   ;; add new modes here to enable lsp integration
-  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode bash-mode c-mode) . lsp)
+  ((zig-mode
+    rust-mode
+    rustic-mode
+    python-mode
+    go-mode
+    java-mode
+    c++-mode
+    sh-mode
+    c-mode) . lsp)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind
