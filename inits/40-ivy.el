@@ -8,6 +8,8 @@
   (ivy-use-virutal-buffers t)
   (ivy-count-format "(%d/%d) ")
   :config
+  ;; ability to select what's in the prompt when there's a partial match below it in the ivy results
+  (setq ivy-use-selectable-prompt t)
   ;; Allow command issue in minibuffer
   (when (setq enable-recursive-minibuffers t)
     (minibuffer-depth-indicate-mode 1))
