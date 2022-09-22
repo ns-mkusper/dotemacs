@@ -35,7 +35,7 @@
   (lsp-ui-doc-max-height 50)
   (lsp-ui-doc-use-childframe t)
   (lsp-ui-doc-use-webkit t)
-  (lsp-ui-doc-delay 1.4)
+  (lsp-ui-doc-delay 1)
   ;; (lsp-ui-doc-alignment 'window) ;; window or frame
   (lsp-ui-doc-show-with-cursor t)
   ;; (lsp-ui-doc-show-with-mouse nil)
