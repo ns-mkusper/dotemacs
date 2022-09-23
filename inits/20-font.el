@@ -9,4 +9,8 @@
          '(default ((t (:family "Fira Code" :slant normal :weight normal :height 120 :width normal))))))
  )
 
+;; good for reading documentation or anything else in the EWW browser
+(custom-set-faces
+ '(variable-pitch ((t (:family "OpenDyslexic3")))))
+
 (provide '20-font)
