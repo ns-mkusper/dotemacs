@@ -14,7 +14,8 @@
 6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code font-gnu-unifont`
 7. `pip install 'python-lsp-server[all]'`
 8. `brew install cmake vterm term`
-9. `Manually install OpenDyslexic3 font`
+9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
+
 
 ## Setup emacs on Windows:
 
@@ -32,4 +33,4 @@
 8. `rustup component add rust-analysis rust-src rls clippy`
 9. `mkdir ~/.emac-d/data`
 10. `pip install 'python-lsp-server[all]'`
-11. `Manually install OpenDyslexic3 font`
+11. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
