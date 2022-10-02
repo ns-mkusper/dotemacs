@@ -22,7 +22,7 @@
 
 ;; highlight current lines
 (global-hl-line-mode 1)
-(set-face-background hl-line-face "grey20")
+(set-face-background hl-line-face "grey10")
 
 ;; powerline and doom require full icon pack
 ;; run M-x all-the-icons-install-fonts to enable (and then install the downloaded font files if on windows)
