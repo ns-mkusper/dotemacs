@@ -1,4 +1,8 @@
 ;; ORG MODE SETUP
+;; which files should org-agenda read?
+;; TODO: should we use roam?
+(setq org-agenda-files (list "~/drive/org/agenda"))
+
 (defun my/prettify-symbols-compose-predicate (start end _match)
   "Explicitly allow any occurrence of the non-breaking space to be composed."
   (let ((result (prettify-symbols-default-compose-p start end _match)))
@@ -103,6 +107,7 @@
                                    (todo . "  ")
                                    (tags . " %i %-12:c")
                                    (search . " %i %-12:c"))))
+
 
 (use-package toc-org
   :ensure t
