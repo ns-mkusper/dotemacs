@@ -7,7 +7,7 @@
       (add-to-list 'gnutls-trustfiles
 		   (expand-file-name
 		    "~/etc/tls/certificates/comodo.rsa.ca.intermediate.crt"))
-
+;; menu bar mode on mac loses 0 space
       (menu-bar-mode 1))
 ;; get meta key working on Mac
 (setq-default mac-option-modifier 'meta)
