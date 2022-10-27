@@ -34,9 +34,12 @@
 
   (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
 
+;; Enable poetry
 (use-package poetry
- :ensure t)
-
+  :ensure t
+  :config
+  (poetry-tracking-mode) ;; This auto load related venv when opening the file
+  )
 
 (use-package py-yapf
   :ensure t
