@@ -34,6 +34,10 @@
 
   (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
 
+(use-package poetry
+ :ensure t)
+
+
 (use-package py-yapf
   :ensure t
   :hook (python-mode . py-yapf-enable-on-save)
