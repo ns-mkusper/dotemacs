@@ -1,16 +1,21 @@
-(use-package elpy
-  :ensure t
-  :bind
-  (:map elpy-mode-map
-        ("M-." . elpy-goto-definition)
-        )
-  :init
-  (elpy-enable)
-  :config
-  (setq elpy-rpc-python-command "python")
-  (setq python-shell-interpreter "python")
-  (setq elpy-rpc-timeout 120)
-  )
+;; (use-package elpy
+;;   :ensure t
+;;   :bind
+;;   (:map elpy-mode-map
+;;         ("M-." . elpy-goto-definition)
+;;         )
+;;   :init
+;;   (elpy-enable)
+;;   :config
+;;   (setq elpy-rpc-python-command "python")
+;;   (setq python-shell-interpreter "python")
+;;   (setq elpy-rpc-timeout 120)
+;;   )
+
+(defun my/python-before-save-fn ()
+  "Format buffer and organize imports when saving anything using lsp-mode."
+  (lsp-organize-imports)
+    (lsp-format-buffer))
 
 (use-package pyenv-mode
   :ensure t
