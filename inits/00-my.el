@@ -38,6 +38,20 @@
 
 (my-load-path "~/.emacs.d/lisp")
 
+;; setup environment variables
+(setenv "PATH"
+        (concat
+         (getenv "PATH")
+         "/usr/local/bin/:"
+         "/usr/local/opt/coreutils/bin/:"
+         "/opt/homebrew/bin/:"
+         "/usr/local/opt/texinfo/bin/:"
+         (concat (getenv "HOME") "/bin/:")
+         (concat (getenv "HOME") "/go/bin:")
+         (concat (getenv "HOME") "/.local/bin:")
+         (concat (getenv "HOME") "/.cargo/bin:")
+         ))
+
 ;;; General Settings
 (setq inhibit-startup-message t)
 (transient-mark-mode t)
