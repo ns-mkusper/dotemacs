@@ -15,7 +15,7 @@
 (defun my/python-before-save-fn ()
   "Format buffer and organize imports when saving anything using lsp-mode."
   (lsp-organize-imports)
-    (lsp-format-buffer))
+  (lsp-format-buffer))
 
 (use-package pyenv-mode
   :ensure t
@@ -24,9 +24,9 @@
   (add-to-list 'exec-path (expand-file-name "~/.pyenv/bin"))
   (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/shims")))
   (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/bin")))
-
   :config
-  (pyenv-mode)
+  (pyenv-mode
+   pyvenv-tracking-mode)
 
   ;; use with projectile
   ;; https://github.com/pythonic-emacs/pyenv-mode#projectile-integration
