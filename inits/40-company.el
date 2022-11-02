@@ -60,10 +60,3 @@
 
 ;; https://github.com/rafalcieslak/emacs-company-terraform
 (use-package company-terraform :ensure t)
-
-(use-package company-tern :ensure t)
-
-(use-package css-mode
-  :ensure t
-  :init
-  (add-hook 'css-mode-hook 'skewer-css-mode))
