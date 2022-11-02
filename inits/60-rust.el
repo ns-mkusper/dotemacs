@@ -22,7 +22,6 @@
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)
         rustic-lsp-server 'rust-analyzer)
   :hook
-  (rustic-mode . global-linum-mode) ;; line display
   (rustic-mode . hs-minor-mode) ;; fold mode
   (rustic-mode . eldoc-mode) ;; code tracing
   (rustic-mode . company-mode) ;; autocomplete

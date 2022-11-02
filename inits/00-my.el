@@ -66,11 +66,9 @@
 (mouse-avoidance-mode 'jump)
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(line-number-mode 1)
 (setq-default indicate-empty-lines t)
 ;; show cursor position
 (setq column-number-mode 1)
-(setq line-number-mode t)
 (blink-cursor-mode 1) ;; Make Cursor more visible
 ;; show matching braces
 (show-paren-mode t)
@@ -116,3 +114,6 @@
 ;; delete trailing whitespace when saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq backup-directory-alist '(("." . "~/.emacs_backups")))
+
+;; show line numbers on all prog buffers
+(add-hook 'prog-mode #'display-line-numbers-mode)
