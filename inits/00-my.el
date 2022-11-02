@@ -39,8 +39,8 @@
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables
-(setenv "PATH"
-        (concat
+(defvar my-env-shell-path
+      (concat
          (getenv "PATH")
          "/usr/local/bin/:"
          "/usr/local/opt/coreutils/bin/:"
@@ -51,6 +51,8 @@
          (concat (getenv "HOME") "/.local/bin:")
          (concat (getenv "HOME") "/.cargo/bin:")
          ))
+(setenv "PATH" my-env-shell-path)
+(setq exec-path (split-string my-env-shell-path path-separator))
 
 ;;; General Settings
 (setq inhibit-startup-message t)
