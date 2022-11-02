@@ -90,6 +90,7 @@
   :ensure t
   :disabled
   :config
+  (dap-mode t)
   (dap-ui-mode 1)
   (dap-tooltip-mode 1)
   (tooltip-mode 1)

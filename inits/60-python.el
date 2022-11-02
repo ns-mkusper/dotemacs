@@ -12,22 +12,20 @@
 ;;   (setq elpy-rpc-timeout 120)
 ;;   )
 
-(defun my/python-before-save-fn ()
-  "Format buffer and organize imports when saving anything using lsp-mode."
-  (lsp-organize-imports)
-  (lsp-format-buffer))
-
 (use-package pyenv-mode
+  :after python
+  :hook
+  ((python-mode . pyenv-mode)
+   (projectile-switch-project . projectile-pyenv-mode-set))
   :ensure t
   :init
   (add-to-list 'exec-path (expand-file-name "~/.pyenv/shims"))
   (add-to-list 'exec-path (expand-file-name "~/.pyenv/bin"))
   (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/shims")))
   (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/bin")))
-  :config
-  (pyenv-mode
-   pyvenv-tracking-mode)
-
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
+  :custom (pyenv-mode-set "3.10.0")
+  :preface
   ;; use with projectile
   ;; https://github.com/pythonic-emacs/pyenv-mode#projectile-integration
   (defun projectile-pyenv-mode-set ()
@@ -35,9 +33,16 @@
     (let ((project (projectile-project-name)))
       (if (member project (pyenv-mode-versions))
           (pyenv-mode-set project)
-        (pyenv-mode-unset))))
+        (pyenv-mode-unset)))))
 
-  (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
+(use-package pyvenv
+  :after python
+  :hook (python-mode . pyvenv-mode)
+  :ensure t
+  :custom
+  (pyvenv-default-virtual-env-name "env")
+  (pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:"
+                                                         pyvenv-virtual-env-name "]"))))
 
 ;; Enable poetry
 (use-package poetry
