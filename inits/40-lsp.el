@@ -90,20 +90,13 @@
   :ensure t
   :disabled
   :config
+  (require 'dap-python)
+  (require 'dap-ui)
   (dap-mode t)
   (dap-ui-mode 1)
   (dap-tooltip-mode 1)
   (tooltip-mode 1)
   )
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-(use-package dap-go
-  :enable t
-  :disabled
-  )
-(use-package dap-python
-  ;; pip install "ptvsd>=4.2"
-  :enable t
-  :disabled
-  )
+
 
 (provide '40-lsp)
