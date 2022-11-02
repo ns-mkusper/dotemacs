@@ -146,6 +146,3 @@
 ;; delete trailing whitespace when saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq backup-directory-alist '(("." . "~/.emacs_backups")))
-
-;; show line numbers on all prog buffers
-(add-hook 'prog-mode #'display-line-numbers-mode)
