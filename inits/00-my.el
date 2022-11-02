@@ -36,6 +36,38 @@
       (eval-region (region-beginning) (region-end) t)
     (call-interactively #'eval-last-sexp)))
 
+(defun my-switch-to-minibuffer-window ()
+  "Switch to the minibuffer window (if active)."
+  (interactive)
+  (when (active-minibuffer-window)
+    (select-window (active-minibuffer-window))))
+
+(defun my-revert-buffer-no-confirm ()
+  "Revert the current buffer without confirmation."
+  (interactive)
+  (if (not (buffer-modified-p))
+      (revert-buffer :ignore-auto :noconfirm)
+    (when (yes-or-no-p "The contents of this buffer have been modified.  Really revert? ")
+      (revert-buffer :ignore-auto :noconfirm))))
+
+(defun my-open-scratch-buffer ()
+  "Open the scratch buffer, (re)creating it if not present."
+  (interactive)
+  (if (get-buffer "*scratch*")
+      (switch-to-buffer "*scratch*")
+    (progn
+      (switch-to-buffer (get-buffer-create "*scratch*"))
+      (lisp-interaction-mode))))
+
+(defun my-open-default-shell ()
+  "Opens the default shell in an `ansi-term' buffer, switching to existing buffer if present."
+  (interactive)
+  (if (get-buffer "*terminal*")
+      (switch-to-buffer "*terminal*")
+    (progn
+      (ansi-term shell-file-name)
+      (rename-buffer "*terminal*"))))
+
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables
