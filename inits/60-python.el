@@ -12,6 +12,14 @@
 ;;   (setq elpy-rpc-timeout 120)
 ;;   )
 
+;; TODO: Move to use-package block
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq indent-tabs-mode nil)
+            (setq tab-width 2)
+            (setq-default python-indent-guess-indent-offset nil)
+            (setq python-indent-offset 2)))
+
 (use-package pyenv-mode
   :after python
   :hook
