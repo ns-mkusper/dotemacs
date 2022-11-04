@@ -16,9 +16,9 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (setq indent-tabs-mode nil)
-            (setq tab-width 2)
+            (setq tab-width 4)
             (setq-default python-indent-guess-indent-offset nil)
-            (setq python-indent-offset 2)))
+            (setq python-indent-offset 4)))
 
 (use-package pyenv-mode
   :after python
