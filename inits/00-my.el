@@ -143,6 +143,4 @@
 ;; resize window to full screen dimensions
 (setq initial-frame-alist '( (fullscreen . maximized)))
 (setq default-frame-alist '( (fullscreen . fullheight)))
-;; delete trailing whitespace when saving
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq backup-directory-alist '(("." . "~/.emacs_backups")))
