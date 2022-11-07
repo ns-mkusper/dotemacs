@@ -144,6 +144,7 @@
 (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 
 (use-package org-gcal
+  :ensure t
   :defer t
   :config
   (setq org-gcal-down-days '20					;; Only fetch events 20 days into the future
