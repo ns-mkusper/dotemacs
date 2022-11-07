@@ -19,6 +19,8 @@
            ("M-h" . help-command)
            ("C-;" . comment-or-uncomment-region)
            ("C-x C-e" . my-eval)
+           ("C-c l" . org-store-link)
+           ("C-c a" . org-agenda)
            )
 
 (provide '01-custom-keys)

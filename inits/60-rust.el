@@ -36,7 +36,8 @@
   :config
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'lsp-mode
-        rustic-format-on-save nil) ;; lsp-format-buffer is way less intrusive
+        rustic-format-on-save nil
+        lsp-rust-rls-server-command 'rust-analyzer) ;; lsp-format-buffer is way less intrusive
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
