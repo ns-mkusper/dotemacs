@@ -1,5 +1,6 @@
 (use-package whitespace-cleanup-mode
-  :config (setq 'whitespace-cleanup-mode t)
+  :config
+  (setq whitespace-cleanup-mode t)
   :hook
   (prog-mode . whitespace-cleanup))
 
