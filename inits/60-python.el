@@ -60,10 +60,14 @@
   (poetry-tracking-mode) ;; This auto load related venv when opening the file
   )
 
-(use-package py-yapf
+(use-package blacken
   :ensure t
-  :hook (python-mode . py-yapf-enable-on-save)
-  )
+  :if (executable-find "black")
+  :after python
+  :commands (blacken-mode blacken-buffer)
+  :diminish
+  :init
+  (setq blacken-line-length 119))
 
 (use-package pyvenv
   :ensure t)
