@@ -67,7 +67,9 @@
   :commands (blacken-mode blacken-buffer)
   :diminish
   :init
-  (setq blacken-line-length 119))
+  (setq blacken-line-length 120)
+  :config
+  (add-hook 'python-mode-hook 'blacken-mode))
 
 (use-package pyvenv
   :ensure t)
