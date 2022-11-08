@@ -18,7 +18,8 @@
             (setq indent-tabs-mode nil)
             (setq tab-width 4)
             (setq-default python-indent-guess-indent-offset nil)
-            (setq python-indent-offset 4)))
+            (setq python-indent-offset 4)
+            (setq highlight-indentation-offset 4)))
 
 (use-package pyenv-mode
   :after python
