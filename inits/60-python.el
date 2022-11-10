@@ -67,7 +67,7 @@
   :commands (blacken-mode blacken-buffer)
   :diminish
   :init
-  (setq blacken-line-length 120)
+  (setq blacken-line-length 100)
   :config
   (add-hook 'python-mode-hook 'blacken-mode))
 

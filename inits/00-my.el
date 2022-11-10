@@ -99,6 +99,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (setq-default indicate-empty-lines t)
+(setq-default display-fill-column-indicator-column 100)
 ;; show cursor position
 (setq column-number-mode 1)
 (blink-cursor-mode 1) ;; Make Cursor more visible
