@@ -140,7 +140,7 @@
 (setq frame-title-format
       (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar
 ;; remove window decoration
-(set-frame-parameter nil 'undecorated t)
+(set-frame-parameter nil 'undecorated nil)
 ;; resize window to full screen dimensions
 (setq initial-frame-alist '( (fullscreen . maximized)))
 (setq default-frame-alist '( (fullscreen . fullheight)))
