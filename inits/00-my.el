@@ -139,7 +139,7 @@
 (setq transient-mark-mode t)
 (setq frame-title-format
       (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar
-;; remove window decoration
+;; use window decoration
 (set-frame-parameter nil 'undecorated nil)
 ;; resize window to full screen dimensions
 (setq initial-frame-alist '( (fullscreen . maximized)))
