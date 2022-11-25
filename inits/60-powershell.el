@@ -2,6 +2,9 @@
   ;; https://learn.microsoft.com/en-us/archive/blogs/dotnetinterop/run-powershell-as-a-shell-within-emacs
   :if (eq system-type 'windows-nt)
   :ensure t
+  :init
+  (setq explicit-shell-file-name "powershell"
+        explicit-powershell-args '("-NoLogo" "-NonInteractive"))
   :config
   ;; Change default compile command for powershell
   (add-hook 'powershell-mode-hook
