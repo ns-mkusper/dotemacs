@@ -143,16 +143,16 @@
 ;; Removes gap when you add a new heading
 (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 
-(use-package org-gcal
-  :ensure t
-  :defer t
-  :config
-  (setq org-gcal-down-days '20					;; Only fetch events 20 days into the future
-        org-gcal-up-days '10					;; Only fetch events 10 days into the past
-        org-gcal-recurring-events-mode 'top-level
-        org-gcal-remove-api-cancelled-events t) ;; No prompt when deleting removed events
-  ;; NOTE - org-gcal ids and calendar configuation is set in 'private.el' for sake of security/privacy.
-  )
+;; (use-package org-gcal
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (setq org-gcal-down-days '20					;; Only fetch events 20 days into the future
+;;         org-gcal-up-days '10					;; Only fetch events 10 days into the past
+;;         org-gcal-recurring-events-mode 'top-level
+;;         org-gcal-remove-api-cancelled-events t) ;; No prompt when deleting removed events
+;;   ;; NOTE - org-gcal ids and calendar configuation is set in 'private.el' for sake of security/privacy.
+;;   )
 
 (use-package org-appear
   :ensure t
