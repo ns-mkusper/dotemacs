@@ -74,10 +74,10 @@
         (concat "*shell*<" (my-get-project-or-filename) ">"))
 
   (if (get-buffer shell-buffer-name)
-      (switch-to-buffer shell-buffer-name))
-  (progn
+      (switch-to-buffer-other-window shell-buffer-name)
+    (progn
     (call-interactively 'shell)
-    (rename-buffer shell-buffer-name))
+    (rename-buffer shell-buffer-name)))
   )
 
 (my-load-path "~/.emacs.d/lisp")
