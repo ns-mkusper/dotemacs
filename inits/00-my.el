@@ -59,14 +59,26 @@
       (switch-to-buffer (get-buffer-create "*scratch*"))
       (lisp-interaction-mode))))
 
+(defun my-get-project-or-filename ()
+  "Return either either the project name or filename if outside of a project."
+  (if  (string-equal "git" (nth 3 (split-string buffer-file-name "/")) )
+      (setq shell-buffer-name (nth 4 (split-string buffer-file-name "/")) )
+    (setq shell-buffer-name (nth 0 (last (split-string buffer-file-name "/"))) ))
+  )
+
 (defun my-open-default-shell ()
-  "Opens the default shell in an `ansi-term' buffer, switching to existing buffer if present."
+  "Opens or switches to a shell dedicated to the current project or file (if outside of a project)."
   (interactive)
-  (if (get-buffer "*terminal*")
-      (switch-to-buffer "*terminal*")
-    (progn
-      (ansi-term shell-file-name)
-      (rename-buffer "*terminal*"))))
+
+  (setq shell-buffer-name
+        (concat "*shell*<" (my-get-project-or-filename) ">"))
+
+  (if (get-buffer shell-buffer-name)
+      (switch-to-buffer shell-buffer-name))
+  (progn
+    (call-interactively 'shell)
+    (rename-buffer shell-buffer-name))
+  )
 
 (my-load-path "~/.emacs.d/lisp")
 
