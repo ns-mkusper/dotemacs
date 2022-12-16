@@ -35,7 +35,8 @@
                         `(org-level-7 ((t (:foreground "#11bfaa"))))
                         `(org-level-8 ((t (:foreground "#735875"))))
                         `(org-level-9 ((t (:foreground "#9d3d4d"))))
-                        `(org-level-10 ((t (:foreground "ff6503"))))                        
+                        `(org-level-10 ((t (:foreground "#ff6503"))))
+                        `(org-scheduled-today ((t (:foreground "#c3c0bb"))))                        
                         )
 
 ;; powerline and doom require full icon pack
