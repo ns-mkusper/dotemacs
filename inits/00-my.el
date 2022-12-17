@@ -59,20 +59,20 @@
       (switch-to-buffer (get-buffer-create "*scratch*"))
       (lisp-interaction-mode))))
 
-(defun my-get-project-or-filename ()
+(defun my-get-shell-buffer-name ()
   "Return either either the project name or filename if outside of a project."
-  (if  (string-equal "git" (nth 3 (split-string buffer-file-name "/")) )
-      (setq shell-buffer-name (nth 4 (split-string buffer-file-name "/")) )
-    (setq shell-buffer-name (nth 0 (last (split-string buffer-file-name "/"))) ))
+  (if  (member "git" (split-string buffer-file-name "/"))
+      (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
+    (setq shell-buffer-name-local-segment (nth 0 (last (split-string buffer-file-name "/") )))
+    )
+
+  (setq shell-buffer-name (concat "*shell*<" shell-buffer-name-local-segment ">"))
   )
 
 (defun my-open-default-shell ()
   "Opens or switches to a shell dedicated to the current project or file (if outside of a project)."
   (interactive)
-
-  (setq shell-buffer-name
-        (concat "*shell*<" (my-get-project-or-filename) ">"))
-
+  (setq shell-buffer-name (my-get-shell-buffer-name))
   (if (get-buffer shell-buffer-name)
       (switch-to-buffer-other-window shell-buffer-name)
     (progn
