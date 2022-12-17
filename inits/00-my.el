@@ -70,7 +70,7 @@
   )
 
 (defun my-open-default-shell ()
-  "Opens or switches to a shell dedicated to the current project or file (if outside of a project)."
+  "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
   (interactive)
   (setq shell-buffer-name (my-get-shell-buffer-name))
   (if (get-buffer shell-buffer-name)
