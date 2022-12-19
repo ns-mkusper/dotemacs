@@ -12,3 +12,5 @@
   :custom-face
   (sp-show-pair-match-face ((t (:foreground "White")))) ;; Could also have :background "Grey"
   )
+
+(provide '60-smartparens)
