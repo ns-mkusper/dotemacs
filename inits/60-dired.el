@@ -18,6 +18,9 @@
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
 
+  ;; Case insentitive search by default
+  (setq find-grep-options "-q -i")
+
 ;; Recursive, interractive find and replace with dired:
 ;;   M-x find-name-dired: you will be prompted for a root directory and a filename pattern.
 ;;   Press t to "toggle mark" for all files found.

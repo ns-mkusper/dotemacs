@@ -32,7 +32,7 @@
   :diminish visual-line-mode
   :bind
   (:map org-mode-map
-        ("C-c l" . org-store-link)
+        ("C-c o l" . org-store-link)
         ("C-c a" . org-agenda))
   :config
   (setq org-ellipsis "  ⤵ ")
