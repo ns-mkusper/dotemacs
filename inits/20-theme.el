@@ -20,6 +20,9 @@
   (org-ellipsis ((t (:height 0.8 :inherit 'shadow))))
   (org-scheduled-previously ((t (:background "red")))))
 
+;; cursor color
+(set-cursor-color 'IndianRed1)
+
 ;; highlight current lines
 (global-hl-line-mode 1)
 (set-face-background hl-line-face "grey10")
