@@ -80,6 +80,13 @@
     (rename-buffer shell-buffer-name)))
   )
 
+(defun my-forward-down-list ()
+  "Jumps to the end delimeter of the actibe block."
+  (interactive)
+  (backward-up-list)
+  (forward-sexp)
+  )
+
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables

@@ -21,6 +21,7 @@
            ("C-x C-e" . my-eval)
            ("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
+           ("C-M-n" . my-forward-down-list)
            )
 
 (provide '01-custom-keys)
