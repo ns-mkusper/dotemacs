@@ -12,7 +12,7 @@
   ;; Enable custom neotree theme (all-the-icons must be installed!)
   (doom-themes-neotree-config)
   ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme
   (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config)
@@ -23,6 +23,11 @@
 ;; highlight current lines
 (global-hl-line-mode 1)
 (set-face-background hl-line-face "grey10")
+
+;; ayu mode doesn't colorize variable names
+(custom-theme-set-faces 'user
+                        `(font-lock-variable-name-face ((t (:foreground "#29AAA1"))))
+                        )
 
 ;; set org level colors
 (custom-theme-set-faces 'user
@@ -36,7 +41,7 @@
                         `(org-level-8 ((t (:foreground "#735875"))))
                         `(org-level-9 ((t (:foreground "#9d3d4d"))))
                         `(org-level-10 ((t (:foreground "#ff6503"))))
-                        `(org-scheduled-today ((t (:foreground "#c3c0bb"))))                        
+                        `(org-scheduled-today ((t (:foreground "#c3c0bb"))))
                         )
 
 ;; powerline and doom require full icon pack

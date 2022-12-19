@@ -33,7 +33,6 @@
   ("C-M-z" . 'counsel-fzf)
   ("C-M-r" . 'counsel-recentf)
   ("C-x C-b" . 'counsel-ibuffer)
-  ("C-M-f" . 'counsel-ag)
   ("C-x C-i" . 'counsel-semantic-or-imenu)
   :custom
   ;; Include recent files and bookmarks in `ivy-switch-buffer' (Cx b) list
