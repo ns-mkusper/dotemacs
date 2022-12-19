@@ -1,6 +1,8 @@
 (use-package dired
   :init
   (load "dired-x")
+  :bind
+  ("C-M-g" . 'find-grep-dired)
   :config
   ;; Don't create new buffer with RET key
   ;; http://www.pshared.net/diary/20071207.html#p02
@@ -16,18 +18,26 @@
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
 
+;; Recursive, interractive find and replace with dired:
+;;   M-x find-name-dired: you will be prompted for a root directory and a filename pattern.
+;;   Press t to "toggle mark" for all files found.
+;;   Press Q for "Query-Replace in Files...": you will be prompted for query/substitution regexps.
+;;   Proceed as with query-replace-regexp: SPACE to replace and move to next match, n to skip a match, etc.
+;;   Press C-x s to save buffers. (You can then press y for yes, n for no, or ! for yes for all)
+
+
   ;; use dired-x instead of dired
   ;; (add-hook 'dired-load-hook
-  ;; 		  (function (lambda ()
-  ;; 					  (load "dired-x")
-  ;; 					  ;; set global variables here.
-  ;; 					  ;; ex)
-  ;; 					  ;; (setq dired-guess-shell-gnutar "gtar")
-  ;; 					  )))
+  ;;              (function (lambda ()
+  ;;                                      (load "dired-x")
+  ;;                                      ;; set global variables here.
+  ;;                                      ;; ex)
+  ;;                                      ;; (setq dired-guess-shell-gnutar "gtar")
+  ;;                                      )))
   ;; (add-hook 'dired-mode-hook
-  ;; 		  (function (lambda ()
-  ;; 					  ;; set buffer-local variables here.
-  ;; 					  ;; ex)
-  ;; 					  ;; (dired-omit-mode 1)
-  ;; 					  )))
+  ;;              (function (lambda ()
+  ;;                                      ;; set buffer-local variables here.
+  ;;                                      ;; ex)
+  ;;                                      ;; (dired-omit-mode 1)
+  ;;                                      )))
   )

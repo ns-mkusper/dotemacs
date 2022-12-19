@@ -1,6 +1,8 @@
 (use-package whitespace-cleanup-mode
+  :ensure t
   :config
-  (setq whitespace-cleanup-mode t)
+  (global-whitespace-cleanup-mode)
+  (setq whitespace-cleanup-mode-only-if-initially-clean t)
   :hook
   (prog-mode . whitespace-cleanup))
 
