@@ -87,6 +87,16 @@
   (forward-sexp)
   )
 
+(defun my-stop-debugging-mode ()
+  (interactive)
+  (dap-delete-all-sessions)
+  (dap-mode 0)
+  (dap-ui-mode 0)
+  (dap-ui-controls-mode 0)
+  (delete-other-windows) ;; hide all the dap UI. I might want to delete the buffers as well.
+  )
+
+
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables
