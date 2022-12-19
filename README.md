@@ -15,6 +15,7 @@
 7. `pip install 'python-lsp-server[all]'`
 8. `brew install cmake vterm term`
 9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
+10. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
 
 
 ## Setup emacs on Windows:
@@ -34,3 +35,4 @@
 9. `mkdir ~/.emac-d/data`
 10. `pip install 'python-lsp-server[all]'`
 11. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
+12. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
