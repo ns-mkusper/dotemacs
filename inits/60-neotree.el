@@ -1,6 +1,7 @@
 (use-package neotree
   :ensure t
-  :bind ("<f8>" . 'neotree-toggle)
+  :bind
+  ("<f5>" . 'neotree-toggle)
   :init
   ;; slow rendering
   (setq inhibit-compacting-font-caches t)

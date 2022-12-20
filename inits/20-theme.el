@@ -48,9 +48,12 @@
                         )
 
 ;; powerline and doom require full icon pack
-;; run M-x all-the-icons-install-fonts to enable (and then install the downloaded font files if on windows)
-;; TODO: automate ^
 (use-package all-the-icons
-  :ensure t)
+  :if (display-graphic-p)
+  :commands all-the-icons-install-fonts
+  :init
+  (unless (find-font (font-spec :name "all-the-icons"))
+    (all-the-icons-install-fonts t)))
+
 
 (provide '20-theme)

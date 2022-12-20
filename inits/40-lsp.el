@@ -85,18 +85,4 @@
   :ensure t
   :hook ((lsp-mode . yas-minor-mode)))
 
-;; optionally if you want to use debugger
-(use-package dap-mode
-  :ensure t
-  :disabled
-  :config
-  (require 'dap-python)
-  (require 'dap-ui)
-  (dap-mode t)
-  (dap-ui-mode 1)
-  (dap-tooltip-mode 1)
-  (tooltip-mode 1)
-  )
-
-
 (provide '40-lsp)

@@ -5,5 +5,5 @@
  ;; If there is more than one, they won't work right.
 
  '(package-selected-packages
-   '(lsp-treemacs lsp-ivy lsp-ui lsp-mode rustic rustic-mode windsize which-key pyenv-mode elpy powerline origami ox-hugo neotree markdown-mode highlight-indentation git-link git-gutter+ magit-find-file magit-svn magit-popup magit perspective ivy-pass ivy-yasnippet counsel-projectile avy ivy-hydra all-the-icons-ivy-rich counsel ivy corfu all-the-icons doom-themes fill-column-indicator init-loader s bison-mode groovy-mode gcmh))
- )
+   '(json-mode lsp-treemacs lsp-ivy lsp-ui lsp-mode rustic rustic-mode windsize which-key pyenv-mode elpy powerline origami ox-hugo neotree markdown-mode highlight-indentation git-link git-gutter+ magit-find-file magit-svn magit-popup magit perspective ivy-pass ivy-yasnippet counsel-projectile avy ivy-hydra all-the-icons-ivy-rich counsel ivy corfu all-the-icons doom-themes fill-column-indicator init-loader s bison-mode groovy-mode gcmh))
+)

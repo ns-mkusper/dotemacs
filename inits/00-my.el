@@ -96,7 +96,6 @@
   (delete-other-windows) ;; hide all the dap UI. I might want to delete the buffers as well.
   )
 
-
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables

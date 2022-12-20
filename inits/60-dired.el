@@ -2,7 +2,8 @@
   :init
   (load "dired-x")
   :bind
-  ("C-M-g" . 'find-grep-dired)
+  (:map dired-mode-map
+        ("C-M-g" . 'find-grep-dired))
   :config
   ;; Don't create new buffer with RET key
   ;; http://www.pshared.net/diary/20071207.html#p02
@@ -12,7 +13,7 @@
 
   ;; macOS `ls' does not have `--dired' , so use coreutils `ls'
   (if (file-executable-p "/usr/local/bin/gls")
-    (setq insert-directory-program "/usr/local/bin/gls"))
+      (setq insert-directory-program "/usr/local/bin/gls"))
 
   ;; recursive copy and recursive delete
   (setq dired-recursive-copies 'always)
@@ -21,12 +22,12 @@
   ;; Case insentitive search by default
   (setq find-grep-options "-q -i")
 
-;; Recursive, interractive find and replace with dired:
-;;   M-x find-name-dired: you will be prompted for a root directory and a filename pattern.
-;;   Press t to "toggle mark" for all files found.
-;;   Press Q for "Query-Replace in Files...": you will be prompted for query/substitution regexps.
-;;   Proceed as with query-replace-regexp: SPACE to replace and move to next match, n to skip a match, etc.
-;;   Press C-x s to save buffers. (You can then press y for yes, n for no, or ! for yes for all)
+  ;; Recursive, interractive find and replace with dired:
+  ;;   M-x find-name-dired: you will be prompted for a root directory and a filename pattern.
+  ;;   Press t to "toggle mark" for all files found.
+  ;;   Press Q for "Query-Replace in Files...": you will be prompted for query/substitution regexps.
+  ;;   Proceed as with query-replace-regexp: SPACE to replace and move to next match, n to skip a match, etc.
+  ;;   Press C-x s to save buffers. (You can then press y for yes, n for no, or ! for yes for all)
 
 
   ;; use dired-x instead of dired
@@ -43,4 +44,9 @@
   ;;                                      ;; ex)
   ;;                                      ;; (dired-omit-mode 1)
   ;;                                      )))
+
+  (use-package all-the-icons-dired
+    :if (display-graphic-p)
+    :hook (dired-mode . all-the-icons-dired-mode))
+
   )
