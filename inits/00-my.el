@@ -120,6 +120,7 @@
 (menu-bar-mode -1)
 (savehist-mode 1) ;; save shell history
 (save-place-mode 1)
+(desktop-save-mode 1)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
 (setq compilation-window-height 45)
 (setq debug-on-error nil) ;; ignore errors in emacs
