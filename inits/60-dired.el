@@ -2,8 +2,7 @@
   :init
   (load "dired-x")
   :bind
-  (:map dired-mode-map
-        ("C-M-g" . 'find-grep-dired))
+  ("C-M-g" . 'find-grep-dired)
   :config
   ;; Don't create new buffer with RET key
   ;; http://www.pshared.net/diary/20071207.html#p02
