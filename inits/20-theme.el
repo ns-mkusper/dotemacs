@@ -21,7 +21,7 @@
   (org-scheduled-previously ((t (:background "red")))))
 
 ;; cursor color
-(set-cursor-color 'IndianRed1)
+(set-cursor-color "IndianRed1")
 
 ;; highlight current lines
 (global-hl-line-mode 1)
