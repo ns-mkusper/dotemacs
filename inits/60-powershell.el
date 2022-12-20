@@ -5,8 +5,8 @@
   :bind (("C-c RET" . open-powershell-with-project-buffer-name))
   :config
   (defun open-powershell-with-project-buffer-name ()
-      (interactive)
-    (setq shell-buffer-name (my-get-project-or-filename))
+    (interactive)
+    (setq shell-buffer-name (my-get-shell-buffer-name))
     (powershell shell-buffer-name nil))
   ;; Change default compile command for powershell
   ;; (add-hook 'powershell-mode-hook
