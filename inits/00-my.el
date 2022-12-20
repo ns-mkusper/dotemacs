@@ -76,8 +76,8 @@
   (if (get-buffer shell-buffer-name)
       (switch-to-buffer-other-window shell-buffer-name)
     (progn
-    (call-interactively 'shell)
-    (rename-buffer shell-buffer-name)))
+      (call-interactively 'shell)
+      (rename-buffer shell-buffer-name)))
   )
 
 (defun my-forward-down-list ()
@@ -100,17 +100,17 @@
 
 ;; setup environment variables
 (defvar my-env-shell-path
-      (concat
-         (getenv "PATH")
-         "/usr/local/bin/:"
-         "/usr/local/opt/coreutils/bin/:"
-         "/opt/homebrew/bin/:"
-         "/usr/local/opt/texinfo/bin/:"
-         (concat (getenv "HOME") "/bin/:")
-         (concat (getenv "HOME") "/go/bin:")
-         (concat (getenv "HOME") "/.local/bin:")
-         (concat (getenv "HOME") "/.cargo/bin:")
-         ))
+  (concat
+   (getenv "PATH")
+   "/usr/local/bin/:"
+   "/usr/local/opt/coreutils/bin/:"
+   "/opt/homebrew/bin/:"
+   "/usr/local/opt/texinfo/bin/:"
+   (concat (getenv "HOME") "/bin/:")
+   (concat (getenv "HOME") "/go/bin:")
+   (concat (getenv "HOME") "/.local/bin:")
+   (concat (getenv "HOME") "/.cargo/bin:")
+   ))
 (setenv "PATH" my-env-shell-path)
 (setq exec-path (split-string my-env-shell-path path-separator))
 
