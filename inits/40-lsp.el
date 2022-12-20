@@ -9,10 +9,13 @@
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   (setq read-process-output-max (* 1024 1024)) ; 1mb
+  ;; MANUALLY-INSTALLED ENGINE SETTING
+  (setq lsp-terraform-server "terraform-ls")
+
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
   ;; add new modes here to enable lsp integration
-  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode) . lsp-deferred)
+  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode) . lsp-deferred)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind

@@ -16,6 +16,15 @@
 8. `brew install cmake vterm term`
 9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
 10. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
+11. Setup terraform lsp:
+   ```bash
+wget https://github.com/hashicorp/terraform-ls/releases/download/v0.30.1/terraform-ls_0.30.1_darwin_arm64.zip
+unzip terraform-ls_0.30.1_darwin_arm64.zip
+sudo mv terraform-ls /usr/local/bin/
+```
+
+
+
 
 
 ## Setup emacs on Windows:
@@ -36,3 +45,8 @@
 10. `pip install 'python-lsp-server[all]'`
 11. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
 12. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
+13. Setup terraform lsp:
+   ```bash
+wget https://github.com/hashicorp/terraform-ls/releases/download/v0.30.1/terraform-ls_0.30.1_windows_amd64.zip
+unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
+```
