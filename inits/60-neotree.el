@@ -1,5 +1,5 @@
 (use-package neotree
-  :ensure t
+  :straight t
   :bind
   ("<f5>" . 'neotree-toggle)
   :init

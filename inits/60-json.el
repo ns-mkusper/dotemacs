@@ -1,5 +1,5 @@
 (use-package json-mode
-  :ensure t
+  :straight t
   :init
   (add-hook 'json-mode-hook
             (lambda ()

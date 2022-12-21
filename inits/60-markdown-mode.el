@@ -1,6 +1,6 @@
 ;; for git markdown
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))

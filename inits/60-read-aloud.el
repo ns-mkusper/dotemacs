@@ -1,5 +1,5 @@
 (use-package read-aloud
-  :ensure t
+  :straight t
   :config
   (setq read-aloud-engine "flite")
   :bind

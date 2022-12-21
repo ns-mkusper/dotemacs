@@ -1,5 +1,5 @@
 ;; (use-package elpy
-;;   :ensure t
+;;   :straight t
 ;;   :bind
 ;;   (:map elpy-mode-map
 ;;         ("M-." . elpy-goto-definition)
@@ -26,7 +26,7 @@
   :hook
   ((python-mode . pyenv-mode)
    (projectile-switch-project . projectile-pyenv-mode-set))
-  :ensure t
+  :straight t
   :init
   (add-to-list 'exec-path (expand-file-name "~/.pyenv/shims"))
   (add-to-list 'exec-path (expand-file-name "~/.pyenv/bin"))
@@ -47,7 +47,7 @@
 (use-package pyvenv
   :after python
   :hook (python-mode . pyvenv-mode)
-  :ensure t
+  :straight t
   :custom
   (pyvenv-default-virtual-env-name "env")
   (pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:"
@@ -55,13 +55,13 @@
 
 ;; Enable poetry
 (use-package poetry
-  :ensure t
+  :straight t
   :config
   (poetry-tracking-mode) ;; This auto load related venv when opening the file
   )
 
 (use-package blacken
-  :ensure t
+  :straight t
   :if (executable-find "black")
   :after python
   :commands (blacken-mode blacken-buffer)
@@ -72,10 +72,10 @@
   (add-hook 'python-mode-hook 'blacken-mode))
 
 (use-package pyvenv
-  :ensure t)
+  :straight t)
 
 (use-package lsp-pyright
-  :ensure t
+  :straight t
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
                          (lsp))))  ; or lsp-deferred

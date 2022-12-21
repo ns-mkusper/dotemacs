@@ -5,7 +5,7 @@
     (lsp-format-buffer))
 
 (use-package rustic
-  :ensure t
+  :straight t
   :after (flycheck lsp-mode)
   :mode
   ("\\.rs\\'" . rustic-mode)
@@ -13,7 +13,7 @@
   ;; (defun my/rustic-mode-hook-fn ()
   ;;   "Needed for lsp-format-buffer to indent with 4 spaces"
   ;;   (setq tab-width 4
-  ;; 	  indent-tabs-mode nil))
+  ;;      indent-tabs-mode nil))
   ;; (defun my/switch-to-cargo-window ()
   ;;   "Switch to the *cargo* window."
   ;;   (other-window 1))
@@ -42,10 +42,10 @@
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
   (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
-        				   (my/rustic-before-save-fn))))
+                                           (my/rustic-before-save-fn))))
   (add-hook 'lsp-after-open-hook (lambda ()
-				   (when (lsp-find-workspace 'rust-analyzer nil)
-				     (lsp-rust-analyzer-inlay-hints-mode))))
+                                   (when (lsp-find-workspace 'rust-analyzer nil)
+                                     (lsp-rust-analyzer-inlay-hints-mode))))
   :bind (:map rustic-mode-map
               ("M-j" . lsp-ui-imenu)
               ("M-?" . lsp-find-references)

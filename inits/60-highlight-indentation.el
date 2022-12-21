@@ -1,6 +1,6 @@
 ;; make indentation more visible in files where it dictates scope
 (use-package highlight-indentation
-  :ensure t
+  :straight t
   :hook
   (prog-mode . highlight-indentation-mode)
   (prog-mode . highlight-indentation-current-column-mode)

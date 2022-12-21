@@ -1,5 +1,5 @@
 (use-package dap-mode
-  :ensure t
+  :straight t
   :after lsp-mode
   :bind
   (:map dap-mode-map

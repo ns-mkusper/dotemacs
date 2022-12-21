@@ -1,7 +1,7 @@
 (use-package powershell
   ;; https://learn.microsoft.com/en-us/archive/blogs/dotnetinterop/run-powershell-as-a-shell-within-emacs
   :if (eq system-type 'windows-nt)
-  :ensure t
+  :straight t
   :bind (("C-c RET" . open-powershell-with-project-buffer-name))
   :config
   (defun open-powershell-with-project-buffer-name ()

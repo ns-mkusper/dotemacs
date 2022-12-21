@@ -1,5 +1,5 @@
 (use-package popwin
-  :ensure t
+  :straight t
   :config
   (global-set-key (kbd "C-x p") 'popwin:keymap)
   (popwin-mode 1)

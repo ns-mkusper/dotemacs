@@ -1,15 +1,15 @@
 (use-package magit
-  :ensure t
+  :straight t
   :bind
   (("C-x g" . magit-status))
   :config
   )
 (use-package magit-find-file
-  :ensure t
+  :straight t
   )
 
 (use-package git-gutter+
-  :ensure t
+  :straight t
   :bind
   ((:map git-gutter+-mode-map
          ;; Jump between hunks
@@ -39,7 +39,7 @@
   )
 
 (use-package git-link
-  :ensure t
+  :straight t
   :bind
   ("C-c g l" . git-link)
   :init

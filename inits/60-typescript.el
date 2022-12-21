@@ -1,5 +1,5 @@
 (use-package typescript-mode
-  :ensure t
+  :straight t
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
   :init

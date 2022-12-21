@@ -110,12 +110,12 @@
 
 
 (use-package toc-org
-  :ensure t
+  :straight t
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))
 
 (use-package org-super-agenda
-  :ensure t
+  :straight t
   :after org
   :config
   (setq org-super-agenda-header-map nil) ;; takes over 'j'
@@ -144,7 +144,7 @@
 (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 
 ;; (use-package org-gcal
-;;   :ensure t
+;;   :straight t
 ;;   :defer t
 ;;   :config
 ;;   (setq org-gcal-down-days '20					;; Only fetch events 20 days into the future
@@ -155,7 +155,7 @@
 ;;   )
 
 (use-package org-appear
-  :ensure t
+  :straight t
   :commands (org-appear-mode)
   :hook (org-mode . org-appear-mode)
   :init
@@ -165,7 +165,7 @@
         org-appear-autosubmarkers t))	;; Enable on subscript and superscript
 
 (use-package ox-reveal
-  :ensure t
+  :straight t
   :defer 5)
 
 (setq org-modules '(org-habit))
@@ -175,7 +175,7 @@
 
 (use-package org-fancy-priorities
   :after (org all-the-icons)
-  :ensure t
+  :straight t
   :hook (org-mode        . org-fancy-priorities-mode)
   :hook (org-agenda-mode . org-fancy-priorities-mode)
   :config
@@ -185,7 +185,7 @@
 
 ;; hugo org-mode integration for blogging
 (use-package ox-hugo
-  :ensure t
+  :straight t
   :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
   :after ox)
 

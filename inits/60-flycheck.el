@@ -1,5 +1,5 @@
 (use-package flycheck
-  :ensure t
+  :straight t
   :commands (global-flycheck-mode)
   :bind
   :hook

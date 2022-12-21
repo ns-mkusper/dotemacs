@@ -1,5 +1,5 @@
 (use-package ein
-  :ensure t
+  :straight t
   :defer t
   :commands ein:notebooklist-open
   )

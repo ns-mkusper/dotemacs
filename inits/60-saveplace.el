@@ -1,5 +1,5 @@
 (use-package saveplace
-  :ensure t
+  :straight t
   :init (setq save-place-limit 100)
   :config (save-place-mode))
 

@@ -1,6 +1,6 @@
 ;; Code folding
 (use-package origami
-  :ensure t
+  :straight t
   :config
   (global-origami-mode))
 

@@ -1,7 +1,7 @@
 ;;; LSP
 ;; IMPORTANT: lsp-install-server all the below languages
 (use-package lsp-mode
-  :ensure t
+  :straight t
   :custom
   ;; (create-lockfiles nil)
   (lsp-auto-guess-root t)
@@ -26,7 +26,7 @@
 
 ;; optional integrations
 (use-package lsp-ui
-  :ensure t
+  :straight t
   :custom
   ;; (scroll-margin 0)
   ;; lsp-ui-doc
@@ -77,15 +77,17 @@
 ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
 (use-package lsp-ivy
-  :ensure t
+  :straight t
+  :after lsp-mode
   :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs
-  :ensure t
+  :straight t
+  :after lsp-mode
   :commands lsp-treemacs-errors-list)
 
 ;; for refactoring that requires insertions
 (use-package yasnippet
-  :ensure t
+  :straight t
   :hook ((lsp-mode . yas-minor-mode)))
 
 (provide '40-lsp)

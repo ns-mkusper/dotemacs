@@ -2,7 +2,7 @@
 ;; TODO: mayebe use instead of paredit in lispy langs?
 (use-package smartparens
   :diminish smartparens-mode ;; Do not show in modeline
-  :ensure t
+  :straight t
   :init
   (require 'smartparens-config)
   :config

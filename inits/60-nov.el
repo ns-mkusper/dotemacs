@@ -1,6 +1,6 @@
 ;; Read epubs in emacs
 (use-package nov
-  :ensure t
+  :straight t
   :preface
   (defun my/nov-delayed-render-setup ()
     (run-with-idle-timer 0.2 nil 'nov-render-document))

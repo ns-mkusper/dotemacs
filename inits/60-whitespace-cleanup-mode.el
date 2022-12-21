@@ -1,5 +1,5 @@
 (use-package whitespace-cleanup-mode
-  :ensure t
+  :straight t
   :config
   (global-whitespace-cleanup-mode)
   (setq whitespace-cleanup-mode-only-if-initially-clean t)

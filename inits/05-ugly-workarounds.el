@@ -2,7 +2,7 @@
 (if (eq system-type 'darwin)
     ;; fix bad ssl
     (use-package gnutls
-      :ensure t
+      :straight t
       :config
       (add-to-list 'gnutls-trustfiles
                    (expand-file-name

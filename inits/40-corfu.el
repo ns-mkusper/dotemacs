@@ -1,6 +1,6 @@
 ;; AUTO COMPLETE
 (use-package corfu
-  :ensure t
+  :straight t
   ;; Optional customizations
   :custom
   (corfu-cycle t)       ;; Enable cycling for `corfu-next/previous'
@@ -29,7 +29,7 @@
 
 ;; Use Dabbrev with Corfu!
 (use-package dabbrev
-  :ensure t
+  :straight t
   ;; Swap M-/ and C-M-/
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand))

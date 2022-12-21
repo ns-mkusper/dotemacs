@@ -1,5 +1,5 @@
 (use-package yasnippet
-  :ensure t
+  :straight t
   :diminish (yas-global-mode yas-minor-mode)
   :commands (yas-minor-mode)
   ;; :commands (yas-reload-all yas-minor-mode)
@@ -17,7 +17,7 @@
   )
 
 (use-package yasnippet-snippets
-  :ensure t
+  :straight t
   :after (yasnippet)
   :config
   (add-to-list 'yas-snippet-dirs yasnippet-snippets-dir)

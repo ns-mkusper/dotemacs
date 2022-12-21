@@ -1,5 +1,5 @@
 (use-package powerline
-  :ensure t
+  :straight t
   :config
   (powerline-default-theme))
 

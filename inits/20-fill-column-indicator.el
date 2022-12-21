@@ -1,6 +1,6 @@
 ;; visual indenting
 (use-package fill-column-indicator
-  :ensure t
+  :straight t
   :init
   (setq fci-rule-column 80)
   (setq fci-rule-use-dashes t)
