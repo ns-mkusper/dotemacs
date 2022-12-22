@@ -1,5 +1,5 @@
 (use-package ivy
-  :ensure  t
+  :straight t
   :bind
   (:map ivy-minibuffer-map
         ;; close the minibuffer with ESC
@@ -20,7 +20,7 @@
   )
 
 (use-package counsel
-  :ensure  t
+  :straight t
   :diminish ivy-mode counsel-mode
   :defines
   (projectile-completion-system magit-completing-read-function)
@@ -48,7 +48,7 @@
   (counsel-find-file-ignore-regexp (regexp-opt completion-ignored-extensions))
   :config
   (use-package ivy-hydra
-    :ensure  t
+    :straight t
     :custom
     ;; Assign Mo to ivy-hydra-read-action
     (ivy-read-action-function #'ivy-hydra-read-action)
@@ -56,7 +56,7 @@
   )
 
 (use-package all-the-icons-ivy-rich
-  :ensure  t
+  :straight t
   :after (counsel-projectile)
   :config
   ;; counsel-projectile-find-file
@@ -70,7 +70,7 @@
   )
 
 (use-package ivy-rich
-  :ensure  t
+  :straight t
   :config
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
   ;; counsel-projectile-find-file
@@ -83,7 +83,7 @@
   (ivy-rich-mode 1))
 
 (use-package swiper
-  :ensure  t
+  :straight t
   :bind
   ("C-s" . 'swiper)
   :custom
@@ -95,18 +95,18 @@
   )
 
 (use-package avy
-  :ensure  t )
+  :straight t )
 
 (use-package counsel-projectile
-  :ensure  t
+  :straight t
   :config
   (counsel-projectile-mode 1)
   )
 
 (use-package ivy-yasnippet
-  :ensure  t )
+  :straight t )
 
 (use-package ivy-pass
-  :ensure  t )
+  :straight t )
 
 (provide '40-ivy)

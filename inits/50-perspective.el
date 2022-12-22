@@ -1,5 +1,5 @@
 (use-package perspective
-  :ensure  t
+  :straight t
   :bind-keymap
   ("C-z" . perspective-map)
   :bind

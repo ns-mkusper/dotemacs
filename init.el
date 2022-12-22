@@ -63,11 +63,11 @@
 (load custom-file) ;; install packages and suppress output
 
 (use-package s
-  :ensure  t )
+  :straight t )
 (use-package use-package)
 ;; load all our sub-config packages
 (use-package init-loader
-  :ensure  t
+  :straight t
   :config
   (setq init-loader-show-log-after-init nil)
   (init-loader-load "~/.emacs.d/inits"))
