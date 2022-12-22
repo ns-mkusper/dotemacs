@@ -1,4 +1,5 @@
 (use-package dired
+  :straight (:type built-in)
   :init
   (load "dired-x")
   :bind

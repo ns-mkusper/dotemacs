@@ -22,7 +22,7 @@ wget https://github.com/hashicorp/terraform-ls/releases/download/v0.30.1/terrafo
 unzip terraform-ls_0.30.1_darwin_arm64.zip
 sudo mv terraform-ls /usr/local/bin/
 ```
-
+12. Install shfmt: `brew install shfmt`
 
 
 
@@ -50,3 +50,4 @@ sudo mv terraform-ls /usr/local/bin/
 wget https://github.com/hashicorp/terraform-ls/releases/download/v0.30.1/terraform-ls_0.30.1_windows_amd64.zip
 unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 ```
+14. Install shfmt: `scoop install shfmt`

@@ -1,3 +1,25 @@
+;; bash
+;; format bash
+(use-package shfmt
+  :straight (shfmt :host github
+                   :repo "amake/shfmt.el"
+                   :local-repo "amake/shfmt.el"
+                   :branch "master"
+                   )
+  :hook (sh-mode . shfmt-on-save-mode)
+  )
+(use-package flycheck-shfmt
+  :straight (flycheck-shfmt :host github
+                            :repo "amake/shfmt.el"
+                            :local-repo "amake/shfmt.el"
+                            :files ("flycheck-shfmt.el")
+                            :branch "master"
+                            )
+  :config
+  (flycheck-shfmt-setup)
+  )
+
+;; probably better to use powershell on windows
 (use-package powershell
   ;; https://learn.microsoft.com/en-us/archive/blogs/dotnetinterop/run-powershell-as-a-shell-within-emacs
   :if (eq system-type 'windows-nt)
@@ -15,4 +37,4 @@
   ;;                  (format "powershell.exe -NoLogo -NonInteractive -Command \"& '%s'\""             ((my-get-project-or-filename) )))))
   )
 
-(provide '60-powershell)
+(provide '60-shell)
