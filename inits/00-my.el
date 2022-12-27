@@ -96,6 +96,30 @@
   (delete-other-windows) ;; hide all the dap UI. I might want to delete the buffers as well.
   )
 
+(defun my-get-ppi ()
+  "Get display PPI.  Do not run this function in non-graphic mode."
+  (setq my-disp-attrs (car (display-monitor-attributes-list)))
+
+  (setq my-mm-size (assq 'mm-size my-disp-attrs))
+  (setq my-mm-width (nth 1 my-mm-size))
+  (setq my-mm-height (nth 2 my-mm-size))
+
+  (setq my-diag-mm (sqrt (+
+                          (expt my-mm-width 2)
+                          (expt my-mm-height 2))))
+
+  (setq my-diag-inches (* my-diag-mm 0.0393701))
+
+  (setq my-geom (assq 'geometry my-disp-attrs))
+  (setq my-pixel-width (nth 3 my-geom))
+  (setq my-pixel-height (nth 4 my-geom))
+
+  (setq my-diag-pixels (sqrt (+
+                              (expt my-pixel-width 2)
+                              (expt my-pixel-height 2))))
+
+  (/ my-diag-pixels my-diag-inches))
+
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables
