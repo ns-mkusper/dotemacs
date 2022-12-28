@@ -73,6 +73,7 @@
         ([remap xref-find-references] . lsp-ui-peek-find-references)
         )
   :commands lsp-ui-mode)
+
 ;; if you are helm user
 ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user

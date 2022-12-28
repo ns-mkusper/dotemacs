@@ -47,6 +47,10 @@
                         `(org-scheduled-today ((t (:foreground "#c3c0bb"))))
                         )
 
+;; customize company (auto-complete) colors
+  (set-face-attribute
+   'company-tooltip-selection nil :background "maroon" :foreground "#0d1017")
+
 ;; powerline and doom require full icon pack
 (use-package all-the-icons
   :if (display-graphic-p)
