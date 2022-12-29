@@ -22,6 +22,7 @@
             (setq highlight-indentation-offset 4)))
 
 (use-package pyenv-mode
+  :straight t
   :after python
   :hook
   ((python-mode . pyenv-mode)
@@ -42,7 +43,37 @@
     (let ((project (projectile-project-name)))
       (if (member project (pyenv-mode-versions))
           (pyenv-mode-set project)
-        (pyenv-mode-unset)))))
+        (pyenv-mode-unset))))
+  
+  (defun my-py-workon-project-venv ()
+    "Call pyenv-workon with the current projectile project name.
+This will return the full path of the associated virtual
+environment found in $WORKON_HOME, or nil if the environment does
+not exist."
+    (let ((pname (projectile-project-name)))
+      (pyvenv-workon pname)
+      (if (file-directory-p pyvenv-virtual-env)
+          pyvenv-virtual-env
+        (pyvenv-deactivate))))
+
+  (defun my-py-auto-lsp ()
+    "Turn on lsp mode in a Python project with some automated logic.
+Try to automatically determine which pyenv virtual environment to
+activate based on the project name, using
+`my-py-workon-project-venv'. If successful, call `lsp'. If we
+cannot determine the virtualenv automatically, first call the
+interactive `pyvenv-workon' function before `lsp'"
+    (interactive)
+    (let ((pvenv (my-py-workon-project-venv)))
+      (if pvenv
+          (lsp)
+        (progn
+          (call-interactively #'pyvenv-workon)
+          (lsp)))))
+
+  (bind-key (kbd "C-c C-a") #'my-py-auto-lsp python-mode-map)
+
+  )
 
 (use-package pyvenv
   :after python
@@ -72,7 +103,8 @@
   (add-hook 'python-mode-hook 'blacken-mode))
 
 (use-package pyvenv
-  :straight t)
+  :straight t
+  )
 
 (use-package lsp-pyright
   :straight t
