@@ -22,6 +22,7 @@
            ("C-c o" . org-store-link)
            ("C-c a" . org-agenda)
            ("C-M-n" . my-forward-down-list)
+           ("C-c C-c l" . flycheck-list-errors)
            )
 
 (provide '01-custom-keys)

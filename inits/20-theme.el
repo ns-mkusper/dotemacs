@@ -59,21 +59,11 @@
   (unless (find-font (font-spec :name "all-the-icons"))
     (all-the-icons-install-fonts t)))
 
-(use-package doom-modeline
+(use-package smart-mode-line
   :straight t
-  :hook ('after-init-hook)
-  :custom
-  (doom-modeline-buffer-encoding t)
-  (doom-modeline-checker-simple-format t)
-  (doom-modeline-hud t)
-  (doom-modeline-project-detection 'projectile)
-  (doom-modeline-buffer-file-name-style 'relative-to-project)
-  (doom-line-numbers-style 'relative)
-  (doom-modeline-major-mode-icon t)
-  (doom-modeline-buffer-state-icon t)
-  (doom-modeline-major-mode-color-icon t)
   :config
-  (doom-modeline-mode))
-
+  (setq sml/no-confirm-load-theme t
+        sml/theme 'dark)
+  (sml/setup))
 
 (provide '20-theme)

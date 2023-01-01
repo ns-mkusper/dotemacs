@@ -23,6 +23,7 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip
 sudo mv terraform-ls /usr/local/bin/
 ```
 12. Install shfmt: `brew install shfmt`
+13. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
 
 
 
@@ -51,3 +52,4 @@ wget https://github.com/hashicorp/terraform-ls/releases/download/v0.30.1/terrafo
 unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 ```
 14. Install shfmt: `scoop install shfmt`
+15. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
