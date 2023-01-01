@@ -59,4 +59,5 @@
   (unless (find-font (font-spec :name "all-the-icons"))
     (all-the-icons-install-fonts t)))
 
+
 (provide '20-theme)
