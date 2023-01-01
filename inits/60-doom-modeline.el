@@ -1,7 +1,7 @@
 (use-package doom-modeline
   :straight t
-  :after all-the-icons
   :hook ('after-init-hook)
+  :init (doom-modeline-mode 1)
   :custom
   (doom-modeline-buffer-encoding t)
   (doom-modeline-checker-simple-format t)
@@ -11,9 +11,8 @@
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t)
   (doom-modeline-major-mode-color-icon t)
-  (doom-modeline-hud nil)
+  (doom-modeline-hud t)
   (doom-modeline-height 10)
-  :config
-  (doom-modeline-mode))
+)
 
 (provide '60-doom-modeline)
