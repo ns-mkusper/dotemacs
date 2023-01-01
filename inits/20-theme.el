@@ -60,4 +60,16 @@
     (all-the-icons-install-fonts t)))
 
 
+(use-package doom-modeline
+  :straight t
+  :after all-the-icons
+  :hook (after-init . doom-modeline-mode)
+  :custom
+  (doom-modeline-buffer-file-name-style 'relative-to-project)
+  (doom-line-numbers-style 'relative)
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  )
+
 (provide '20-theme)

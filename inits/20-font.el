@@ -31,4 +31,7 @@
 (custom-set-faces
  '(variable-pitch ((t (:family "OpenDyslexic3")))))
 
+(set-fontset-font "fontset-default" '(#x5d0 . #x5ff) "Miriam Mono CLM:bold")
+
+
 (provide '20-font)
