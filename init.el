@@ -55,7 +55,11 @@
 ;; (package-initialize) ;; no longer needed after package was removed?
 
 (use-package straight
-             :custom (straight-use-package-by-default t))
+  :custom (straight-use-package-by-default t))
+
+(use-package use-package-ensure-system-package
+  :straight t)
+
 
 ;; custom file
 (setq custom-file (expand-file-name
