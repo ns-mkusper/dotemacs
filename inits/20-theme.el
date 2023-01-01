@@ -48,8 +48,8 @@
                         )
 
 ;; customize company (auto-complete) colors
-  (set-face-attribute
-   'company-tooltip-selection nil :background "maroon" :foreground "#0d1017")
+(set-face-attribute
+ 'company-tooltip-selection nil :background "maroon" :foreground "#0d1017")
 
 ;; powerline and doom require full icon pack
 (use-package all-the-icons
@@ -59,17 +59,21 @@
   (unless (find-font (font-spec :name "all-the-icons"))
     (all-the-icons-install-fonts t)))
 
-
 (use-package doom-modeline
   :straight t
-  :after all-the-icons
-  :hook (after-init . doom-modeline-mode)
+  :hook ('after-init-hook)
   :custom
+  (doom-modeline-buffer-encoding t)
+  (doom-modeline-checker-simple-format t)
+  (doom-modeline-hud t)
+  (doom-modeline-project-detection 'projectile)
   (doom-modeline-buffer-file-name-style 'relative-to-project)
   (doom-line-numbers-style 'relative)
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t)
   (doom-modeline-major-mode-color-icon t)
-  )
+  :config
+  (doom-modeline-mode))
+
 
 (provide '20-theme)

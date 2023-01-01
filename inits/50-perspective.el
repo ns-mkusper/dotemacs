@@ -1,5 +1,6 @@
 (use-package perspective
   :straight t
+  :after counsel
   :bind-keymap
   ("C-z" . perspective-map)
   :bind
