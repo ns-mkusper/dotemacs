@@ -50,7 +50,7 @@
                       (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
 
 (use-package counsel
-  :straight t  
+  :straight t
   :bind (("M-x" . counsel-M-x)
          ("C-M-j" . counsel-switch-buffer)
          ;; ("C-x b" . counsel-ibuffer)
@@ -58,10 +58,10 @@
          ("C-r" . 'counsel-minibuffer-history))
   :config
   ;; these are a lot buggier on windows
-  ;; TODO: investigate why  
+  ;; TODO: investigate why
   (if (not (eq system-type 'windows-nt)) (bind-keys ("C-M-l" . counsel-imenu)
              ("C-x C-f" . counsel-find-file)
-             ))  
+             ))
   (counsel-mode 1)
   ;; (setq ivy-initial-inputs-alist nil)
   ) ;; Don't start searches with ^
