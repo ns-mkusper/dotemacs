@@ -1,114 +1,103 @@
 (use-package ivy
   :straight t
-  :bind
-  (:map ivy-minibuffer-map
-        ;; close the minibuffer with ESC
-        ("<escape>" . 'minibuffer-keyboard-quit))
-  :custom
-  (ivy-use-virutal-buffers t)
-  (ivy-count-format "(%d/%d) ")
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :init
+  (ivy-mode 1)
   :config
-  ;; ability to select what's in the prompt when there's a partial match below it in the ivy results
-  (setq ivy-use-selectable-prompt t)
-  ;; Allow command issue in minibuffer
-  (when (setq enable-recursive-minibuffers t)
-    (minibuffer-depth-indicate-mode 1))
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-wrap t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
 
-  ;; more
-  (with-eval-after-load 'magit
-    (setq magit-completing-read-function 'ivy-completing-read))
-  )
+  ;; Use different regex strategies per completion command
+  (push '(completion-at-point . ivy--regex-fuzzy) ivy-re-builders-alist)
+  (push '(swiper . ivy--regex-ignore-order) ivy-re-builders-alist)
+  (push '(counsel-M-x . ivy--regex-ignore-order) ivy-re-builders-alist)
 
-;; (use-package counsel
-;;   :straight t
-;;   ;; for some reason this throws weird errors on windows
-;;   ;; TODO: investigate
-;;   :diminish ivy-mode counsel-mode
-;;   :defines
-;;   (projectile-completion-system magit-completing-read-function)
-;;   :hook
-;;   (after-init . ivy-mode)
-;;   (ivy-mode . counsel-mode)
-;;   :bind
-;;   ("M-x" . 'counsel-M-x)
-;;   ("M-y" . 'counsel-yank-pop)
-;;   ("C-M-z" . 'counsel-fzf)
-;;   ("C-M-r" . 'counsel-recentf)
-;;   ("C-x C-b" . 'counsel-ibuffer)
-;;   ("C-x C-i" . 'counsel-semantic-or-imenu)
-;;   :custom
-;;   ;; Include recent files and bookmarks in `ivy-switch-buffer' (Cx b) list
-;;   (ivy-use-virtual-buffers t)
 
-;;   ;; Wrap prompt
-;;   (ivy-truncate-lines nil)
-
-;;   ;; If `Cp' at the beginning of the list, move to the end of the list
-;;   (ivy-wrap t)
-
-;;   ;; Do not show unnecessary files in `counsel-find-file'
-;;   ;; (counsel-find-file-ignore-regexp (regexp-opt completion-ignored-extensions))
-;;   :config
-;;   (use-package ivy-hydra
-;;     :straight t
-;;     :custom
-;;     ;; Assign Mo to ivy-hydra-read-action
-;;     (ivy-read-action-function #'ivy-hydra-read-action)
-;;     )
-;;   )
-
-(use-package all-the-icons-ivy-rich
-  :straight t
-  ;; :after (counsel-projectile)
-  :config
-  ;; counsel-projectile-find-file
-  ;; (plist-put all-the-icons-ivy-rich-display-transformers-list
-  ;;            'counsel-projectile-find-file
-  ;;            '(:columns
-  ;;              (
-  ;;               (ivy-read-file-transformer)
-  ;;               (ivy-rich-counsel-find-file-truename (:face font-lock-doc-face)))))
-  (all-the-icons-ivy-rich-mode 1)
-  )
+  ;; Set minibuffer heght for different commands
+  (setf (alist-get 'swiper ivy-height-alist) 15)
+  (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7))
 
 (use-package ivy-rich
   :straight t
+  :init
+  (ivy-rich-mode 1)
+  :after counsel
   :config
-  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-  ;; counsel-projectile-find-file
-  ;; (plist-put ivy-rich-display-transformers-list
-  ;;            'counsel-projectile-find-file
-  ;;            '(:columns
-  ;;              (
-  ;;               (ivy-read-file-transformer)
-  ;;               (ivy-rich-counsel-find-file-truename (:face font-lock-doc-face)))))
-  (ivy-rich-mode 1))
+  (setq ivy-format-function #'ivy-format-function-line)
+  (setq ivy-rich-display-transformers-list
+        (plist-put ivy-rich-display-transformers-list
+                   'ivy-switch-buffer
+                   '(:columns
+                     ((ivy-rich-candidate (:width 40))
+                      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right)); return the buffer indicators
+                      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))          ; return the major mode info
+                      (ivy-rich-switch-buffer-project (:width 15 :face success))             ; return project name using `projectile'
+                      (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
+
+(use-package counsel
+  :straight t
+  :bind (("M-x" . counsel-M-x)
+         ("C-M-j" . counsel-switch-buffer)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         ("C-M-l" . counsel-imenu)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
+  :config
+  (counsel-mode 1)
+  (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
+
+;; Improves sorting for fuzzy-matched results
+(use-package flx
+  :straight t
+  :after ivy
+  :defer t
+  :init
+  (setq ivy-flx-limit 10000))
+
+(use-package wgrep
+  :straight t)
+
+(use-package ivy-posframe
+  :straight t
+  :disabled
+  :custom
+  (ivy-posframe-width 115)
+  (ivy-posframe-min-width 115)
+  (ivy-posframe-height 10)
+  :config
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+  (setq ivy-posframe-parameters '((parent-frame . nil)
+                                  (left-fringe . 8)
+                                  (right-fringe . 8)))
+  (ivy-posframe-mode 1))
+
+(personal/leader-keys
+  "r" '(ivy-resume :which-key "ivy resume")
+  "f" '(:ignore t :which-key "files")
+  "ff" '(counsel-find-file :which-key "open file")
+  "C-f" 'counsel-find-file
+  "fr" '(counsel-recentf :which-key "recent files")
+  "fR" '(revert-buffer :which-key "revert file")
+  "fj" '(counsel-file-jump :which-key "jump to file"))
 
 (use-package swiper
   :straight t
-  :bind
-  ("C-s" . 'swiper)
-  :custom
-  (swiper-include-line-number-in-search t)
-  :config
-  ;; Enable preview in counsel-imenu
-  ;; (ivy-configure 'counsel-imenu
-  ;;   :update-fn 'auto)
-  )
-
-(use-package avy
-  :straight t )
-
-;; (use-package counsel-projectile
-;;   :straight t
-;;   :config
-;;   (counsel-projectile-mode 1)
-;;   )
-
-(use-package ivy-yasnippet
-  :straight t )
-
-(use-package ivy-pass
-  :straight t )
-
-(provide '40-ivy)
+  :after ivy
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)))
