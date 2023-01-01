@@ -11,16 +11,22 @@
   (setq read-process-output-max (* 1024 1024)) ; 1mb
   ;; MANUALLY-INSTALLED ENGINE SETTING
   (setq lsp-terraform-server "terraform-ls")
-
+  ;; (add-to-list 'lsp-language-id-configuration '(".*\\.pas$" . "pascal"))
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
   ;; add new modes here to enable lsp integration
-  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode) . lsp-deferred)
+  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode ;; pascal-mode
+             ) . lsp-deferred)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind
   (:map lsp-mode-map
-        ("C-c r" . lsp-rename))
+        ("C-c r" . lsp-rename)
+        ("M-?" . lsp-find-references)
+        ("C-c C-c a" . lsp-execute-code-action)
+        ("C-c C-c r" . lsp-rename)
+        ("C-c C-c q" . lsp-workspace-restart)
+        ("C-c C-c Q" . lsp-workspace-shutdown))
   :commands lsp
   )
 
@@ -69,6 +75,7 @@
         ("C-c m" . lsp-ui-imenu)
         ("C-c s" . lsp-ui-sideline-mode)
         ("C-c d" . lsp-ui-doc-show)
+
         ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
         ([remap xref-find-references] . lsp-ui-peek-find-references)
         )
@@ -85,6 +92,10 @@
   :straight t
   :after lsp-mode
   :commands lsp-treemacs-errors-list)
+
+(use-package lsp-pascal
+  :straight t
+  :after lsp-mode)
 
 ;; for refactoring that requires insertions
 (use-package yasnippet

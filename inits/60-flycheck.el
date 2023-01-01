@@ -2,6 +2,8 @@
   :straight t
   :commands (global-flycheck-mode)
   :bind
+              ("C-c C-c l" . flycheck-list-errors)
+  
   :hook
   (after-init . global-flycheck-mode)
   :init
