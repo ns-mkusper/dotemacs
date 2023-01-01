@@ -2,8 +2,6 @@
   :straight (:type built-in)
   :init
   (load "dired-x")
-  :bind
-  ("C-M-g" . 'find-grep-dired)
   :config
   ;; Don't create new buffer with RET key
   ;; http://www.pshared.net/diary/20071207.html#p02

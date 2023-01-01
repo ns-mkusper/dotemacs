@@ -4,8 +4,11 @@
   ;; :ensure-system-package (ripgrep)
   :bind-keymap
   ([(meta p)] . projectile-command-map)
-  :bind (:map projectile-command-map
-              ("s" . my-scratch-buffer))
+  :bind
+  ;; (:map projectile-command-map
+  ;;             ("s" . my-scratch-buffer))
+  ("C-M-g" . 'projectile-ripgrep)
+
   :init
   (setq projectile-globally-ignored-file-suffixes '("pyc" "~" "#" "o" "obj" "map" "elf" "scl"))
 
