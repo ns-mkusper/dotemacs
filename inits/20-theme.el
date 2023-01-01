@@ -59,11 +59,4 @@
   (unless (find-font (font-spec :name "all-the-icons"))
     (all-the-icons-install-fonts t)))
 
-(use-package smart-mode-line
-  :straight t
-  :config
-  (setq sml/no-confirm-load-theme t
-        sml/theme 'dark)
-  (sml/setup))
-
 (provide '20-theme)
