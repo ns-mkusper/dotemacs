@@ -10,6 +10,7 @@
          ("C-x i v" . yas-visit-snippet-file)))
   :init
   (add-hook 'prog-mode-hook #'yas-minor-mode)
+  :hook ((lsp-mode . yas-minor-mode))
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
   (yas-initialize)

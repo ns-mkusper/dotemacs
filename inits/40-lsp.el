@@ -97,9 +97,4 @@
   :straight t
   :after lsp-mode)
 
-;; for refactoring that requires insertions
-(use-package yasnippet
-  :straight t
-  :hook ((lsp-mode . yas-minor-mode)))
-
 (provide '40-lsp)

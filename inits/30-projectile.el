@@ -39,4 +39,7 @@
   (add-to-list 'projectile-globally-ignored-modes "dired-mode")
   )
 
+(use-package projectile-ripgrep
+  :straight t)
+
 (provide '30-projectile)
