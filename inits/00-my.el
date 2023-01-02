@@ -72,12 +72,26 @@
 (defun my-open-default-shell ()
   "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
   (interactive)
+  (setq current-open-and-visible-frames (length (cl-delete-duplicates (mapcar #'window-buffer (window-list)))))
   (setq shell-buffer-name (my-get-shell-buffer-name))
-  (if (get-buffer shell-buffer-name)
-      (switch-to-buffer-other-window shell-buffer-name)
+  ;; does a shell for this project already exist?
+  (if-let (shell-buffer (get-buffer shell-buffer-name))
+      ;; is its frame visible?
+      (if (eq shell-buffer (buffer-name (window-buffer (selected-window))))
+          (select-window (get-buffer-window shell-buffer))
+        (progn
+          ;; if only one window is open on-screen then split vertically
+          (if (<= current-open-and-visible-frames 1) (split-window-right))
+          (other-window 1)
+          (switch-to-buffer shell-buffer-name))
+        )
     (progn
+      ;; if only one window is open on-screen then split vertically and move focus to it
+      (if (<= current-open-and-visible-frames 1)
+          (select-window  (split-window-right)))
       (call-interactively 'shell)
-      (rename-buffer shell-buffer-name)))
+      (rename-buffer shell-buffer-name)
+      ))
   )
 
 (defun my-forward-down-list ()
