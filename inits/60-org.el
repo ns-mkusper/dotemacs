@@ -72,10 +72,10 @@
           (69 . "DarkSlateGray4")
           (70 . "PaleTurquoise4")))
 
-  (setq org-habit-preceding-days 7
-        org-habit-following-days 7
+  (setq org-habit-preceding-days 30
+        org-habit-following-days 0
         org-habit-show-habits-only-for-today nil
-        org-habit-today-glyph ?⍟ ;;‖
+        org-habit-today-glyph ?📅;;‖
         org-habit-completed-glyph ?✓
         org-habit-graph-column 40)
 

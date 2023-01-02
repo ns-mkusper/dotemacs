@@ -63,7 +63,7 @@
 
 (use-package emojify
   :straight t
-  :init
-  (global-emojify-mode))
+  :hook
+  ((prog-mode . emojify-mode)))
 
 (provide '20-theme)
