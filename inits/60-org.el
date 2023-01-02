@@ -82,6 +82,12 @@
   ;; Uses custom time stamps
   (setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
 
+  ;; Weekly view in agenda is pretty silly imo
+(setq org-agenda-span 10
+      org-agenda-start-on-weekday nil
+      org-agenda-start-day "-3d")
+
+
   (setq org-agenda-restore-windows-after-quit t)
 
   ;; Only show upcoming deadlines for tomorrow or the day after tomorrow. By default it shows

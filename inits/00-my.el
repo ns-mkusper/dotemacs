@@ -87,7 +87,8 @@
     (progn
       ;; if only one window is open on-screen then split vertically and move focus to it
       (if (<= current-open-and-visible-frames 1)
-          (select-window  (split-window-right)))
+          (select-window  (split-window-right))
+        (other-window 1))
       (call-interactively 'shell)
       (rename-buffer shell-buffer-name)))
   )
@@ -208,4 +209,5 @@
 ;; ;; resize window to full screen dimensions
 ;; (setq initial-frame-alist '( (fullscreen . maximized)))
 ;; (setq default-frame-alist '( (fullscreen . fullheight)))
+(setq backup-directory-alist '(("." . "~/.emacs_backups")))
 (setq backup-directory-alist '(("." . "~/.emacs_backups")))
