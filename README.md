@@ -53,4 +53,4 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 ```
 14. Install shfmt: `scoop install shfmt`
 15. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
-16. 
+
