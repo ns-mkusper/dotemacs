@@ -13,7 +13,7 @@
 5. `rustup component add rust-analysis rust-src rls  clippy`
 6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code font-gnu-unifont`
 7. `pip install 'python-lsp-server[all]'`
-8. `brew install cmake vterm term ripgrep`
+8. `brew install cmake vterm term ripgrep tree-sitter`
 9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
 10. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
 11. Setup terraform lsp:
@@ -33,7 +33,7 @@ sudo mv terraform-ls /usr/local/bin/
 1. install scoop
    - https://scoop.sh/
 2. `scoop bucket add extras`
-3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep`
+3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `rsync -av dotemacs/ ~/.emacs.d/`
 5. install fonts
@@ -53,3 +53,4 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 ```
 14. Install shfmt: `scoop install shfmt`
 15. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
+16. 
