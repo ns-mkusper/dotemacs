@@ -133,6 +133,25 @@
 
   (/ my-diag-pixels my-diag-inches))
 
+(defmacro when-on-windows (&rest body)
+  `(when (equal system-type 'windows-nt)
+     ,@body))
+
+(defmacro unless-on-windows (&rest body)
+  `(unless (equal system-type 'windows-nt)
+     ,@body))
+
+(defun append-env (env new-item)
+  (setenv env (concat (getenv env) ":"
+                      new-item)))
+
+(defun path-as-list ()
+  (split-string (getenv "PATH") ":"))
+
+(defun apply-path-list (list)
+  (setenv "PATH" (string-join list ":")))
+
+
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables

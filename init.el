@@ -61,7 +61,7 @@
   :straight t)
 
 
-;; custom file
+;; custom filex
 (setq custom-file (expand-file-name
                    (concat user-emacs-directory "my-custom-vars.el")))
 (load custom-file) ;; install packages and suppress output
