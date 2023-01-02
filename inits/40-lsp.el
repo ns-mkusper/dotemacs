@@ -1,5 +1,7 @@
 ;;; LSP
 ;; IMPORTANT: lsp-install-server all the below languages
+(setq lsp-enabled-major-modes '(zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode ;; pascal-mode
+             ))
 (use-package lsp-mode
   :straight t
   :custom
@@ -15,8 +17,7 @@
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
   ;; add new modes here to enable lsp integration
-  ((zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode ;; pascal-mode
-             ) . lsp-deferred)
+  (lsp-enabled-major-modes . lsp-deferred)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind
