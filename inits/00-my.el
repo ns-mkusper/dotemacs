@@ -83,15 +83,13 @@
           ;; if only one window is open on-screen then split vertically
           (if (<= current-open-and-visible-frames 1) (split-window-right))
           (other-window 1)
-          (switch-to-buffer shell-buffer-name))
-        )
+          (switch-to-buffer shell-buffer-name)))
     (progn
       ;; if only one window is open on-screen then split vertically and move focus to it
       (if (<= current-open-and-visible-frames 1)
           (select-window  (split-window-right)))
       (call-interactively 'shell)
-      (rename-buffer shell-buffer-name)
-      ))
+      (rename-buffer shell-buffer-name)))
   )
 
 (defun my-forward-down-list ()
