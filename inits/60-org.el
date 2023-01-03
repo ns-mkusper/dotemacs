@@ -72,7 +72,7 @@
           (69 . "DarkSlateGray4")
           (70 . "PaleTurquoise4")))
 
-  (setq org-habit-preceding-days 30
+  (setq org-habit-preceding-days 14
         org-habit-following-days 0
         org-habit-show-habits-only-for-today nil
         org-habit-today-glyph ?📅;;‖
@@ -83,9 +83,9 @@
   (setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
 
   ;; Weekly view in agenda is pretty silly imo
-(setq org-agenda-span 10
-      org-agenda-start-on-weekday nil
-      org-agenda-start-day "-3d")
+  (setq org-agenda-span 10
+        org-agenda-start-on-weekday nil
+        org-agenda-start-day "-3d")
 
 
   (setq org-agenda-restore-windows-after-quit t)
