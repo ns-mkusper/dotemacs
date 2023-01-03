@@ -6,7 +6,7 @@
   (doom-modeline-buffer-encoding t)
   (doom-modeline-checker-simple-format t)
   (doom-modeline-project-detection 'projectile)
-  (doom-modeline-buffer-file-name-style 'relative-to-project)
+  (doom-modeline-buffer-file-name-style 'truncate-upto-project) ; or truncate-with-project, truncate-except-project, relative-from-project relative-to-project
   (doom-line-numbers-style 'relative)
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t)
