@@ -66,4 +66,4 @@
   :hook
   ((prog-mode . emojify-mode)))
 
-(provide '20-theme)
+(provide '70-theme)

@@ -45,27 +45,27 @@
   (lsp-ui-doc-max-height 50)
   (lsp-ui-doc-use-childframe t)
   (lsp-ui-doc-use-webkit t)
-  (lsp-ui-doc-delay 1)
+  (lsp-ui-doc-delay 3)
   ;; (lsp-ui-doc-alignment 'window) ;; window or frame
   (lsp-ui-doc-show-with-cursor t)
   ;; (lsp-ui-doc-show-with-mouse nil)
   ;; lsp-ui-flycheck
   (lsp-ui-flycheck-enable t)
   ;; lsp-ui-sideline
-  ;; (lsp-ui-sideline-enable nil)
-  ;; (lsp-ui-sideline-ignore-duplicate t)
-  ;; (lsp-ui-sideline-show-symbol t)
-  ;; (lsp-ui-sideline-show-hover t)
-  ;; (lsp-ui-sideline-show-diagnostics nil)
-  ;; (lsp-ui-sideline-show-code-actions nil)
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-symbol t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-show-diagnostics nil)
+  (lsp-ui-sideline-show-code-actions nil)
   ;; lsp-ui-imenu
-  ;; (lsp-ui-imenu-enable nil)
-  ;; (lsp-ui-imenu-kind-position 'top)
+  (lsp-ui-imenu-enable nil)
+  (lsp-ui-imenu-kind-position 'top)
   ;; lsp-ui-peek
-  ;; (lsp-ui-peek-enable t)
-  ;; (lsp-ui-peek-peek-height 20)
-  ;; (lsp-ui-peek-list-width 50)
-  ;; (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
+  (lsp-ui-peek-enable t)
+  (lsp-ui-peek-peek-height 20)
+  (lsp-ui-peek-list-width 50)
+  (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
   ;; :hook
   ;; (lsp-mode . lsp-ui-mode)
   :bind
