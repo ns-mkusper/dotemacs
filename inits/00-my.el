@@ -59,6 +59,15 @@
       (switch-to-buffer (get-buffer-create "*scratch*"))
       (lisp-interaction-mode))))
 
+(defun my-open-text-buffer ()
+  "Open the *text*  buffer, (re)creating it if not present."
+  (interactive)
+  (if (get-buffer "*text*")
+      (switch-to-buffer "*text*")
+    (progn
+      (switch-to-buffer (get-buffer-create "*text*"))
+      (fundamental-mode))))
+
 (defun my-get-shell-buffer-name ()
   "Return either either the project name or filename if outside of a project."
   (if  (member "git" (split-string buffer-file-name "/"))
