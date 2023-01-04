@@ -75,7 +75,7 @@
         ("C-c i" . lsp-ui-peek-find-implementation)
         ("C-c m" . lsp-ui-imenu)
         ("C-c s" . lsp-ui-sideline-mode)
-        ("C-c d" . lsp-ui-doc-show)
+        ("C-c d" . lsp-describe-thing-at-point)
 
         ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
         ([remap xref-find-references] . lsp-ui-peek-find-references)
