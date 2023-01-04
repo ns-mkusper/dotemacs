@@ -13,7 +13,7 @@
 5. `rustup component add rust-analysis rust-src rls  clippy`
 6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code font-gnu-unifont`
 7. `pip install 'python-lsp-server[all]'`
-8. `brew install cmake vterm term ripgrep tree-sitter fd pandoc ag zeal`
+8. `brew install cmake vterm term ripgrep tree-sitter fd pandoc ag zeal python-lsp-server`
 9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
 10. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
 11. Setup terraform lsp:
