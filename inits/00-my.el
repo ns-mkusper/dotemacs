@@ -19,7 +19,7 @@
     (unless (member epath load-path)
       (setq load-path (cons epath load-path)))))
 ;; modeline fix
-(defun my-which-active-modes ()
+(defun my-active-modes ()
   "Give a message of which minor modes are enabled in the current buffer."
   (interactive)
   (let ((active-modes))
