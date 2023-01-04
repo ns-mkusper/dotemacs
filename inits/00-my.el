@@ -241,4 +241,3 @@
 ;; (setq initial-frame-alist '( (fullscreen . maximized)))
 ;; (setq default-frame-alist '( (fullscreen . fullheight)))
 (setq backup-directory-alist '(("." . "~/.emacs_backups")))
-(setq backup-directory-alist '(("." . "~/.emacs_backups")))

@@ -9,6 +9,10 @@
   (smartparens-global-strict-mode t)
   (show-smartparens-global-mode t)
   (setq sp-show-pair-from-inside t)
+  :hook
+  ((prog-mode . smartparens-strict-mode)
+   (markdown-mode . smartparens-strict-mode))
+
   :custom-face
   (sp-show-pair-match-face ((t (:foreground "White")))) ;; Could also have :background "Grey"
   )
