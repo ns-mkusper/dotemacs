@@ -1,7 +1,7 @@
 (use-package zeal-at-point
   :straight (zeal-at-point :host github
                            :repo "ns-mkusper/zeal-at-point"
-                           :local-repo "zeal-at-point"
+                           :local-repo "ns-mkusper/zeal-at-point"
                            :branch "master"
                            )
   :bind
