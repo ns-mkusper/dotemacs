@@ -63,7 +63,7 @@
 
 (use-package emojify
   :straight t
-  :hook
-  ((prog-mode . emojify-mode)))
+  :hook (erc-mode . emojify-mode)
+  :commands emojify-mode)
 
 (provide '70-theme)
