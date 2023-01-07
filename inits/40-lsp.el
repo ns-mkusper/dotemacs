@@ -1,6 +1,6 @@
 ;;; LSP
 ;; IMPORTANT: lsp-install-server all the below languages
-(setq lsp-enabled-major-modes '(zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode ;; pascal-mode
+(setq lsp-enabled-major-modes '(zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode shell-script-mode ;; pascal-mode
              ))
 (use-package lsp-mode
   :straight t
