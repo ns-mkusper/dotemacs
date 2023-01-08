@@ -21,7 +21,9 @@
   (visual-line-mode 1) ;; Nice line wrapping
   (centered-cursor-mode) ;; Enable centered cursor mode
   (smartparens-mode 0) ;; Disable smartparents
-  (hl-prog-extra-mode)) ;; Highlighting with regexps
+  (hl-prog-extra-mode)  ;; Highlighting with regexps
+  (flyspell-mode) ;; Highlighting with regexps
+  )
 
 (use-package org
   :pin gnu
