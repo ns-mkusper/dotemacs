@@ -82,15 +82,15 @@
   (lsp-ui-sideline-ignore-duplicate t)
   (lsp-ui-sideline-show-symbol t)
   (lsp-ui-sideline-show-hover t)
-  (lsp-ui-sideline-show-diagnostics nil)
-  (lsp-ui-sideline-show-code-actions nil)
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-code-actions t)
   ;; lsp-ui-imenu
   (lsp-ui-imenu-enable nil)
   (lsp-ui-imenu-kind-position 'top)
   ;; lsp-ui-peek
   (lsp-ui-peek-enable t)
-  (lsp-ui-peek-peek-height 20)
-  (lsp-ui-peek-list-width 50)
+  (lsp-ui-peek-peek-height 30)
+  (lsp-ui-peek-list-width 100)
   (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
   ;; :hook
   ;; (lsp-mode . lsp-ui-mode)
