@@ -1,12 +1,20 @@
 ;;; LSP
 ;; IMPORTANT: lsp-install-server all the below languages
-(setq lsp-enabled-major-modes '(zig-mode rust-mode rustic-mode python-mode go-mode java-mode c++-mode sh-mode c-mode terraform-mode shell-script-mode kotlin-mode yaml-mode ;; pascal-mode
-             ))
+
 (use-package lsp-mode
   :straight t
   :custom
   ;; (create-lockfiles nil)
   (lsp-auto-guess-root t)
+  (lsp-clients-clangd-args '("-j=2"
+                             "--background-index"
+                             "--clang-tidy"
+                             "--compile-commands-dir=build"
+                             "--log=error"
+                             "--pch-storage=memory"))
+  (lsp-enable-xref t)
+
+
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
@@ -14,10 +22,28 @@
   ;; MANUALLY-INSTALLED ENGINE SETTING
   (setq lsp-terraform-server "terraform-ls")
   ;; (add-to-list 'lsp-language-id-configuration '(".*\\.pas$" . "pascal"))
+  :config
+  (put 'lsp-clients-clangd-args 'safe-local-variable #'listp)
+
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
   ;; add new modes here to enable lsp integration
-  (lsp-enabled-major-modes . lsp-deferred)
+  ((zig-mode
+    rust-mode
+    rustic-mode
+    python-mode
+    go-mode
+    java-mode
+    c++-mode
+    sh-mode
+    c-mode
+    terraform-mode
+    shell-script-mode
+    kotlin-mode
+    yaml-mode
+    lua-mode
+    ;; pascal-mode
+    ) . lsp-deferred)
   ;; if you want which-key integration
   (lsp-mode . lsp-enable-which-key-integration)
   :bind
@@ -42,7 +68,7 @@
   (lsp-ui-doc-include-signature t)
   (lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
   (lsp-ui-doc-max-width 300)
-  (lsp-ui-doc-max-height 50)
+  (lsp-ui-doc-max-height 100)
   (lsp-ui-doc-use-childframe t)
   (lsp-ui-doc-use-webkit t)
   (lsp-ui-doc-delay 2)
