@@ -9,7 +9,7 @@
   (yaml-mode . highlight-indentation-mode)
   (yaml-mode . highlight-indentation-current-column-mode)
   :config
-  (set-face-background 'highlight-indentation-face "grey25")
-  (set-face-background 'highlight-indentation-current-column-face "grey35"))
+  (set-face-background 'highlight-indentation-face "grey15")
+  (set-face-background 'highlight-indentation-current-column-face "grey25"))
 
 (provide '60-highlight-indentation)
