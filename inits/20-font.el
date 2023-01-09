@@ -12,7 +12,7 @@
        ;; mac air has ppi of 126.x
        (if (<= my-ppi 92)
            (setq my-font-height 120)
-         (if (<= my-ppi 109)
+         (if (<= my-ppi 113)
              (setq my-font-height 110)
            (if (<= my-ppi 126)
                (setq my-font-height 120)
