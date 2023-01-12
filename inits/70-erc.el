@@ -9,7 +9,7 @@
         erc-port 6697
         erc-nick "nego"
         erc-user-full-name "Nego"
-        erc-prompt-for-password nil
+        erc-prompt-for-password t
         erc-track-shorten-start 6
         erc-autojoin-channels-alist '(("irc.libera.chat"
                                        "#org-mode" "#emacs"))
