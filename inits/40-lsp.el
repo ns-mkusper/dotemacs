@@ -13,8 +13,9 @@
                              "--log=error"
                              "--pch-storage=memory"))
   (lsp-enable-xref t)
-
-
+  ;; lens is a cool feature but laggy, best to enable on-demand
+  (lsp-lens-auto-enable nil)
+  (lsp-lens-enable nil)
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
