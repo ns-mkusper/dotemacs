@@ -8,6 +8,11 @@
   :straight t
   )
 
+(use-package magit-todos
+  :after magit
+  :straight t
+  :config (magit-todos-mode))
+
 (use-package git-gutter+
   :straight t
   :bind
