@@ -70,18 +70,24 @@
 
 (defun my-get-shell-buffer-name ()
   "Return either either the project name or filename if outside of a project."
-  (if  (member "git" (split-string buffer-file-name "/"))
-      (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
-    (setq shell-buffer-name-local-segment (nth 0 (last (split-string buffer-file-name "/") )))
-    )
-
+  (if (> (length (projectile-project-name)) 1)
+      (setq shell-buffer-name-local-segment (projectile-project-name))
+    ;; if projectile doesn't find a project we go by our project dir structure
+    (progn
+      ;; is this a file buffer?
+      (if (eq (length buffer-file-name) 0)
+          (setq shell-buffer-name-local-segment (buffer-name))
+    (progn
+      (if (member "git" (split-string buffer-file-name "/"))
+           (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
+        (setq shell-buffer-name-local-segment (my-get-shell-buffer-name)))))))
   (setq shell-buffer-name (concat "*shell*<" shell-buffer-name-local-segment ">"))
   )
 
 (defun my-open-default-shell ()
   "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
   (interactive)
-  ;; gets lost while moving fucos around
+  ;; TODO: only use default-directory if we're in a buffer visiting a file?
   (setq current-buffer-directory default-directory)
   (setq current-open-and-visible-frames (length (cl-delete-duplicates (mapcar #'window-buffer (window-list)))))
   (setq shell-buffer-name (my-get-shell-buffer-name))
@@ -101,7 +107,7 @@
           (select-window  (split-window-right))
         (other-window 1))
       (setq default-directory current-buffer-directory)
-      (call-interactively 'shell)
+      (shell shell-buffer-name)
       (rename-buffer shell-buffer-name)))
   )
 
