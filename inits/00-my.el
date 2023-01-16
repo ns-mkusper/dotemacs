@@ -70,17 +70,17 @@
 
 (defun my-get-shell-buffer-name ()
   "Return either either the project name or filename if outside of a project."
-  (if (> (length (projectile-project-name)) 1)
-      (setq shell-buffer-name-local-segment (projectile-project-name))
-    ;; if projectile doesn't find a project we go by our project dir structure
+  ;; if a fileless buffer don't even consult projectile
+  (if (not (buffer-file-name))
+      (setq shell-buffer-name-local-segment (buffer-name))
     (progn
-      ;; is this a file buffer?
-      (if (eq (length buffer-file-name) 0)
-          (setq shell-buffer-name-local-segment (buffer-name))
-    (progn
-      (if (member "git" (split-string buffer-file-name "/"))
-           (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
-        (setq shell-buffer-name-local-segment (my-get-shell-buffer-name)))))))
+      (if (> (length (projectile-project-name)) 1)
+          (setq shell-buffer-name-local-segment (projectile-project-name))
+        ;; if projectile doesn't find a project we go by our project dir structure
+        (progn
+          (if (member "git" (split-string buffer-file-name "/"))
+              (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
+            (setq shell-buffer-name-local-segment (my-get-shell-buffer-name)))))))
   (setq shell-buffer-name (concat "*shell*<" shell-buffer-name-local-segment ">"))
   )
 
