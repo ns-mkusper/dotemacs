@@ -110,6 +110,6 @@ interactive `pyvenv-workon' function before `lsp'"
   :straight t
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+                         (lsp-mode))))  ; or lsp-deferred
 
 (provide '60-python)

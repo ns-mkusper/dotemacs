@@ -21,6 +21,8 @@
          (elixir-mode . (lambda () (require 'dap-elixir)))
          ((typescript-mode js-mode js2-mode) . (lambda () (require 'dap-node)))
          ;; ((typescript-mode js-mode js2-mode) . (lambda () (require 'dap-chrome)))
-         ))
+         )
+  :config
+  (setq dap-python-debugger 'debugpy))
 
 (provide '60-dap)
