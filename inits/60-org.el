@@ -3,20 +3,20 @@
 ;; TODO: should we use roam?
 (setq org-agenda-files (list "~/drive/org/agenda"))
 
-(defun my/prettify-symbols-compose-predicate (start end _match)
+(defun my-prettify-symbols-compose-predicate (start end _match)
   "Explicitly allow any occurrence of the non-breaking space to be composed."
   (let ((result (prettify-symbols-default-compose-p start end _match)))
     (or result (string-equal (buffer-substring start end) "\\nbsp{}"))))
 
-(defun my/prettify-symbols-setup ()
+(defun my-prettify-symbols-setup ()
   "Set up `prettify-symbols-mode' for `org-mode' buffers."
   (make-variable-buffer-local 'prettify-symbols-unprettify-at-point)
   (setq prettify-symbols-unprettify-at-point 'right-edge)
-  (setq prettify-symbols-compose-predicate #'my/prettify-symbols-compose-predicate)
+  (setq prettify-symbols-compose-predicate #'my-prettify-symbols-compose-predicate)
   (setq prettify-symbols-alist `(("\\nbsp{}" . ,(string-to-char "~"))))
   (prettify-symbols-mode 1))
 
-(defun my/org-setup ()
+(defun my-org-setup ()
   (org-indent-mode) ;; Keeps org items like text under headings, lists, nicely indented
   (visual-line-mode 1) ;; Nice line wrapping
   (centered-cursor-mode) ;; Enable centered cursor mode
@@ -28,8 +28,8 @@
 (use-package org
   :pin gnu
   :hook
-  (org-mode . my/org-setup)
-  (org-mode . my/)
+  (org-mode . my-org-setup)
+  (org-mode . my-prettify-symbols-setup)
   :diminish org-indent-mode
   :diminish visual-line-mode
   :bind
@@ -194,7 +194,6 @@
 ;; hugo org-mode integration for blogging
 (use-package ox-hugo
   :straight t
-  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
   :after ox)
 
 (provide '60-org)
