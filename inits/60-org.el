@@ -19,10 +19,14 @@
 (defun my-org-setup ()
   (org-indent-mode) ;; Keeps org items like text under headings, lists, nicely indented
   (visual-line-mode 1) ;; Nice line wrapping
-  (centered-cursor-mode) ;; Enable centered cursor mode
+  ;; (centered-cursor-mode) ;; Enable centered cursor mode
   (smartparens-mode 0) ;; Disable smartparents
   (hl-prog-extra-mode)  ;; Highlighting with regexps
-  (flyspell-mode) ;; Highlighting with regexps
+  (flyspell-mode)
+  (org-superstar-mode) ;; Replace headline markers w/ bullets
+  (toc-org-enable) ;; easily generate and keep ToC updated
+  (org-appear-mode) ;; only show certain markers when needed
+  (org-fancy-priorities-mode)
   )
 
 (use-package org
@@ -116,11 +120,10 @@
                                    (tags . " %i %-12:c")
                                    (search . " %i %-12:c"))))
 
-
 (use-package toc-org
   :straight t
   :commands toc-org-enable
-  :init (add-hook 'org-mode-hook 'toc-org-enable))
+  )
 
 (use-package org-super-agenda
   :straight t
@@ -134,6 +137,7 @@
   (org-super-agenda-mode))
 
 (use-package org-superstar
+  :straight t
   :config
   (setq org-superstar-leading-bullet " ")
   (setq org-superstar-special-todo-items t) ;; Makes TODO header bullets into boxes
@@ -145,8 +149,7 @@
                                           ("READ" . 9744)
                                           ("PROJ" . 9744)
                                           ("CONTACT" . 9744)
-                                          ("DONE" . 9745)))
-  :hook (org-mode . org-superstar-mode))
+                                          ("DONE" . 9745))))
 
 ;; Removes gap when you add a new heading
 (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
@@ -165,7 +168,6 @@
 (use-package org-appear
   :straight t
   :commands (org-appear-mode)
-  :hook (org-mode . org-appear-mode)
   :init
   (setq org-hide-emphasis-markers t		;; A default setting that needs to be t for org-appear
         org-appear-autoemphasis t		;; Enable org-appear on emphasis (bold, italics, etc)
