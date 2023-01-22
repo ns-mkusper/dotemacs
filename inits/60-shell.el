@@ -21,25 +21,40 @@
 
 
 
+(use-package fakecygpty
+  ;; when using POSIX shells  on NT emacs we need to spawn these processes with fakecygpty.exe to ensure proper signal handling
+  :if (eq system-type 'windows-nt)
+  :straight (fakecygpty :host github
+                        :repo "d5884/fakecygpty"
+                        :local-repo "d5884/fakecygpty"
+                        :files ("fakecygpty.el")
+                        :branch "master"
+                        )
+  :init
+  (fakecygpty-activate)
+  )
+
 ;;; WINDOWS
 (when-on-windows
-  (let* ((combine-path (lambda (dir dir-or-file)
-                         (concat (file-name-as-directory dir) dir-or-file)))
-         (base-dir "C:/tools/msys64")
-         (mingw64-bin-dir (funcall combine-path base-dir "mingw64/bin"))
-         (msys2-bin-dir (funcall combine-path base-dir "usr/bin"))
-         (bash-path (funcall combine-path msys2-bin-dir "zsh.exe")))
-    (add-to-list 'exec-path msys2-bin-dir)
-    (add-to-list 'exec-path mingw64-bin-dir)
-    (setq explicit-shell-file-name bash-path)
-    (setq shell-file-name bash-path)
-    (setenv "SHELL" bash-path)
-    ;; make sure this env var is set in msys ~/.bashrc
-    (setenv "STARTDIR" default-directory)
-    (setq explicit-bash.exe-args (list "--noediting" "--login" "-i"))
-    (setenv "PATH" (concat mingw64-bin-dir path-separator
-                           (concat msys2-bin-dir path-separator
-                                   (getenv "PATH"))))))
+ (let* ((combine-path (lambda (dir dir-or-file)
+                        (concat (file-name-as-directory dir) dir-or-file)))
+        (base-dir "C:/tools/msys64")
+        (mingw64-bin-dir (funcall combine-path base-dir "mingw64/bin"))
+        (msys2-bin-dir (funcall combine-path base-dir "usr/bin"))
+        ;; TODO: handle msys2_shell.bat loading (add functions to switch env's?)
+        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe")))
+   (add-to-list 'exec-path msys2-bin-dir)
+   (add-to-list 'exec-path mingw64-bin-dir)
+   (setq explicit-shell-file-name bash-path)
+   (setq shell-file-name bash-path)
+   (setenv "SHELL" bash-path)
+   ;; make sure this env var is set in msys ~/.bashrc
+   (setenv "STARTDIR" default-directory)
+   (setq explicit-bash.exe-args (list "--noediting" "--login" "-i"))
+   (setenv "PATH" (concat mingw64-bin-dir path-separator
+                          (concat msys2-bin-dir path-separator
+                                  (getenv "PATH"))))))
+
 
 
 ;; probably better to use powershell on windows
