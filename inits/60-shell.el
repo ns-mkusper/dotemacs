@@ -20,7 +20,7 @@
   )
 
 
-
+;;; WINDOWS
 (use-package fakecygpty
   ;; when using POSIX shells  on NT emacs we need to spawn these processes with fakecygpty.exe to ensure proper signal handling
   :if (eq system-type 'windows-nt)
@@ -34,7 +34,6 @@
   (fakecygpty-activate)
   )
 
-;;; WINDOWS
 (when-on-windows
  (let* ((combine-path (lambda (dir dir-or-file)
                         (concat (file-name-as-directory dir) dir-or-file)))
