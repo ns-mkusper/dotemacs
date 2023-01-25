@@ -23,6 +23,11 @@
          ;; ((typescript-mode js-mode js2-mode) . (lambda () (require 'dap-chrome)))
          )
   :config
-  (setq dap-python-debugger 'debugpy))
+  (setq dap-python-debugger 'debugpy)
+  (defun dap-python--pyenv-executable-find (command)
+    (with-venv (executable-find "python")))
+
+  (add-hook 'dap-stopped-hook
+            (lambda (arg) (call-interactively #'dap-hydra))))
 
 (provide '60-dap)
