@@ -44,7 +44,7 @@
       (if (member project (pyenv-mode-versions))
           (pyenv-mode-set project)
         (pyenv-mode-unset))))
-  
+
   (defun my-py-workon-project-venv ()
     "Call pyenv-workon with the current projectile project name.
 This will return the full path of the associated virtual
@@ -73,6 +73,12 @@ interactive `pyvenv-workon' function before `lsp'"
 
   (bind-key (kbd "C-c C-a") #'my-py-auto-lsp python-mode-map)
 
+  )
+
+(use-package with-venv
+  :after python
+  :hook (python-mode . pyvenv-mode)
+  :straight t
   )
 
 (use-package pyvenv
