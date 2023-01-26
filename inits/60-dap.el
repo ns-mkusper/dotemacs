@@ -23,6 +23,10 @@
          ;; ((typescript-mode js-mode js2-mode) . (lambda () (require 'dap-chrome)))
          )
   :config
+  (dap-tooltip-mode 1)
+  (tooltip-mode 1)
+  (dap-ui-controls-mode -1)
+
   (setq dap-python-debugger "ptvsd")
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
