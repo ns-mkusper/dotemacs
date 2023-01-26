@@ -97,6 +97,13 @@ interactive `pyvenv-workon' function before `lsp'"
   (poetry-tracking-mode) ;; This auto load related venv when opening the file
   )
 
+
+;; (use-package py-isort
+;;   :after python
+;;   :straight t
+;;   :hook ((python-mode . pyvenv-mode)
+;;          (before-save . py-isort-before-save)))
+
 (use-package blacken
   :straight t
   :if (executable-find "black")

@@ -25,4 +25,7 @@
            ("C-M-n" . my-forward-down-list)
            )
 
+(use-package general
+  :straight t)
+
 (provide '01-custom-keys)

@@ -28,6 +28,12 @@
     (with-venv (executable-find "python")))
 
   (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra))))
+            (lambda (arg) (call-interactively #'dap-hydra)))
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :prefix lsp-keymap-prefix
+   "d" '(dap-hydra t :wk "debugger"))
+  )
 
 (provide '60-dap)
