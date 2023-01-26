@@ -23,7 +23,7 @@
          ;; ((typescript-mode js-mode js2-mode) . (lambda () (require 'dap-chrome)))
          )
   :config
-  (setq dap-python-debugger 'debugpy)
+  (setq dap-python-debugger "ptvsd")
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
 
