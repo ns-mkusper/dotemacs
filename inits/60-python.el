@@ -19,7 +19,9 @@
             (setq tab-width 4)
             (setq-default python-indent-guess-indent-offset nil)
             (setq python-indent-offset 4)
-            (setq highlight-indentation-offset 4)))
+            (setq highlight-indentation-offset 4)
+            (setq fill-column 100)
+            (fci-mode)))
 
 (use-package pyenv-mode
   :straight t
