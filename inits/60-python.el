@@ -127,4 +127,11 @@ interactive `pyvenv-workon' function before `lsp'"
                          (require 'lsp-pyright)
                          (lsp-mode))))  ; or lsp-deferred
 
+;; flymake-ruff integration
+(use-package flymake-ruff
+  :straight (flymake-ruff
+             :type git
+             :host github
+             :repo "erickgnavar/flymake-ruff"))
+
 (provide '60-python)
