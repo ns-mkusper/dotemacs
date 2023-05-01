@@ -78,6 +78,7 @@
   :custom
   (whitespace-cleanup-mode-only-if-initially-clean t)
   :hook
-  ((prog-mode . whitespace-cleanup-mode)))
+  ((prog-mode . whitespace-cleanup-mode))
+  ((yaml-mode . whitespace-cleanup-mode)))
 
 (provide '60-whitespace)
