@@ -16,7 +16,7 @@
              (setq my-font-height 110)
            (if (<= my-ppi 126)
                (setq my-font-height 120)
-             (setq my-font-height 220))))
+             (setq my-font-height 120))))
 
 
 
