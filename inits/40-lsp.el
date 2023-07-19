@@ -43,6 +43,7 @@
     kotlin-mode
     yaml-mode
     lua-mode
+    common-lisp-mode
     ;; pascal-mode
     ) . lsp-deferred)
   ;; if you want which-key integration

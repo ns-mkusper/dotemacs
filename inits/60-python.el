@@ -96,7 +96,8 @@ interactive `pyvenv-workon' function before `lsp'"
 (use-package poetry
   :straight t
   :config
-  (poetry-tracking-mode) ;; This auto load related venv when opening the file
+  ;; todo: why is this so insanely slow?
+  ;; (poetry-tracking-mode) ;; This auto load related venv when opening the file
   )
 
 
