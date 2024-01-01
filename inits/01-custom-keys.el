@@ -23,6 +23,7 @@
            ("C-c o" . org-store-link)
            ("C-c a" . org-agenda)
            ("C-M-n" . my-forward-down-list)
+           ("C-c i" . kprompt-bard)
            )
 
 (use-package general
