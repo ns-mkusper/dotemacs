@@ -241,6 +241,7 @@
 (setq transient-mark-mode t)
 (setq frame-title-format
       (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar
+(setq eval-expression-print-length 999) ;; do not truncate longer eval results in messages buffer
 ;; ;; use window decoration
 ;; (set-frame-parameter nil 'undecorated nil)
 ;; ;; resize window to full screen dimensions
