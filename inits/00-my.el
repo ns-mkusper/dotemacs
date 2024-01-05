@@ -1,20 +1,22 @@
-;; safe loading of configs
-(defun my-weightloss-records (start weeks loss)
-  "Create a list weekly weightloss records."
-  (cl-defstruct weightloss-goal-record date weight)
+(defun my-timeline-progress-records (start weeks difference mutation)
+  "Create a list weekly timeline-progress records.
+
+   (my-timeline-progress-records 220 20 4 #'+)"
+  (cl-defstruct timeline-progress-goal-record date progress)
 
   (let ((iterator 0)
         (current-number start)
         (current-date (current-time))
         (records))
     (while (<= iterator weeks)
-      (setq current-record (make-weightloss-goal-record :date (format-time-string "%Y-%m-%d" current-date) :weight (format "%0.2f" current-number)))
+      (setq current-record (make-timeline-progress-goal-record :date (format-time-string "%Y-%m-%d" current-date) :progress (format "%0.2f" current-number)))
       (push current-record records)
-      (setq current-number (- current-number loss))
+      (setq current-number (funcall mutation current-number difference))
       (setq current-date (time-add current-date (days-to-time 7)))
       (setq iterator (1+ iterator)))
     (reverse records)))
 
+;; safe loading of configs
 (defmacro exec-if-bound (sexplist)
   "Only run the function if it exists (just check fboundp of car)."
   `(if (fboundp (car ',sexplist))
