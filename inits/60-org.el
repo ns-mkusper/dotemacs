@@ -16,6 +16,21 @@
   (setq prettify-symbols-alist `(("\\nbsp{}" . ,(string-to-char "~"))))
   (prettify-symbols-mode 1))
 
+(defun my-convert-org-to-docx-with-pandoc ()
+  "Use Pandoc to convert .org to .docx.
+Comments:
+- The `-N' flag numbers the headers lines.
+- Use the `--from org' flag to have this function work on files
+  that are in Org syntax but do not have a .org extension"
+  (interactive)
+  (message "exporting .org to .docx")
+  (shell-command
+   (concat "pandoc -N --from org " (buffer-file-name)
+           " -o "
+           (file-name-sans-extension (buffer-file-name))
+           (format-time-string "-%Y-%m-%d-%H%M%S") ".docx")))
+
+
 (defun my-org-setup ()
   (org-indent-mode) ;; Keeps org items like text under headings, lists, nicely indented
   (visual-line-mode 1) ;; Nice line wrapping
