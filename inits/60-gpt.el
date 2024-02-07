@@ -52,3 +52,5 @@
         (end-of-buffer)
         (insert prompt)
         (comint-send-input)))))
+
+(provide '60-gpt)
