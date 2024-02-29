@@ -50,6 +50,7 @@
     yaml-mode
     lua-mode
     common-lisp-mode
+    json-mode
     ;; pascal-mode
     ) . lsp-deferred)
   ;; if you want which-key integration
