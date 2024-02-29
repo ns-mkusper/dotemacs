@@ -7,7 +7,9 @@
     kotlin-mode
     python-mode
     go-mode
-    typescript-mode) . shim-mode)
+    ;; TODO: figure out crashing issue on typescript mode
+    ;; typescript-mode
+    ) . shim-mode)
   :config
   (shim-init-ruby)
   (shim-init-python)

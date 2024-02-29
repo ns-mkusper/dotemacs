@@ -25,6 +25,12 @@
   ;; (add-to-list 'lsp-language-id-configuration '(".*\\.pas$" . "pascal"))
   :config
   (put 'lsp-clients-clangd-args 'safe-local-variable #'listp)
+  (progn
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+                  :major-modes '(python-mode)
+                  :remote? t
+                  :server-id 'pyls-remote)))
 
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
