@@ -7,6 +7,7 @@
 (use-package go-mode
   :defer t
   :straight t
+  :mode "\\.go\\'"
   :config
   (add-hook 'go-mode-hook 'lsp-deferred)
   (add-hook 'go-mode-hook
