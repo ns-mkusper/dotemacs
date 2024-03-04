@@ -6,8 +6,8 @@
   :straight t)
 
 (use-package tree-sitter-langs
-  :if (executable-find "tree-sitter")
   :straight t
-  :after tree-sitter)
+  :after tree-sitter
+  :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode) . tree-sitter-hl-mode))
 
 (provide '60-tree-sitter)
