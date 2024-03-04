@@ -60,7 +60,8 @@ Comments:
   (setq org-src-fontify-natively t) ;; Syntax highlighting in org src blocks
   (setq org-highlight-latex-and-related '(native)) ;; Highlight inline LaTeX
   (setq org-startup-folded 'show2levels) ;; Org files start up folded by default
-  (setq org-image-actual-width 300)
+  (setq org-image-actual-width nil)
+  (setq org-startup-with-inline-images t)
   (setq org-fontify-whole-heading-line t)
   (setq org-cycle-separator-lines 1)
   (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
@@ -212,5 +213,8 @@ Comments:
 (use-package ox-hugo
   :straight t
   :after ox)
+
+(use-package org-download
+  :straight t)
 
 (provide '60-org)
