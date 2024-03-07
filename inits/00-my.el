@@ -16,6 +16,27 @@
       (setq iterator (1+ iterator)))
     (reverse records)))
 
+;; easily set keymaps
+(defmacro my-defkeymap (name prefix &rest bindings)
+  "Create a new NAME-keymap bound to PREFIX, with BINDINGS.
+
+Usage:
+  (my-defkeymap \"spook-git\" \"C-c g\"
+    '(\"s\" . magit-status))
+"
+  (let* ((keymap-name (intern (concat name "-keymap")))
+         (keymap-alias (intern name))
+         (keymap-bindings (mapcar
+                           (lambda (binding)
+                             (let ((binding (eval binding)))
+                               `(define-key ,keymap-name (kbd ,(car binding)) #',(cdr binding))))
+                           bindings)))
+    `(progn
+       (defvar ,keymap-name (make-sparse-keymap))
+       (defalias ',keymap-alias ,keymap-name)
+       (global-set-key (kbd ,prefix) ',keymap-alias)
+       ,@keymap-bindings)))
+
 ;; safe loading of configs
 (defmacro exec-if-bound (sexplist)
   "Only run the function if it exists (just check fboundp of car)."

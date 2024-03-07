@@ -11,3 +11,5 @@
    '("C" . ts-fold-close-all)
    '("c" . ts-fold-close)
    '("z" . ts-fold-toggle)))
+
+(provide '60-fold)

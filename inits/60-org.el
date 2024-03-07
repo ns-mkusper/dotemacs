@@ -34,14 +34,14 @@ Comments:
 (defun my-org-setup ()
   (org-indent-mode) ;; Keeps org items like text under headings, lists, nicely indented
   (visual-line-mode 1) ;; Nice line wrapping
-  ;; (centered-cursor-mode) ;; Enable centered cursor mode
-  (smartparens-mode 0) ;; Disable smartparents
-  (hl-prog-extra-mode)  ;; Highlighting with regexps
-  (flyspell-mode)
   (org-superstar-mode) ;; Replace headline markers w/ bullets
   (toc-org-enable) ;; easily generate and keep ToC updated
   (org-appear-mode) ;; only show certain markers when needed
   (org-fancy-priorities-mode)
+  ;; (centered-cursor-mode) ;; Enable centered cursor mode
+  (smartparens-mode 0) ;; Disable smartparents
+  (hl-prog-extra-mode)  ;; Highlighting with regexps
+  (flyspell-mode)
   )
 
 (use-package org
@@ -64,6 +64,7 @@ Comments:
   (setq org-startup-with-inline-images t)
   (setq org-fontify-whole-heading-line t)
   (setq org-cycle-separator-lines 1)
+  (setq org-fold-core-style 'text-properties)
   (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
   (setq org-src-tab-acts-natively t)
 
