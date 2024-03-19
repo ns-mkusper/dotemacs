@@ -8,6 +8,6 @@
 (use-package tree-sitter-langs
   :straight t
   :after tree-sitter
-  :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode) . tree-sitter-hl-mode))
+  :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode terraform-mode) . tree-sitter-hl-mode))
 
 (provide '60-tree-sitter)
