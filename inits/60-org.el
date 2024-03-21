@@ -1,7 +1,9 @@
 ;; ORG MODE SETUP
 ;; which files should org-agenda read?
 ;; TODO: should we use roam?
-(setq org-agenda-files (list "~/drive/org/agenda"))
+(setq org-agenda-files (list
+                        "~/drive/org/agenda"
+                        "~/drive/org/work/agenda"))
 
 (defun my-prettify-symbols-compose-predicate (start end _match)
   "Explicitly allow any occurrence of the non-breaking space to be composed."
