@@ -25,3 +25,13 @@
   :config
   ;; Use the PATH from the remote
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+;; force psuedoterminal on windows as tramp workaround
+;; see: https://emacs.stackexchange.com/questions/76120/how-can-i-use-tramps-ssh-on-windows-10-with-the-native-ssh-exe
+(when (eq system-type 'windows-nt)
+  (require 'cl-lib)
+  (with-eval-after-load 'tramp
+    (cl-pushnew '("-tt")
+                (car (alist-get 'tramp-login-args
+                                (cdr (assoc "ssh" tramp-methods))))
+                :test #'equal)))
