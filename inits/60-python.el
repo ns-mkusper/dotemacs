@@ -95,11 +95,13 @@
 
 ;; Enable poetry
 (use-package poetry
-  :straight t
+  :defer t
+  :straight (:build t)
+  :commands (poetry-venv-toggle
+             poetry-tracking-mode)
   :config
-  ;; todo: why is this so insanely slow?
-  ;; (poetry-tracking-mode) ;; This auto load related venv when opening the file
-  )
+  (setq poetry-tracking-strategy 'switch-buffer)
+  (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
 
 ;; (use-package py-isort
