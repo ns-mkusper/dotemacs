@@ -12,7 +12,7 @@
     ) . shim-mode)
   :config
   (shim-init-ruby)
-  (shim-init-python)
+  ;; (shim-init-python)
   (shim-init-node)
   (shim-init-java)
   (shim-init-go)
