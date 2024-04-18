@@ -95,8 +95,7 @@
 
 ;; Enable poetry
 (use-package poetry
-  :defer t
-  :straight (:build t)
+  :straight t
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
   :config
