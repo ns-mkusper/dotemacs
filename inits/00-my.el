@@ -16,7 +16,7 @@
       (let ((value (funcall mutator start-value (* mutator-arg i))))
 
         (setq org-string (concat org-string
-                                 (format "* TODO %s: %s \n DEADLINE: %s\n"
+                                 (format "* TODO %s: %s \n DEADLINE: <%s>\n"
                                          message value (format-time-string "%Y-%m-%d" current-date)))))
       (setq current-date (time-add current-date (days-to-time 7)))
       )
