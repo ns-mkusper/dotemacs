@@ -1,20 +1,26 @@
-(defun my-timeline-progress-records (start weeks difference mutation)
-  "Create a list weekly timeline-progress records.
+(defun my-generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
+  "Generates TODO org-mode agenda items for a number of weeks.
 
-   (my-timeline-progress-records 220 20 4 #'+)"
-  (cl-defstruct timeline-progress-goal-record date progress)
+  Args:
+    start-date: The date to start generating agendas from. (e.g., (date 2024 04 28))
+    start-value: value at current date
+    num-weeks: The number of weeks to generate agendas for.
+    message: The message for each agenda item.
+    mutator: The function used to mutate the value week-by-week.
+    mutator-arg: The argument to pass to the mutator function.
 
-  (let ((iterator 0)
-        (current-number start)
-        (current-date (current-time))
-        (records))
-    (while (<= iterator weeks)
-      (setq current-record (make-timeline-progress-goal-record :date (format-time-string "%Y-%m-%d" current-date) :progress (format "%0.2f" current-number)))
-      (push current-record records)
-      (setq current-number (funcall mutation current-number difference))
+  Returns:
+    A string containing the org-mode entries for the agenda items."
+  (let ((org-string "") (current-date start-date))
+    (dotimes (i num-weeks)
+      (let ((value (funcall mutator start-value (* mutator-arg i))))
+
+        (setq org-string (concat org-string
+                                 (format "* TODO %s: %s \n DEADLINE: %s\n"
+                                         message value (format-time-string "%Y-%m-%d" current-date)))))
       (setq current-date (time-add current-date (days-to-time 7)))
-      (setq iterator (1+ iterator)))
-    (reverse records)))
+      )
+    org-string))
 
 ;; easily set keymaps
 (defmacro my-defkeymap (name prefix &rest bindings)
