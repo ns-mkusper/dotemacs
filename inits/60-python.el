@@ -23,6 +23,8 @@
             (setq fill-column 100)
             (fci-mode)))
 
+
+
 ;; Replaced with shim
 ;; (use-package pyenv-mode
 ;;   :straight t
