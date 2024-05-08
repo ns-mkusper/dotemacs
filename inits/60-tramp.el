@@ -7,10 +7,9 @@
                     ("./configure")
                     ("make")))
   :demand t
- ;; :init
- ;; (autoload #'tramp-register-crypt-file-name-handler "tramp-crypt")
+  :init
+  (autoload #'tramp-register-crypt-file-name-handler "tramp-crypt")
   :config
-  ;;(setq tramp-verbose 6)
   (defun my-turn-off-project-detection ()
     ;; projectile causes slowness over remote connection
     ;; see: https://www.reddit.com/r/emacs/comments/xul3qm/comment/iqy0gct/?utm_source=reddit&utm_medium=web2x&context=3
@@ -19,20 +18,21 @@
     (setq-local doom-modeline-project-detection nil))
   (add-hook 'tramp-mode-hook #'my-turn-off-project-detection)
 
-  (setq tramp-default-method "ssh")
-  (setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+  (add-to-list 'backup-directory-alist
+               (cons tramp-file-name-regexp nil))
+  (setq tramp-auto-save-directory temporary-file-directory)
+  (setq remote-file-name-inhibit-locks t)
 
   (setq vc-ignore-dir-regexp
         (format "\\(%s\\)\\|\\(%s\\)"
                 vc-ignore-dir-regexp
                 tramp-file-name-regexp))
 
+  ;; Only check for Git files remotely
+  (setq vc-handled-backends '(Git))
+
   ;; Honor remote PATH.
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-
-  ;; cache file names for 10 seconds
-  ;; (remote-file-name-inhibit-cache 10)
-
 
   ;; Allow ssh connections to persist.
   ;;

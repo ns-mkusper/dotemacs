@@ -27,10 +27,10 @@
   (put 'lsp-clients-clangd-args 'safe-local-variable #'listp)
   (progn
     (lsp-register-client
-     (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+     (make-lsp-client :new-connection (lsp-tramp-connection "pyright")
                   :major-modes '(python-mode)
                   :remote? t
-                  :server-id 'pyls-remote)))
+                  :server-id 'pyright-remote)))
 
   :hook
   (prog-major-mode . lsp-prog-major-mode-enable)
