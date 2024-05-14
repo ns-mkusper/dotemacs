@@ -10,6 +10,12 @@
   :init
   (autoload #'tramp-register-crypt-file-name-handler "tramp-crypt")
   :config
+
+  ;; Avoid “ControlPath too long” with Tramp on OSX
+  (when (file-directory-p "/tmp/")
+    (put 'temporary-file-directory 'standard-value (list "/tmp/")))
+
+
   (defun my-turn-off-project-detection ()
     ;; projectile causes slowness over remote connection
     ;; see: https://www.reddit.com/r/emacs/comments/xul3qm/comment/iqy0gct/?utm_source=reddit&utm_medium=web2x&context=3
