@@ -6,7 +6,7 @@
 1. dl dmg from emacsformacos-com
 2. install homebrew
    - https://brew.sh/
-3. `brew install emacs`
+3. `brew install emacs-plus@29 --with-modern-pen-icon`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `rsync -av dotemacs/ ~/.emacs.d/ --exclude='.git/'`
 4. `mkdir ~/.emac-d/data`
