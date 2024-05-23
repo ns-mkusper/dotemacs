@@ -1,12 +1,3 @@
-;; disable company in remote shell since it's slow
-;; SEE: https://emacs.stackexchange.com/questions/55028/how-can-i-disable-company-mode-in-a-shell-when-it-is-remote
-(defun my-shell-mode-setup-function ()
-  (when (and (fboundp 'company-mode)
-             (file-remote-p default-directory))
-    (company-mode -1)))
-
-(add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
-
 (use-package tramp
   :straight (tramp :type git
                    :repo "https://git.savannah.gnu.org/git/tramp.git"
@@ -32,6 +23,16 @@
     (setq-local projectile-dynamic-mode-line nil)
     (setq-local doom-modeline-project-detection nil))
   (add-hook 'tramp-mode-hook #'my-turn-off-project-detection)
+
+  ;; disable company in remote shell since it's slow
+  ;; SEE: https://emacs.stackexchange.com/questions/55028/how-can-i-disable-company-mode-in-a-shell-when-it-is-remote
+  (defun my-shell-mode-setup-function ()
+    (when (and (fboundp 'company-mode)
+               (file-remote-p default-directory))
+      (company-mode -1)))
+
+  (add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
+
 
   (add-to-list 'backup-directory-alist
                (cons tramp-file-name-regexp nil))
