@@ -1,11 +1,20 @@
 ;; Modular in-buffer completion framework for Emacs
 ;; http://company-mode.github.io/
+
+(defun my-shell-mode-setup-function ()
+  (when (and (fboundp 'company-mode)
+             (file-remote-p default-directory))
+    (company-mode -1)))
+
 (use-package company
   :diminish company-mode
   :after lsp-mode
   :straight t
   :config
   (add-hook 'after-init-hook 'global-company-mode)
+  ;; Disable company-mode if in a remote shell due to slow performance
+  (add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
+
   (setq
    company-echo-delay 0
    company-idle-delay 0.2
