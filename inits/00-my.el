@@ -114,6 +114,16 @@ Usage:
       (switch-to-buffer (get-buffer-create "*text*"))
       (fundamental-mode))))
 
+(defun my-open-canvas-buffer ()
+  "Open the *canvas*  (doodling) buffer, (re)creating it if not present."
+  ;; TODO: merge these my-open... functions into one?
+  (interactive)
+  (if (get-buffer "*canvas*")
+      (switch-to-buffer "*canvas*")
+    (progn
+      (switch-to-buffer (get-buffer-create "*canvas*"))
+      (canvas-mode))))
+
 (defun my-get-shell-buffer-name ()
   "Return either either the project name or filename if outside of a project."
   ;; if a fileless buffer don't even consult projectile

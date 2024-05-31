@@ -28,6 +28,7 @@ sudo mv terraform-ls /usr/local/bin/
 14. `cargo install cargo-makedocs`
 15. `GOBIN=/usr/local/bin/ go install 'github.com/reugn/gemini-cli/cmd/gemini@latest'`
 16. Setup `.env` file
+17. Install [Chrome Emacs extension](https://chromewebstore.google.com/detail/chrome-emacs/dabdpcafiblbndpoadckibiaojbdnpjg)
 
 
 
@@ -61,3 +62,4 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 17. Setup [fakecygpty](https://github.com/d5884/fakecygpty) for handling POSIX signals on windows
 18. `GOBIN=/usr/local/bin/ go install 'github.com/reugn/gemini-cli/cmd/gemini@latest`
 19. Setup `.env` file
+20. Install [Chrome Emacs extension](https://chromewebstore.google.com/detail/chrome-emacs/dabdpcafiblbndpoadckibiaojbdnpjg)
