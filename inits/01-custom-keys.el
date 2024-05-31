@@ -5,7 +5,9 @@
            ("C-c m" . my-switch-to-minibuffer-window)
            ("C-c r" . my-revert-buffer-no-confirm)
            ("C-c s" . my-open-scratch-buffer)
-           ("C-c c" . my-open-canvas-buffer)
+           ;; TODO: ensure canvas-mode works on mac & windows
+           ;; see: https://www.reddit.com/r/emacs/comments/pk5ad6/draw_and_scribble_in_gnu_emacs/
+           ;; ("C-c c" . my-open-canvas-buffer)
            ("C-c t" . my-open-text-buffer)
            ("C-c RET" . my-open-default-shell)
            ("C-x C-b" . ibuffer)
