@@ -5,7 +5,7 @@
            ("C-c m" . my-switch-to-minibuffer-window)
            ("C-c r" . my-revert-buffer-no-confirm)
            ("C-c s" . my-open-scratch-buffer)
-           ("C-c c" . my-open-scratch-buffer)
+           ("C-c c" . my-open-canvas-buffer)
            ("C-c t" . my-open-text-buffer)
            ("C-c RET" . my-open-default-shell)
            ("C-x C-b" . ibuffer)
