@@ -136,7 +136,7 @@ Usage:
         (progn
           (if (member "git" (split-string buffer-file-name "/"))
               (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
-            (setq shell-buffer-name-local-segment (my-get-shell-buffer-name)))))))
+            (setq shell-buffer-name-local-segment (first (last (split-string buffer-file-name "/") 2))))))))
   (setq shell-buffer-name (concat "*shell*<" shell-buffer-name-local-segment ">"))
   )
 
