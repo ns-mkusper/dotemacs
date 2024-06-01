@@ -5,7 +5,8 @@
   :hook
   ((java-mode
     kotlin-mode
-    python-mode
+    ;; TODO: get this working with poetry-mode
+    ;; python-mode
     go-mode
     ;; TODO: figure out crashing issue on typescript mode
     ;; typescript-mode
