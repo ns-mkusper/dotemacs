@@ -59,10 +59,7 @@
   (:map lsp-mode-map
         ("C-c r" . lsp-rename)
         ("M-?" . lsp-find-references)
-        ("C-c C-c a" . lsp-execute-code-action)
-        ("C-c C-c r" . lsp-rename)
-        ("C-c C-c q" . lsp-workspace-restart)
-        ("C-c C-c Q" . lsp-workspace-shutdown))
+        ("M-<return>" . lsp-execute-code-action))
   :commands lsp
   )
 
