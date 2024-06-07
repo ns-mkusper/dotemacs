@@ -6,7 +6,7 @@
              :host github)
   :commands (atomic-chrome-start-server)
   :config
-  (setq-default atomic-chrome-buffer-open-style 'frame)
+  (setq-default atomic-chrome-buffer-open-style 'full)
   (setq-default atomic-chrome-auto-remove-file t)
   (setq-default atomic-chrome-url-major-mode-alist
                 '(("github.com" . gfm-mode)
