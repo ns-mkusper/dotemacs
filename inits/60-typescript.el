@@ -2,11 +2,12 @@
   :straight t
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
-  :init
-  (setq interpreter-mode-alist (assoc-delete-all "node" interpreter-mode-alist))
-  (add-to-list 'magic-mode-alist
-               '((lambda ()
-                   (string-match "\\.ts$" (buffer-file-name))) . typescript-mode))
+;; TODO: needed? currently results in "Wrong type argument: stringp, nil" for some buffers
+  ;; :init
+  ;; (setq interpreter-mode-alist (assoc-delete-all "node" interpreter-mode-alist))
+  ;; (add-to-list 'magic-mode-alist
+  ;;              '((lambda ()
+  ;;                  (string-match "\\.ts$" (buffer-file-name))) . typescript-mode))
 
   :config
   (setq typescript-indent-level 2)

@@ -213,9 +213,14 @@ Comments:
                                     ,(all-the-icons-faicon "square"   :height 1.1 :v-adjust 0.0))))
 
 ;; hugo org-mode integration for blogging
+(use-package ox :straight nil)
+
 (use-package ox-hugo
-  :straight t
+  :straight ( :host github
+              :repo "kaushalmodi/ox-hugo"
+              :branch "main")
   :after ox)
+
 
 (use-package org-download
   :straight t)
