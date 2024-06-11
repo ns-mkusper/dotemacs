@@ -2,6 +2,7 @@
   :straight t
   :after lsp-mode
   :bind
+  ;; TODO: find better keymappings for DAP
   (:map dap-mode-map
         (("<f12>" . dap-debug)
          ("<f8>" . dap-continue)
@@ -27,7 +28,7 @@
   (tooltip-mode 1)
   (dap-ui-controls-mode -1)
 
-  (setq dap-python-debugger "ptvsd")
+  (setq dap-python-debugger "debugpy")
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
 

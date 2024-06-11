@@ -21,6 +21,9 @@
   (setq poetry-tracking-strategy 'switch-buffer)
   (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
+(use-package with-venv
+  :straight t)
+
 ;; (use-package py-isort
 ;;   :after python
 ;;   :straight t
