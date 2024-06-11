@@ -1,4 +1,4 @@
-;; visual indenting
+;; show fill column
 (use-package fill-column-indicator
   :straight t
   :commands (fci-mode)
