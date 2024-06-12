@@ -14,7 +14,8 @@
               ("C-c C-c" .  (lambda () (interactive) (python-shell-send-buffer t)))))
 
 (use-package poetry
-  :straight t
+  :defer t
+  :straight (:build t)
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
   :config
