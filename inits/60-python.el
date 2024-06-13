@@ -8,7 +8,8 @@
   (setq highlight-indentation-offset 4)
   (setq fill-column 100)
   (fci-mode)
-  :hook ((python-mode . eglot-ensure))
+  ;; TODO: explore eglot as an alternative
+  ;; :hook ((python-mode . eglot-ensure))
   :bind (:map python-mode-map
               ;; Force the execution of the main block
               ("C-c C-b" .  (lambda () (interactive) (python-shell-send-buffer t)))))
