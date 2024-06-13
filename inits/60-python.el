@@ -11,7 +11,7 @@
   :hook ((python-mode . eglot-ensure))
   :bind (:map python-mode-map
               ;; Force the execution of the main block
-              ("C-c C-c" .  (lambda () (interactive) (python-shell-send-buffer t)))))
+              ("C-c C-b" .  (lambda () (interactive) (python-shell-send-buffer t)))))
 
 (use-package poetry
   :defer t
