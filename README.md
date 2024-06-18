@@ -1,5 +1,6 @@
 # Semi-portable Emacs config
 
+<!-- TODO: automate this as part of a Makefile -->
 
 ## Setup emacs on Mac:
 

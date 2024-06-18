@@ -32,6 +32,15 @@
 ;;                  (not (equal f ".")))
 ;;         (add-to-list 'load-path name)))))
 
+;; set gpg home dir when on Windows to avoid strange path loop issue
+;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
+(when-let (cygpath (executable-find "cygpath.exe"))
+  (setopt package-gnupghome-dir
+          (with-temp-buffer
+            (call-process cygpath nil t nil
+                          "-u" (default-value 'package-gnupghome-dir))
+            (string-trim (buffer-string)))))
+
 ;; setup straight
 (defvar straight-bootstrap-version)
 (let ((bootstrap-file
