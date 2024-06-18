@@ -15,12 +15,13 @@
 ;; Don't warn `Package cl is deprecated' when using (require 'cl)
 (setq byte-compile-warnings '(not cl-functions obsolete))
 
-;; (setq package-archives
-;;       '(("celpa" . "https://celpa.conao3.com/packages/")
-;;         ("melpa" . "https://melpa.org/packages/")
-;;         ("org" . "https://orgmode.org/elpa/")
-;;         ("gnu" . "https://elpa.gnu.org/packages/")))
 
+;; Add additional repos
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+
+(add-to-list 'package-archives
+             '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
 
 ;; include all installed packages so far to load-path
 ;; (let ((base package-user-dir))
