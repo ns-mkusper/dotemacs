@@ -15,14 +15,6 @@
 ;; Don't warn `Package cl is deprecated' when using (require 'cl)
 (setq byte-compile-warnings '(not cl-functions obsolete))
 
-
-;; Add additional repos
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
-(add-to-list 'package-archives
-             '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
-
 ;; include all installed packages so far to load-path
 ;; (let ((base package-user-dir))
 ;;   (add-to-list 'load-path base)
@@ -32,15 +24,6 @@
 ;;                  (not (equal f ".."))
 ;;                  (not (equal f ".")))
 ;;         (add-to-list 'load-path name)))))
-
-;; set gpg home dir when on Windows to avoid strange path loop issue
-;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
-(when-let (cygpath (executable-find "cygpath.exe"))
-  (setopt package-gnupghome-dir
-          (with-temp-buffer
-            (call-process cygpath nil t nil
-                          "-u" (default-value 'package-gnupghome-dir))
-            (string-trim (buffer-string)))))
 
 ;; setup straight
 (defvar straight-bootstrap-version)
@@ -62,14 +45,13 @@
 ;; TODO: run only when stale
 ;; (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
 
-;; (package-initialize) ;; no longer needed after package was removed?
+(package-initialize) ;; no longer needed after package was removed?
 
 (use-package straight
   :custom (straight-use-package-by-default t))
 
 (use-package use-package-ensure-system-package
   :straight t)
-
 
 ;; custom file
 (setq custom-file (expand-file-name
@@ -79,6 +61,24 @@
 (use-package s
   :straight t )
 (use-package use-package)
+
+;; Add additional repos
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+
+(add-to-list 'package-archives
+             '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
+
+;; set gpg home dir when on Windows to avoid strange path loop issue
+;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
+(when-let (cygpath (executable-find "cygpath.exe"))
+  (setopt package-gnupghome-dir
+          (with-temp-buffer
+            (call-process cygpath nil t nil
+                          "-u" (default-value 'package-gnupghome-dir))
+            (string-trim (buffer-string)))))
+
+
 ;; load all our sub-config packages
 (use-package init-loader
   :straight t
