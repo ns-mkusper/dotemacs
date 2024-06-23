@@ -3,7 +3,7 @@
   ;; :diminish projectile-mode
   ;; :ensure-system-package (ripgrep)
   :bind-keymap
-  ([(meta p)] . projectile-command-map)
+  ("C-C p" . projectile-command-map)
   :bind
   ;; (:map projectile-command-map
   ;;             ("s" . my-scratch-buffer))
@@ -39,7 +39,8 @@
   (add-to-list 'projectile-globally-ignored-modes "dired-mode")
   )
 
-(use-package projectile-ripgrep
-  :straight t)
+;; TODO: figure out why this breaks ripgrep on windows
+;; (use-package projectile-ripgrep
+;;   :straight t)
 
 (provide '30-projectile)
