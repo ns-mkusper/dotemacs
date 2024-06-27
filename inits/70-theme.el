@@ -58,14 +58,21 @@
  'company-tooltip-selection nil :background "maroon" :foreground "#0d1017")
 
 ;; powerline and doom require full icon pack
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :straight t
-  :commands all-the-icons-install-fonts
-  :init
-  (unless (find-font (font-spec :name "all-the-icons"))
-    (all-the-icons-install-fonts t))
-  )
+(use-package nerd-icons
+  :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  (nerd-icons-font-family "Symbols Nerd Font Mono"))
+
+;; (use-package all-the-icons
+;;   :if (display-graphic-p)
+;;   :straight t
+;;   :commands all-the-icons-install-fonts
+;;   :init
+;;   (unless (find-font (font-spec :name "all-the-icons"))
+;;     (all-the-icons-install-fonts t))
+  ;; )
 
 (use-package emojify
   :straight t

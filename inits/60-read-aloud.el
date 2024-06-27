@@ -1,7 +1,8 @@
 (use-package read-aloud
   :straight t
-  :config
-  (setq read-aloud-engine "flite")
+  :custom
+  (read-aloud-engines '("flite" (cmd "flite" args ("--setf" "duration_stretch=.9"))))
+  (read-aloud-engine "flite")
   :bind
   ("C-c C-v" . read-aloud-this)
   )
