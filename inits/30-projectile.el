@@ -1,3 +1,4 @@
+;; TODO: look into project, a built-in replacement for projectile
 (use-package projectile
   :straight t
   ;; :diminish projectile-mode
