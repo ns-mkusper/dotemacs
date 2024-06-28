@@ -9,6 +9,7 @@
   )
 
 (use-package magit-todos
+  :if (not (eq system-type 'windows-nt)) ;; see:
   :after magit
   :straight t
   :config (magit-todos-mode))
