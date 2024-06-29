@@ -12,6 +12,7 @@
                              "--compile-commands-dir=build"
                              "--log=error"
                              "--pch-storage=memory"))
+  (lsp-prefer-capf t)
   (lsp-enable-xref t)
   ;; lens is a cool feature but laggy, best to enable on-demand
   (lsp-lens-auto-enable nil)
