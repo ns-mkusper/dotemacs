@@ -18,9 +18,10 @@
   (setq
    company-echo-delay 0
    company-idle-delay 0
-   company-show-numbers t
+   company-show-numbers 0.01
    company-minimum-prefix-length 1
    company-tooltip-align-annotations t
+   company-minimum-prefix-length 3
    company-tooltip-limit 20)
   :bind
   (:map company-active-map
