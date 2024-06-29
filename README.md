@@ -43,8 +43,8 @@ sudo mv terraform-ls /usr/local/bin/
 2. [x] `scoop bucket add extras`
 3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter fd pandoc ag zeal pgformatter`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av --delete ~/git/dotemacs/inits/ ${APPDATA}/.emacs.d/inits/`
-   - `rsync -av ~/git/dotemacs/inits/*.el ${APPDATA}/.emacs.d/`
+   - `rsync -av --delete ~/git/dotemacs/inits/ "$(cygpath ${APPDATA})"/.emacs.d/inits/`
+   - `rsync -av ~/git/dotemacs/inits/*.el "$(cygpath ${APPDATA})"/.emacs.d/`
 5. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode unifont`
