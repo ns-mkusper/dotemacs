@@ -14,6 +14,7 @@
   (add-hook 'after-init-hook 'global-company-mode)
   ;; Disable company-mode if in a remote shell due to slow performance
   (add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
+  (add-to-list 'company-backends 'company-capf)
 
   (setq
    company-echo-delay 0
