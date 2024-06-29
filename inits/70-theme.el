@@ -24,7 +24,25 @@
   :straight t
   :init (doom-modeline-mode 1))
 
-(load-theme 'modus-vivendi t)
+;; https://gitlab.com/protesilaos/modus-themes
+(use-package modus-themes
+  :straight (modus-themes :type git
+                          :host gitlab
+                          :repo "protesilaos/modus-themes")
+    :custom
+    ;; Add all your customizations prior to loading the themes
+    (modus-themes-italic-constructs t)
+    (modus-themes-bold-constructs t)
+    (modus-themes-region '(bg-only no-extend))
+    (modus-themes-lang-checkers '(text-also background straight-underline))
+    (modus-themes-paren-match '(bold))
+    (modus-themes-mode-line '(moody accented))
+
+    :init
+    (modus-themes-load-themes)
+    :config
+    (modus-themes-load-vivendi)
+  )
 
 ;; cursor color
 ;; (set-cursor-color "IndianRed1")

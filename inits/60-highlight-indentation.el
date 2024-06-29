@@ -1,3 +1,4 @@
+;; see: https://github.com/protesilaos/modus-themes/issues/98
 (defun my/set-highlight-indent-guides-faces-default ()
   "Set theme-agnostic `highlight-indent-guides' faces.
 
@@ -28,9 +29,9 @@ These faces rely on Modus themes' custom color variables."
       (set-face-background 'highlight-indent-guides-top-odd-face magenta-faint)
       (set-face-background 'highlight-indent-guides-top-even-face magenta-faint)
       (set-face-foreground 'highlight-indent-guides-top-character-face magenta-faint)
-      (set-face-background 'highlight-indent-guides-stack-odd-face fg-inactive)
-      (set-face-background 'highlight-indent-guides-stack-even-face fg-inactive)
-      (set-face-foreground 'highlight-indent-guides-stack-character-face fg-inactive))))
+      (set-face-background 'highlight-indent-guides-stack-odd-face bg-lavender)
+      (set-face-background 'highlight-indent-guides-stack-even-face bg-lavender)
+      (set-face-foreground 'highlight-indent-guides-stack-character-face bg-lavender))))
 
 (use-package highlight-indent-guides
   :straight t
