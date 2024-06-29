@@ -1,6 +1,7 @@
 # Semi-portable Emacs config
 
 <!-- TODO: automate this as part of a Makefile -->
+<!-- TODO: add everything to an org-mode file -->
 
 ## Setup emacs on Mac:
 
@@ -9,7 +10,8 @@
    - https://brew.sh/
 3. `brew install emacs-plus@29 --with-modern-pen-icon`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av dotemacs/ ~/.emacs.d/ --exclude='.git/'`
+   - `rsync -av --delete ~/git/dotemacs/inits/ ~/.emacs.d/inits/`
+   - `rsync -av ~/git/dotemacs/inits/*.el ~/.emacs.d/`
 4. `mkdir ~/.emac-d/data`
 5. `rustup component add rust-analyzer rust-src rls clippy`
 6. `brew tap homebrew/cask-fonts && brew install --cask font-fira-code font-gnu-unifont`
@@ -34,14 +36,15 @@ sudo mv terraform-ls /usr/local/bin/
 
 
 
-## Setup emacs on Windows:
+## Setup emacs on Windows (MinGW):
 
 1. install scoop
    - https://scoop.sh/
 2. [x] `scoop bucket add extras`
 3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter fd pandoc ag zeal pgformatter`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av dotemacs/ ~/.emacs.d/ --exclude='.git/'`
+   - `rsync -av --delete ~/git/dotemacs/inits/ ${APPDATA}/.emacs.d/inits/`
+   - `rsync -av ~/git/dotemacs/inits/*.el ${APPDATA}/.emacs.d/`
 5. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode unifont`
