@@ -38,8 +38,8 @@
     (modus-themes-paren-match '(bold))
     (modus-themes-mode-line '(moody accented))
 
-    :init
-    (modus-themes-load-themes)
+    ;; :init
+    ;; (modus-themes-load-themes)
     :config
     (modus-themes-select 'modus-vivendi)
   )
