@@ -20,7 +20,7 @@
            ("M-o" . replace-string)
            ("M-O" . replace-regexp)
            ("M-G" . goto-line)
-           ("M-h" . help-command)
+           ;; ("M-h" . help-command)
            ("C-;" . comment-or-uncomment-region)
            ("C-x C-e" . my-eval)
            ("C-c o" . org-store-link)
