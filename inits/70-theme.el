@@ -41,7 +41,7 @@
     :init
     (modus-themes-load-themes)
     :config
-    (modus-themes-load-theme 'modus-vivendi)
+    (modus-themes-select 'modus-vivendi)
   )
 
 ;; cursor color
