@@ -22,7 +22,7 @@
    company-show-numbers t
    company-minimum-prefix-length 1
    company-tooltip-align-annotations t
-   company-minimum-prefix-length 2
+   company-minimum-prefix-length 0
    company-tooltip-limit 20)
   :bind
   (:map company-active-map
