@@ -1,8 +1,8 @@
 ;; RUST
 (defun my/rustic-before-save-fn ()
   "Format buffer and organize imports when saving anything using lsp-mode."
-  (lsp-organize-imports)
-    (lsp-format-buffer))
+  (eglot-code-action-organize-imports)
+  (eglot-format-buffer))
 
 (use-package rustic
   :straight t
@@ -26,7 +26,6 @@
   (rustic-mode . eldoc-mode) ;; code tracing
   (rustic-mode . company-mode) ;; autocomplete
   ;; (rustic-mode . cargo-minor-mode)
-  (rustic-mode . lsp-mode)
   (rustic-mode . flycheck-mode)
   ;; (flycheck-mode . flycheck-rust-setup)
   (rustic-mode . (lambda () (setq indent-tabs-mode nil))) ;; set indent
@@ -35,17 +34,17 @@
 
   :config
   (setq rustic-lsp-server 'rust-analyzer
-        rustic-lsp-client 'lsp-mode
-        rustic-format-on-save nil
-        lsp-rust-rls-server-command 'rust-analyzer) ;; lsp-format-buffer is way less intrusive
+        rustic-lsp-client 'eglot
+        rustic-format-on-save nil ;; lsp-format-buffer is way less intrusive
+        lsp-rust-rls-server-command 'rust-analyzer)
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
   (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
                                            (my/rustic-before-save-fn))))
-  (add-hook 'lsp-after-open-hook (lambda ()
-                                   (when (lsp-find-workspace 'rust-analyzer nil)
-                                     (lsp-rust-analyzer-inlay-hints-mode))))
+  ;; (add-hook 'lsp-after-open-hook (lambda ()
+  ;;                                  (when (lsp-find-workspace 'rust-analyzer nil)
+  ;;                                    (lsp-rust-analyzer-inlay-hints-mode))))
   :bind (:map rustic-mode-map
               ("C-c C-c s" . lsp-rust-analyzer-status)))
 
