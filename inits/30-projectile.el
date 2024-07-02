@@ -31,7 +31,7 @@
   (projectile-enable-caching t)
   (projectile-sort-order 'recently-active)
   (projectile-buffers-filter-function 'projectile-buffers-with-file)
-  ;; (projectile-use-git-grep t)
+  (projectile-use-git-grep t)
   (projectile-completion-system 'ivy)
   (projectile-current-project-on-switch 'keep)
 
