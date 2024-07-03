@@ -45,7 +45,8 @@
    (add-to-list 'exec-path msys2-bin-dir)
    (add-to-list 'exec-path mingw64-bin-dir)
    (setq explicit-shell-file-name bash-path)
-   (setq shell-file-name bash-path)
+   ;; Setting `shell-file-name' breaks most commands emacs wishes to run in a shell since it uses windows paths
+   ;; (setq shell-file-name bash-path)
    (setenv "SHELL" bash-path)
    ;; make sure this env var is set in msys ~/.bashrc
    (setenv "STARTDIR" default-directory)
