@@ -1,7 +1,6 @@
 ;; RUST
 (defun my/rustic-before-save-fn ()
   "Format buffer and organize imports when saving anything using lsp-mode."
-  (eglot-code-action-organize-imports)
   (eglot-format-buffer))
 
 (use-package rustic
@@ -19,10 +18,11 @@
   ;;   (other-window 1))
   :init
   ;; to use rustic-mode even if rust-mode also installed
+  (setq rust-mode-treesitter-derive t)
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)
         rustic-lsp-server 'rust-analyzer)
   :hook
-  (rustic-mode . hs-minor-mode) ;; fold mode
+  ;; (rustic-mode . hs-minor-mode) ;; fold mode
   (rustic-mode . eldoc-mode) ;; code tracing
   (rustic-mode . company-mode) ;; autocomplete
   ;; (rustic-mode . cargo-minor-mode)
@@ -33,10 +33,11 @@
   (rustic-before-save . my/before-save-fn) ;; use lsp format
 
   :config
-  (setq rustic-lsp-server 'rust-analyzer
-        rustic-lsp-client 'eglot
-        rustic-format-on-save nil ;; lsp-format-buffer is way less intrusive
-        lsp-rust-rls-server-command 'rust-analyzer)
+  (push 'rustic-clippy flycheck-checkers)
+  ;; (setq rustic-lsp-server 'rust-analyzer
+  ;;       rustic-lsp-client 'eglot
+  ;;       rustic-format-on-save nil ;; lsp-format-buffer is way less intrusive
+  ;;       lsp-rust-rls-server-command 'rust-analyzer)
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
@@ -45,7 +46,8 @@
   ;; (add-hook 'lsp-after-open-hook (lambda ()
   ;;                                  (when (lsp-find-workspace 'rust-analyzer nil)
   ;;                                    (lsp-rust-analyzer-inlay-hints-mode))))
-  :bind (:map rustic-mode-map
-              ("C-c C-c s" . lsp-rust-analyzer-status)))
+  ;; :bind (:map rustic-mode-map
+  ;;             ("C-c C-c s" . lsp-rust-analyzer-status))
+  )
 
 (provide '60-rust)
