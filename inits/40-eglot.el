@@ -13,6 +13,8 @@
               ("C-c c" . eglot-completion-at-point)
               ("C-c r" . eglot-rename)
               ("C-c a" . eglot-code-actions))
+  :custom-face (eglot-highlight-symbol-face ((t (:inherit 'highlight :background "DimGray"))))
+
   :config
   (setq read-process-output-max (* 1024 1024))
   ;; (push :documentHighlightProvider eglot-ignored-server-capabilities)
