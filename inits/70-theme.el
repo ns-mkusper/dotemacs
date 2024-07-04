@@ -38,7 +38,7 @@
     ;; (modus-themes-load-themes)
     :config
     (modus-themes-select 'modus-vivendi)
-  )
+    )
 
 ;; cursor color
 ;; (set-cursor-color "IndianRed1")
