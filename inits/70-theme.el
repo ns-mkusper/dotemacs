@@ -20,10 +20,6 @@
 ;;   (org-ellipsis ((t (:height 0.8 :inherit 'shadow))))
 ;;   (org-scheduled-previously ((t (:background "red")))))
 
-(use-package doom-modeline
-  :straight t
-  :init (doom-modeline-mode 1))
-
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
   :straight (modus-themes :type git
