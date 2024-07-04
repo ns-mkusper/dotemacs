@@ -83,17 +83,12 @@
                                   (right-fringe . 8)))
   (ivy-posframe-mode 1))
 
-(personal/leader-keys
-  "r" '(ivy-resume :which-key "ivy resume")
-  "f" '(:ignore t :which-key "files")
-  "ff" '(counsel-find-file :which-key "open file")
-  "C-f" 'counsel-find-file
-  "fr" '(counsel-recentf :which-key "recent files")
-  "fR" '(revert-buffer :which-key "revert file")
-  "fj" '(counsel-file-jump :which-key "jump to file"))
+
 
 (use-package swiper
   :straight t
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
+
+(provide '40-eglot)

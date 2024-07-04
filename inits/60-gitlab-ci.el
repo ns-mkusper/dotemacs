@@ -8,4 +8,4 @@
   :init
   (gitlab-ci-mode-flycheck-enable))
 
-(provide 60-gitlab-ci)
+(provide '60-gitlab-ci)

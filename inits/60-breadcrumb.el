@@ -9,4 +9,4 @@
   (setq breadcrumb-imenu-crumb-separator " » "))
 
 
-(provides '60-breadcrumb)
+(provide '60-breadcrumb)

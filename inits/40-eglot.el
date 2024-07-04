@@ -42,4 +42,3 @@
   (global-flycheck-eglot-mode 1))
 
 (provide '40-eglot)
-c
