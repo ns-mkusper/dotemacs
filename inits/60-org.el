@@ -1,6 +1,5 @@
 ;; ORG MODE SETUP
 ;; which files should org-agenda read?
-;; TODO: should we use roam?
 (setq org-agenda-files (list
                         "~/drive/org/agenda"
                         "~/drive/org/work/agenda"))
@@ -224,5 +223,24 @@ Comments:
 
 (use-package org-download
   :straight t)
+
+(use-package org-roam
+  :straight (:build t)
+  :defer t
+  :custom
+  (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
+  (org-roam-completion-everywhere t)
+  (org-roam-v2-ack t)
+
+  :config
+  (org-roam-db-autosync-mode 1)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today)))
+
 
 (provide '60-org)
