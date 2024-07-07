@@ -229,6 +229,7 @@ Comments:
   :defer t
   :custom
   (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
+  (expand-file-name "drive/org/roam/org-roam.db" (getenv "HOME"))
   (org-roam-completion-everywhere t)
   (org-roam-v2-ack t)
 

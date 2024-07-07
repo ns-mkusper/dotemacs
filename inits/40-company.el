@@ -8,7 +8,7 @@
 
 (use-package company
   :diminish company-mode
-  :after lsp-mode
+  :after eglot
   :straight t
   :config
   (add-hook 'after-init-hook 'global-company-mode)

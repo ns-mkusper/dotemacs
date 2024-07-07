@@ -1,6 +1,6 @@
 (use-package dap-mode
   :straight t
-  :after lsp-mode
+  :after eglot
   :bind
   ;; TODO: find better keymappings for DAP
   (:map dap-mode-map
@@ -35,10 +35,11 @@
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
   ;; Bind `C-c l d` to `dap-hydra` for easy access
-  (general-define-key
-   :keymaps 'lsp-mode-map
-   :prefix lsp-keymap-prefix
-   "d" '(dap-hydra t :wk "debugger"))
+  ;; (general-define-key
+  ;;  :keymaps 'lsp-map
+  ;;  :prefix lsp-keymap-prefix
+  ;;  "d" '(dap-hydra t :wk "debugger"))
+  ;; TOOD: find a better hotkey with eglot
   )
 
 (provide '60-dap)
