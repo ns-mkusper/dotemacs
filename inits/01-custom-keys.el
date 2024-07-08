@@ -3,7 +3,7 @@
            ([f7] . display-line-numbers-mode)
            ([f10] . menu-bar-mode)
            ("C-c m" . my-switch-to-minibuffer-window)
-           ("C-c r" . my-revert-buffer-no-confirm)
+           ;; ("C-c r" . my-revert-buffer-no-confirm)
            ("C-c s" . my-open-scratch-buffer)
            ;; TODO: ensure canvas-mode works on mac & windows
            ;; see: https://www.reddit.com/r/emacs/comments/pk5ad6/draw_and_scribble_in_gnu_emacs/

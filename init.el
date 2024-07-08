@@ -86,6 +86,14 @@
   (setq init-loader-show-log-after-init nil)
   (init-loader-load "~/.emacs.d/inits"))
 
+;; Load the feature no-littering as early as possible in your init file. Make sure you load it at least before you change any path variables using some other method.
+;; see: https://github.com/emacscollective/no-littering
+(use-package no-littering
+  :straight t
+  :init
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+
 ;; fontify all buffers
 (global-font-lock-mode  t)
 

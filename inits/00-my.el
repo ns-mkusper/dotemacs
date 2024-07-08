@@ -275,7 +275,10 @@ Usage:
 (setq case-fold-search t)
 (setq show-trailing-whitespace t)
 (setq c-default-style "bsd")
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq delete-old-versions t)
+(setq kept-new-versions 6)
+(setq kept-old-versions 2)
+(setq version-control t)
 (setq-default indent-tabs-mode nil) ;; only use space indenting
 (setq completion-cycle-threshold 3) ;; TAB cycle if there are only few candidates
 ;; Enable indentation+completion using the TAB key.
@@ -305,4 +308,4 @@ Usage:
 ;; ;; resize window to full screen dimensions
 ;; (setq initial-frame-alist '( (fullscreen . maximized)))
 ;; (setq default-frame-alist '( (fullscreen . fullheight)))
-;; (setq backup-directory-alist '(("." . "~/.emacs_backups"))) ;; using no-littering instead
+(setq backup-directory-alist '(("." . "~/.emacs_backups"))) ;; using no-littering instead

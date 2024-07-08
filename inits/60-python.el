@@ -45,11 +45,11 @@
 
 
 
-(use-package lsp-pyright
-  :straight t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp-mode))))  ; or lsp-deferred
+;; (use-package lsp-pyright
+;;   :straight t
+;;   :hook (python-mode . (lambda ()
+;;                          (require 'lsp-pyright)
+;;                          (lsp-mode))))  ; or lsp-deferred
 
 ;; flymake-ruff integration
 (use-package flymake-ruff

@@ -1,11 +1,11 @@
 ;; RUST
 (defun my/rustic-before-save-fn ()
   "Format buffer and organize imports when saving anything using lsp-mode."
-  (eglot-format-buffer))
+(eglot-format-buffer))
 
 (use-package rustic
   :straight t
-  :after (flycheck lsp-mode)
+  :after (flycheck eglot)
   :mode
   ("\\.rs\\'" . rustic-mode)
   ;; :preface
