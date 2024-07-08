@@ -279,6 +279,7 @@ Usage:
 (setq kept-new-versions 6)
 (setq kept-old-versions 2)
 (setq version-control t)
+(setq confirm-nonexistent-file-or-buffer nil)
 (setq-default indent-tabs-mode nil) ;; only use space indenting
 (setq completion-cycle-threshold 3) ;; TAB cycle if there are only few candidates
 ;; Enable indentation+completion using the TAB key.
@@ -308,4 +309,4 @@ Usage:
 ;; ;; resize window to full screen dimensions
 ;; (setq initial-frame-alist '( (fullscreen . maximized)))
 ;; (setq default-frame-alist '( (fullscreen . fullheight)))
-(setq backup-directory-alist '(("." . "~/.emacs_backups"))) ;; using no-littering instead
+(setq backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory))))
