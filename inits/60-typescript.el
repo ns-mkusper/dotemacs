@@ -1,7 +1,7 @@
 (use-package typescript-mode
   :straight t
   :mode "\\.ts\\'"
-  :hook (typescript-mode . lsp-deferred)
+  :hook (typescript-mode . eglot)
 ;; TODO: needed? currently results in "Wrong type argument: stringp, nil" for some buffers
   ;; :init
   ;; (setq interpreter-mode-alist (assoc-delete-all "node" interpreter-mode-alist))
