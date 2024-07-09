@@ -229,7 +229,9 @@ Comments:
   :defer t
   :custom
   (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
-  (expand-file-name "drive/org/roam/org-roam.db" (getenv "HOME"))
+  ;; intentionally not shared in remote (shared) drive
+  ;; see: https://org-roam.discourse.group/t/org-roam-db-across-multiple-machines/332
+  (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
   (org-roam-completion-everywhere t)
   (org-roam-v2-ack t)
 
