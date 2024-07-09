@@ -44,7 +44,6 @@
 
 ;; TODO: run only when stale
 ;; (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
-
 (package-initialize) ;; no longer needed after package was removed?
 
 (use-package straight

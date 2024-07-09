@@ -34,10 +34,12 @@
 
   :config
   (push 'rustic-clippy flycheck-checkers)
-  ;; (setq rustic-lsp-server 'rust-analyzer
-  ;;       rustic-lsp-client 'eglot
-  ;;       rustic-format-on-save nil ;; lsp-format-buffer is way less intrusive
-  ;;       lsp-rust-rls-server-command 'rust-analyzer)
+  (setq rustic-lsp-server 'rust-analyzer
+        rustic-lsp-client 'eglot
+        rustic-format-on-save t
+        lsp-rust-rls-server-command 'rust-analyzer
+        ;; rustic-lsp-setup-p nil
+        )
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
@@ -49,5 +51,6 @@
   ;; :bind (:map rustic-mode-map
   ;;             ("C-c C-c s" . lsp-rust-analyzer-status))
   )
+
 
 (provide '60-rust)
