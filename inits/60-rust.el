@@ -36,7 +36,7 @@
   (push 'rustic-clippy flycheck-checkers)
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'eglot
-        rustic-format-on-save t
+        rustic-format-on-save nil ;; slow on windows
         lsp-rust-rls-server-command 'rust-analyzer
         ;; rustic-lsp-setup-p nil
         )
