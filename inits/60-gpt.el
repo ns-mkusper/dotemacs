@@ -5,6 +5,10 @@
 ;; in-emacs gpt prompt
 (use-package gptel
   :straight (gpt :type git :host github :repo "karthink/gptel")
+  :bind
+  ("C-c C-a" . 'gptel)
+
+
   :config
   ;; Setup claude
   (setq
