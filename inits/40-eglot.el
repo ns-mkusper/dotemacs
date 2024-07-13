@@ -12,7 +12,7 @@
               ("C-c =" . eglot-format-buffer)
               ("C-c c" . eglot-completion-at-point)
               ("C-c r" . eglot-rename)
-              ("C-c a" . eglot-code-actions))
+              ("C-c l a" . eglot-code-actions))
   :custom-face (eglot-highlight-symbol-face ((t (:inherit 'highlight :background "DimGray"))))
 
   :config
