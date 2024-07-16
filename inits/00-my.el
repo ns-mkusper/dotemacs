@@ -250,6 +250,7 @@ Usage:
 (menu-bar-mode -1)
 (savehist-mode 1) ;; save shell history
 (save-place-mode 1)
+(fset 'yes-or-no-p 'y-or-n-p)
  ;; silence bell, see: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Beep-sound.html
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
 (setq compilation-window-height 45)
