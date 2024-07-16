@@ -251,7 +251,6 @@ Usage:
 (savehist-mode 1) ;; save shell history
 (save-place-mode 1)
  ;; silence bell, see: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Beep-sound.html
-(set-message-beep 'silent)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
 (setq compilation-window-height 45)
 (setq debug-on-error nil) ;; ignore errors in emacs
