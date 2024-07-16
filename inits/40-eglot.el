@@ -1,5 +1,7 @@
 ;; LSP Integration
 (use-package eglot
+  :init
+  (fset #'jsonrpc--log-event #'ignore) ;; performance boost
   :straight t
   :bind (:map eglot-mode-map
               ("C-c h" . eldoc-doc-buffer)
@@ -14,6 +16,9 @@
               ("C-c r" . eglot-rename)
               ("C-c l a" . eglot-code-actions))
   :custom-face (eglot-highlight-symbol-face ((t (:inherit 'highlight :background "DimGray"))))
+
+  :custom
+  (eglot-events-buffer-size 0) ;; improved perf
 
   :config
   (setq read-process-output-max (* 1024 1024))
