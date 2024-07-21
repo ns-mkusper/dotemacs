@@ -9,6 +9,11 @@
   ("C-c C-a" . 'gptel)
 
 
+  :custom
+  ;; default curl on windows doesn't work with gptel
+  ;; see: https://github.com/karthink/gptel/issues/90
+  ;; TODO: get working with msys2 curl on windows
+  (gptel-use-curl nil)
   :config
   ;; Setup claude
   (setq

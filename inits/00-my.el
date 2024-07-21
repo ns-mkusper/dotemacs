@@ -24,11 +24,11 @@
     org-string))
 
 ;; easily set keymaps
-(defmacro my-defkeymap (name prefix &rest bindings)
+(defmacro my/defkeymap (name prefix &rest bindings)
   "Create a new NAME-keymap bound to PREFIX, with BINDINGS.
 
 Usage:
-  (my-defkeymap \"spook-git\" \"C-c g\"
+  (my/defkeymap \"spook-git\" \"C-c g\"
     '(\"s\" . magit-status))
 "
   (let* ((keymap-name (intern (concat name "-keymap")))

@@ -7,7 +7,7 @@
   :config
   ;; TODO: Figure out why this causes company to be insanely slow
   ;; (add-hook 'tree-sitter-after-on-hook #'ts-fold-indicators-mode)
-  (my-defkeymap
+  (my/defkeymap
    "my-ts-fold" "C-c f"
    '("O" . ts-fold-open-all)
    '("o" . ts-fold-open-recursively)
