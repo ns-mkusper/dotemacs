@@ -6,9 +6,6 @@
   :bind (:map eglot-mode-map
               ("C-c h" . eldoc-doc-buffer)
               ("C-c l r" . xref-find-references)
-              ("C-c l d" . eglot-find-declaration ;; xref-find-definitions
-               )
-              ("C-c l D" . xref-find-definitions-other-window)
               ("C-c l t" . eglot-find-typeDefinition)
               ("C-c l i" . eglot-find-implementation)
               ("C-c =" . eglot-format-buffer)
