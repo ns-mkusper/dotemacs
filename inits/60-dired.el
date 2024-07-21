@@ -46,5 +46,5 @@
   (use-package nerd-icons-dired
     :straight t
     :if (display-graphic-p)
-    :hook (dired-mode . nerd-dired-mode))
+    :hook (dired-mode . nerd-icons-dired-mode))
   )
