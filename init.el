@@ -43,6 +43,7 @@
 (straight-use-package 'use-package)
 
 ;; TODO: run only when stale
+;; (setq package-check-signature nil) ;; use in case of gpg key corruption
 ;; (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
 (package-initialize) ;; no longer needed after package was removed?
 

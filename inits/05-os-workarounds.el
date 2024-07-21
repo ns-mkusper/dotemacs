@@ -18,4 +18,10 @@
     (set-selection-coding-system 'utf-16-le)          ; correct
   )
 
-(provide '05-ugly-workarounds)
+;; Open files with default app in windows
+(use-package w32-browser
+  :if (eq system-type 'windows-nt)
+  :straight t
+  )
+
+(provide '05-os-workarounds)
