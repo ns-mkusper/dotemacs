@@ -1,4 +1,4 @@
-(defun my-generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
+(defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
   "Generates TODO org-mode agenda items for a number of weeks.
     (my-generate-weekly-todos (current-time) 82 10 \"reach weight (kg)\" '- 1.6)
 

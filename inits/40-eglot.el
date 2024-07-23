@@ -26,6 +26,7 @@
   (setq eldoc-echo-area-use-multiline-p t)
   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
   )
 
 (use-package eldoc-box
