@@ -1,3 +1,13 @@
+(defun my/number-lines-region (start end)
+  "Number a selected region of lines."
+  (interactive "r")
+  (save-excursion
+    (let ((line-num 1))
+      (goto-char start)
+      (while (re-search-forward "^" end t)
+        (replace-match (format "%d. " line-num) t t)
+        (setq line-num (1+ line-num))))))
+
 (defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
   "Generates TODO org-mode agenda items for a number of weeks.
     (my-generate-weekly-todos (current-time) 82 10 \"reach weight (kg)\" '- 1.6)
