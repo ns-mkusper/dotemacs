@@ -310,6 +310,7 @@ Usage:
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
+(setq-default buffer-file-coding-system 'utf-8-unix)
 (setq transient-mark-mode t)
 (setq frame-title-format
       (format "emacs@%s: %%f" (system-name))) ;; Show file name in title bar

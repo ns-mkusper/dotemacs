@@ -234,8 +234,6 @@ Comments:
   (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
   (org-roam-completion-everywhere t)
   (org-roam-v2-ack t)
-
-  :config
   (org-roam-db-autosync-mode 1)
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
