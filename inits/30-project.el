@@ -137,7 +137,9 @@ for one."
     ;; Dynamic variables
     (defvar shell-buffer-name)
     (let* ((default-directory (project-root (project-current 'maybe-prompt)))
-           (shell-buffer-name (project-prefixed-buffer-name "shell")))
+           (shell-buffer-name (project-prefixed-buffer-name "shell"))
+           (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
+           (current-buffer-directory (file-name-directory (buffer-file-name))))
       (if-let (shell-buffer (get-buffer shell-buffer-name))
           ;; is its frame visible?
           (if (eq shell-buffer-name (buffer-name (window-buffer (selected-window))))
