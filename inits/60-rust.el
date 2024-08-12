@@ -1,6 +1,6 @@
 ;; RUST
 (defun my/rustic-before-save-fn ()
-  "Format buffer and organize imports when saving anything using lsp-mode."
+  "Format buffer and organize imports when saving anything using eglot."
 (eglot-format-buffer))
 
 (use-package rustic
@@ -40,6 +40,8 @@
         lsp-rust-rls-server-command 'rust-analyzer
         ;; rustic-lsp-setup-p nil
         )
+  ;; prevents lsp-mode prompt
+  (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
