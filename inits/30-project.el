@@ -161,7 +161,8 @@ for one."
    :map project-prefix-map
    ("m" . my-proj/magit-status)
    ("t" . my-proj/vterm)
-   ("e" . my-proj/eshell))
+   ("e" . my-proj/eshell)
+   ("s" . my-proj/eshell))
 
   (setq project-compilation-buffer-name-function #'project-prefixed-buffer-name)
   (setq project-switch-commands
