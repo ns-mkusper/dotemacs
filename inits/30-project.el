@@ -144,7 +144,7 @@ for one."
               (select-window (get-buffer-window shell-buffer))
             (progn
               ;; if only one window is open on-screen then split vertically
-              (if (<= current-open-and-visible-frames 1) (split-window-right))
+              (if (<= (length (window-list)) 1) (split-window-right))
               (other-window 1)
               (switch-to-buffer shell-buffer-name)))
         (progn
