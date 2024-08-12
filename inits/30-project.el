@@ -74,16 +74,16 @@ the secondary ones."
                       (when (file-exists-p file-name)
                         (list file-name))))
            (secondary (file-expand-wildcards (thread-last root
-                                               (expand-file-name "*/")
-                                               (expand-file-name name)))))
+                                                          (expand-file-name "*/")
+                                                          (expand-file-name name)))))
       (if (and (null primary) (> (length secondary) 1) prompt)
           (let* ((candidates (mapcar (lambda (file-name)
                                        (cons (file-relative-name file-name root)
                                              file-name))
                                      secondary))
                  (file-name (thread-first
-                                (completing-read "Project configuration: "
-                                                 candidates nil t)
+                              (completing-read "Project configuration: "
+                                               candidates nil t)
                               (assoc candidates)
                               cdr)))
             (cons file-name (remove file-name secondary)))
@@ -100,7 +100,7 @@ the secondary ones."
 When not in a project, prompt for one."
     (interactive)
     (let ((default-directory            ; Dynamic variable
-            (project-root (project-current 'maybe-prompt))))
+           (project-root (project-current 'maybe-prompt))))
       (magit-status-setup-buffer)))
 
   (defun my-proj/vterm (&optional arg)
@@ -141,20 +141,20 @@ for one."
       (if-let (shell-buffer (get-buffer shell-buffer-name))
           ;; is its frame visible?
           (if (eq shell-buffer-name (buffer-name (window-buffer (selected-window))))
-          (select-window (get-buffer-window shell-buffer))
+              (select-window (get-buffer-window shell-buffer))
+            (progn
+              ;; if only one window is open on-screen then split vertically
+              (if (<= current-open-and-visible-frames 1) (split-window-right))
+              (other-window 1)
+              (switch-to-buffer shell-buffer-name)))
         (progn
-          ;; if only one window is open on-screen then split vertically
-          (if (<= current-open-and-visible-frames 1) (split-window-right))
-          (other-window 1)
-          (switch-to-buffer shell-buffer-name)))
-    (progn
-      ;; if only one window is open on-screen then split vertically and move focus to it
-      (if (<= current-open-and-visible-frames 1)
-          (select-window  (split-window-right))
-        (other-window 1))
-      (setq default-directory current-buffer-directory)
-      (shell shell-buffer-name)
-      (rename-buffer shell-buffer-name)))
+          ;; if only one window is open on-screen then split vertically and move focus to it
+          (if (<= current-open-and-visible-frames 1)
+              (select-window  (split-window-right))
+            (other-window 1))
+          (setq default-directory current-buffer-directory)
+          (shell shell-buffer-name)
+          (rename-buffer shell-buffer-name)))
       ))
   :config
   (bind-keys
@@ -171,6 +171,7 @@ for one."
           (project-switch-to-buffer "Buffer")
           (my-proj/magit-status "Magit")
           (my-proj/vterm "Vterm")
-          (my-proj/eshell "Eshell"))))
+          (my-proj/eshell "Eshell")
+          (my-proj/shell "Shell"))))
 
 (provides '30-project)
