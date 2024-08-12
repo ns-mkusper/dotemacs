@@ -278,3 +278,5 @@ Usage:
 ;; (setq initial-frame-alist '( (fullscreen . maximized)))
 ;; (setq default-frame-alist '( (fullscreen . fullheight)))
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+;; xref
+(setq xref-search-program 'ripgrep)
