@@ -134,49 +134,6 @@ Usage:
       (switch-to-buffer (get-buffer-create "*canvas*"))
       (canvas-mode))))
 
-(defun my-get-shell-buffer-name ()
-  "Return either either the project name or filename if outside of a project."
-  ;; if a fileless buffer don't even consult projectile
-  (if (not (buffer-file-name))
-      (setq shell-buffer-name-local-segment (buffer-name))
-    (progn
-      (if (> (length (projectile-project-name)) 1)
-          (setq shell-buffer-name-local-segment (projectile-project-name))
-        ;; if projectile doesn't find a project we go by our project dir structure
-        (progn
-          (if (member "git" (split-string buffer-file-name "/"))
-              (setq shell-buffer-name-local-segment (nth 1 (member "git" (split-string buffer-file-name "/") )))
-            (setq shell-buffer-name-local-segment (first (last (split-string buffer-file-name "/") 2))))))))
-  (setq shell-buffer-name (concat "*shell*<" shell-buffer-name-local-segment ">"))
-  )
-
-(defun my-open-default-shell ()
-  "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
-  (interactive)
-  ;; TODO: only use default-directory if we're in a buffer visiting a file?
-  (setq current-buffer-directory default-directory)
-  (setq current-open-and-visible-frames (length (cl-delete-duplicates (mapcar #'window-buffer (window-list)))))
-  (setq shell-buffer-name (my-get-shell-buffer-name))
-  ;; does a shell for this project already exist?
-  (if-let (shell-buffer (get-buffer shell-buffer-name))
-      ;; is its frame visible?
-      (if (eq shell-buffer (buffer-name (window-buffer (selected-window))))
-          (select-window (get-buffer-window shell-buffer))
-        (progn
-          ;; if only one window is open on-screen then split vertically
-          (if (<= current-open-and-visible-frames 1) (split-window-right))
-          (other-window 1)
-          (switch-to-buffer shell-buffer-name)))
-    (progn
-      ;; if only one window is open on-screen then split vertically and move focus to it
-      (if (<= current-open-and-visible-frames 1)
-          (select-window  (split-window-right))
-        (other-window 1))
-      (setq default-directory current-buffer-directory)
-      (shell shell-buffer-name)
-      (rename-buffer shell-buffer-name)))
-  )
-
 (defun my-forward-down-list ()
   "Jumps to the end delimeter of the actibe block."
   (interactive)

@@ -9,7 +9,7 @@
            ;; see: https://www.reddit.com/r/emacs/comments/pk5ad6/draw_and_scribble_in_gnu_emacs/
            ;; ("C-c c" . my-open-canvas-buffer)
            ("C-c t" . my-open-text-buffer)
-           ("C-c RET" . my-open-default-shell)
+           ("C-c RET" . my-proj/shell)
            ("C-x C-b" . ibuffer)
            ("C-M-n" . forward-paragraph)
            ("C-M-p" . backward-paragraph)
