@@ -174,4 +174,4 @@ for one."
           (my-proj/eshell "Eshell")
           (my-proj/shell "Shell"))))
 
-(provides '30-project)
+(provide '30-project)
