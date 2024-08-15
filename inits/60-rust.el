@@ -5,7 +5,7 @@
 
 (use-package rustic
   :straight t
-  :after (flycheck eglot)
+  ;; :after (flycheck eglot)
   :mode
   ("\\.rs\\'" . rustic-mode)
   ;; :preface
@@ -32,14 +32,13 @@
   ;; (rustic-mode . my/rustic-mode-hook-fn)
   (rustic-before-save . my/before-save-fn) ;; use lsp format
 
+  :custom
+  (rustic-lsp-server 'rust-analyzer)
+  (rustic-lsp-client 'eglot)
+  (rustic-format-on-save nil)    ;; slow on windows
+  (lsp-rust-rls-server-command 'rust-analyzer)
   :config
   (push 'rustic-clippy flycheck-checkers)
-  (setq rustic-lsp-server 'rust-analyzer
-        rustic-lsp-client 'eglot
-        rustic-format-on-save nil ;; slow on windows
-        lsp-rust-rls-server-command 'rust-analyzer
-        ;; rustic-lsp-setup-p nil
-        )
   ;; prevents lsp-mode prompt
   (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
