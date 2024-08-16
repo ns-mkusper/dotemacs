@@ -8,6 +8,15 @@
         (replace-match (format "%d. " line-num) t t)
         (setq line-num (1+ line-num))))))
 
+(defun my/close-all-org-buffers ()
+  "Close all org-mode buffers."
+  (interactive)
+  (let ((buffers (buffer-list)))
+    (dolist (buffer buffers)
+      (with-current-buffer buffer
+        (when (eq major-mode 'org-mode)
+          (kill-buffer))))))
+
 (defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
   "Generates TODO org-mode agenda items for a number of weeks.
     (my-generate-weekly-todos (current-time) 82 10 \"reach weight (kg)\" '- 1.6)
