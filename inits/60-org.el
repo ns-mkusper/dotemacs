@@ -68,6 +68,7 @@ Comments:
   (setq org-fold-core-style 'text-properties)
   (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
   (setq org-src-tab-acts-natively t)
+  (setq org-clock-sound "~/drive/ding.wav") ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
 
   ;; M-Ret can split lines on items and tables but not headlines and not on anything else (unconfigured)
   (setq org-M-RET-may-split-line '((headline) (item . t) (table . t) (default)))
