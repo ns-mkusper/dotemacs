@@ -4,7 +4,7 @@
 (if (display-graphic-p)
     (funcall
      (lambda()
-       (setq my-ppi (floor (my-get-ppi)))
+       (setq my-ppi (floor (my/get-ppi)))
 
        (setq my-font-face "Fira Code")
        (setq my-font-height 110)

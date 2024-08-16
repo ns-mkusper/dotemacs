@@ -84,7 +84,7 @@ Usage:
     (unless (member epath load-path)
       (setq load-path (cons epath load-path)))))
 ;; modeline fix
-(defun my-active-modes ()
+(defun my/active-modes ()
   "Give a message of which minor modes are enabled in the current buffer."
   (interactive)
   (let ((active-modes))
@@ -95,19 +95,19 @@ Usage:
           minor-mode-list)
     (message "Active modes are %s" active-modes)))
 ;; eval-last-sexp if no region selected, eval-region if selected
-(defun my-eval ()
+(defun my/eval ()
   (interactive)
   (if (region-active-p)
       (eval-region (region-beginning) (region-end) t)
     (call-interactively #'eval-last-sexp)))
 
-(defun my-switch-to-minibuffer-window ()
+(defun my/switch-to-minibuffer-window ()
   "Switch to the minibuffer window (if active)."
   (interactive)
   (when (active-minibuffer-window)
     (select-window (active-minibuffer-window))))
 
-(defun my-revert-buffer-no-confirm ()
+(defun my/revert-buffer-no-confirm ()
   "Revert the current buffer without confirmation."
   (interactive)
   (if (not (buffer-modified-p))
@@ -115,7 +115,7 @@ Usage:
     (when (yes-or-no-p "The contents of this buffer have been modified.  Really revert? ")
       (revert-buffer :ignore-auto :noconfirm))))
 
-(defun my-open-scratch-buffer ()
+(defun my/open-scratch-buffer ()
   "Open the scratch buffer, (re)creating it if not present."
   (interactive)
   (if (get-buffer "*scratch*")
@@ -124,7 +124,7 @@ Usage:
       (switch-to-buffer (get-buffer-create "*scratch*"))
       (lisp-interaction-mode))))
 
-(defun my-open-text-buffer ()
+(defun my/open-text-buffer ()
   "Open the *text*  buffer, (re)creating it if not present."
   (interactive)
   (if (get-buffer "*text*")
@@ -133,7 +133,7 @@ Usage:
       (switch-to-buffer (get-buffer-create "*text*"))
       (fundamental-mode))))
 
-(defun my-open-canvas-buffer ()
+(defun my/open-canvas-buffer ()
   "Open the *canvas*  (doodling) buffer, (re)creating it if not present."
   ;; TODO: merge these my-open... functions into one?
   (interactive)
@@ -143,14 +143,14 @@ Usage:
       (switch-to-buffer (get-buffer-create "*canvas*"))
       (canvas-mode))))
 
-(defun my-forward-down-list ()
+(defun my/forward-down-list ()
   "Jumps to the end delimeter of the actibe block."
   (interactive)
   (backward-up-list)
   (forward-sexp)
   )
 
-(defun my-stop-debugging-mode ()
+(defun my/stop-debugging-mode ()
   (interactive)
   (dap-delete-all-sessions)
   (dap-mode 0)
@@ -159,7 +159,7 @@ Usage:
   (delete-other-windows) ;; hide all the dap UI. I might want to delete the buffers as well.
   )
 
-(defun my-get-ppi ()
+(defun my/get-ppi ()
   "Get display PPI.  Do not run this function in non-graphic mode."
   (setq my-disp-attrs (car (display-monitor-attributes-list)))
 
