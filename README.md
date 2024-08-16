@@ -13,7 +13,7 @@
    - `rsync -av --delete ~/git/dotemacs/inits/ ~/.emacs.d/inits/`
    - `rsync -av ~/git/dotemacs/*.el ~/.emacs.d/`
 4. `mkdir ~/.emacs.d/data`
-5. `rustup component add rust-analyzer rust-src rls clippy`
+5. `rustup component add rust-analyzer rust-src rls clippy rustc`
 6. `brew install --cask font-fira-code font-gnu-unifont`
    - M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 7. `pip install 'python-lsp-server[all]'`
@@ -50,7 +50,7 @@ sudo mv terraform-ls /usr/local/bin/
    - `scoop install firacode unifont`
 6. M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 7. `scoop install rust rustup`
-8. `rustup component add rust-analyzer rust-src rls clippy`
+8. `rustup component add rust-analyzer rust-src rls clippy rustc`
 9. `mkdir ~/.emac-d/data`
 10. `pip install 'python-lsp-server[all]'`
 11. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
