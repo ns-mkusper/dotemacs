@@ -140,12 +140,10 @@ Comments:
                                    (search . " %i %-12:c"))))
 
 (use-package toc-org
-  :straight t
   :commands toc-org-enable
   )
 
 (use-package org-super-agenda
-  :straight t
   :after org
   :config
   (setq org-super-agenda-header-map nil) ;; takes over 'j'
@@ -156,7 +154,6 @@ Comments:
   (org-super-agenda-mode))
 
 (use-package org-superstar
-  :straight t
   :config
   (setq org-superstar-leading-bullet " ")
   (setq org-superstar-special-todo-items t) ;; Makes TODO header bullets into boxes
@@ -174,7 +171,6 @@ Comments:
 (setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 
 ;; (use-package org-gcal
-;;   :straight t
 ;;   :defer t
 ;;   :config
 ;;   (setq org-gcal-down-days '20					;; Only fetch events 20 days into the future
@@ -185,7 +181,6 @@ Comments:
 ;;   )
 
 (use-package org-appear
-  :straight t
   :commands (org-appear-mode)
   :init
   (setq org-hide-emphasis-markers t		;; A default setting that needs to be t for org-appear
@@ -194,7 +189,6 @@ Comments:
         org-appear-autosubmarkers t))	;; Enable on subscript and superscript
 
 (use-package ox-reveal
-  :straight t
   :defer 5)
 
 (setq org-modules '(org-habit))
@@ -204,7 +198,6 @@ Comments:
 
 (use-package org-fancy-priorities
   :after (org all-the-icons)
-  :straight t
   :hook (org-mode        . org-fancy-priorities-mode)
   :hook (org-agenda-mode . org-fancy-priorities-mode)
   :config
@@ -223,7 +216,6 @@ Comments:
 
 
 (use-package org-download
-  :straight t)
 
 (use-package org-roam
   :straight (:build t)
@@ -245,7 +237,6 @@ Comments:
          ("C-c n j" . org-roam-dailies-capture-today)))
 
 (use-package org-roam-ui
-  :straight t
   :after org-roam ;; or :after org
   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
   ;;         a hookable mode anymore, you're advised to pick something yourself
@@ -257,5 +248,21 @@ Comments:
   (org-roam-ui-update-on-save t)
   (org-roam-ui-open-on-start t))
 
+(use-package org-roam-ui
+  :after org-roam ;; or :after org
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t)
+  (org-roam-ui-open-on-start t))
+
+(use-package org-pomodoro
+  :commands (org-pomodoro)
+  :config
+    (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
 
 (provide '60-org)
