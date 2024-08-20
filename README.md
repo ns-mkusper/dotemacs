@@ -33,6 +33,7 @@ sudo mv terraform-ls /usr/local/bin/
 16. Setup `.env` file
 17. Install [Chrome Emacs extension](https://chromewebstore.google.com/detail/chrome-emacs/dabdpcafiblbndpoadckibiaojbdnpjg)
 18. Install [emacs-lsp-booster](https://github.com/blahgeek/emacs-lsp-booster)
+19. Install tree-sitter grammars with M-x `tree-sitter-langs-install-grammars`
 
 
 
@@ -68,3 +69,4 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 19. Setup `.env` file
 20. Install [Chrome Emacs extension](https://chromewebstore.google.com/detail/chrome-emacs/dabdpcafiblbndpoadckibiaojbdnpjg)
 21. Install [emacs-lsp-booster](https://github.com/blahgeek/emacs-lsp-booster)
+22. Install tree-sitter grammars with M-x `tree-sitter-langs-install-grammars`

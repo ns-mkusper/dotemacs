@@ -137,7 +137,20 @@ Comments:
   (setq org-agenda-prefix-format '((agenda . " %i %-1:i%?-2t% s")
                                    (todo . "  ")
                                    (tags . " %i %-12:c")
-                                   (search . " %i %-12:c"))))
+                                   (search . " %i %-12:c")))
+
+  ;; CAPTURE TEMPLATES
+  ;; (add-to-list 'org-capture-templates
+  ;;              ;; TODO: fix to add habit capture template and others
+  ;;              ;; see: https://www.reddit.com/r/emacs/comments/7zqc7b/comment/duwpow3/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  ;;              '("h" "Habit" entry (file+headline "~/drive/org/agenda/habits.org" "Habits")
+  ;;          "* TODO %^{Habit}
+  ;;         SCHEDULED: %(format-time-string \"%Y-%m-%d\" (org-read-date nil t))
+  ;;         :PROPERTIES:
+  ;;         :STYLE: habit
+  ;;         :END:")
+  ;;              )
+  )
 
 (use-package toc-org
   :commands toc-org-enable
@@ -217,52 +230,52 @@ Comments:
 
 (use-package org-download
 
-(use-package org-roam
-  :straight (:build t)
-  :defer t
-  :custom
-  (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
-  ;; intentionally not shared in remote (shared) drive
-  ;; see: https://org-roam.discourse.group/t/org-roam-db-across-multiple-machines/332
-  (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
-  (org-roam-completion-everywhere t)
-  (org-roam-v2-ack t)
-  (org-roam-db-autosync-mode 1)
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today)))
+  (use-package org-roam
+    :straight (:build t)
+    :defer t
+    :custom
+    (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
+    ;; intentionally not shared in remote (shared) drive
+    ;; see: https://org-roam.discourse.group/t/org-roam-db-across-multiple-machines/332
+    (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
+    (org-roam-completion-everywhere t)
+    (org-roam-v2-ack t)
+    (org-roam-db-autosync-mode 1)
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today)))
 
-(use-package org-roam-ui
-  :after org-roam ;; or :after org
-  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-  ;;         a hookable mode anymore, you're advised to pick something yourself
-  ;;         if you don't care about startup time, use
-  ;;  :hook (after-init . org-roam-ui-mode)
-  :custom
-  (org-roam-ui-sync-theme t)
-  (org-roam-ui-follow t)
-  (org-roam-ui-update-on-save t)
-  (org-roam-ui-open-on-start t))
+  (use-package org-roam-ui
+    :after org-roam ;; or :after org
+    ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+    ;;         a hookable mode anymore, you're advised to pick something yourself
+    ;;         if you don't care about startup time, use
+    ;;  :hook (after-init . org-roam-ui-mode)
+    :custom
+    (org-roam-ui-sync-theme t)
+    (org-roam-ui-follow t)
+    (org-roam-ui-update-on-save t)
+    (org-roam-ui-open-on-start t))
 
-(use-package org-roam-ui
-  :after org-roam ;; or :after org
-  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-  ;;         a hookable mode anymore, you're advised to pick something yourself
-  ;;         if you don't care about startup time, use
-  ;;  :hook (after-init . org-roam-ui-mode)
-  :custom
-  (org-roam-ui-sync-theme t)
-  (org-roam-ui-follow t)
-  (org-roam-ui-update-on-save t)
-  (org-roam-ui-open-on-start t))
+  (use-package org-roam-ui
+    :after org-roam ;; or :after org
+    ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+    ;;         a hookable mode anymore, you're advised to pick something yourself
+    ;;         if you don't care about startup time, use
+    ;;  :hook (after-init . org-roam-ui-mode)
+    :custom
+    (org-roam-ui-sync-theme t)
+    (org-roam-ui-follow t)
+    (org-roam-ui-update-on-save t)
+    (org-roam-ui-open-on-start t))
 
-(use-package org-pomodoro
-  :commands (org-pomodoro)
-  :config
+  (use-package org-pomodoro
+    :commands (org-pomodoro)
+    :config
     (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
 
-(provide '60-org)
+  (provide '60-org)

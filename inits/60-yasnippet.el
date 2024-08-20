@@ -12,7 +12,7 @@
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   :hook (prog-mode . yas-minor-mode)
   :config
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (setq yas-snippet-dirs '("~/drive/emacs/snippets"))
   (yas-initialize)
   (yas-reload-all)
   )
