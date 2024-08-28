@@ -1,6 +1,5 @@
 (use-package tree-sitter
   :if (executable-find "tree-sitter")
-  :straight t
   :config
   (global-tree-sitter-mode)
   :straight t
@@ -32,8 +31,12 @@
           (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
 
 (use-package tree-sitter-langs
-  :straight t
   :after tree-sitter
   :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode terraform-mode toml-mode) . tree-sitter-hl-mode))
+
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+
 
 (provide '60-tree-sitter)

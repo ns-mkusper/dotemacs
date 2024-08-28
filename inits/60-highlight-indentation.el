@@ -38,7 +38,9 @@ These faces rely on Modus themes' custom color variables."
   :hook
   (prog-mode . highlight-indent-guides-mode) ;; automatically start mode
   (yaml-mode . highlight-indent-guides-mode)
+  (yaml-ts-mode . highlight-indent-guides-mode)
   (json-mode . highlight-indent-guides-mode)
+  (json-ts-mode . highlight-indent-guides-mode)
   :custom
   ;; Only highlight the first character of each indent level instead of the
   ;; entire column. This works better with minimap-mode.
