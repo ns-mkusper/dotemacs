@@ -20,7 +20,7 @@
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
   :config
-  (setq poetry-tracking-strategy 'projectile)
+  (setq poetry-tracking-strategy 'project)
   (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
 (use-package with-venv
