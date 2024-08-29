@@ -213,6 +213,7 @@ Usage:
    "/opt/homebrew/bin/:"
    "/usr/local/opt/texinfo/bin/:"
    (concat (getenv "HOME") "/bin/:")
+   ;; TODO: use more intelligent way to find nvm dir (with version)
    (concat (getenv "HOME") "/.nvm/versions/node/v18.17.1/bin/:")
    (concat (getenv "HOME") "/.pyenv/shims/:")
    (concat (getenv "HOME") "/go/bin:")
