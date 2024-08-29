@@ -213,6 +213,8 @@ Usage:
    "/opt/homebrew/bin/:"
    "/usr/local/opt/texinfo/bin/:"
    (concat (getenv "HOME") "/bin/:")
+   (concat (getenv "HOME") "/.nvm/versions/node/v18.17.1/bin/:")
+   (concat (getenv "HOME") "/.pyenv/shims/:")
    (concat (getenv "HOME") "/go/bin:")
    (concat (getenv "HOME") "/.local/bin:")
    (concat (getenv "HOME") "/.cargo/bin:")
