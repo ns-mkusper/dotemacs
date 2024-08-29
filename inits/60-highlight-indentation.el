@@ -39,6 +39,7 @@ These faces rely on Modus themes' custom color variables."
   (prog-mode . highlight-indent-guides-mode) ;; automatically start mode
   (yaml-mode . highlight-indent-guides-mode)
   (yaml-ts-mode . highlight-indent-guides-mode)
+  (cfn-mode . highlight-indent-guides-mode)
   (json-mode . highlight-indent-guides-mode)
   (json-ts-mode . highlight-indent-guides-mode)
   :custom
