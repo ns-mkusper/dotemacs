@@ -68,89 +68,89 @@ Comments:
   (setq org-fold-core-style 'text-properties)
   (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
   (setq org-src-tab-acts-natively t)
-  (setq org-clock-sound "~/drive/ding.wav") ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
+  (setq org-clock-sound (expand-file-name "drive/ding.wav" (getenv "HOME")))) ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
 
-  ;; M-Ret can split lines on items and tables but not headlines and not on anything else (unconfigured)
-  (setq org-M-RET-may-split-line '((headline) (item . t) (table . t) (default)))
-  (setq org-loop-over-headlines-in-active-region nil)
+;; M-Ret can split lines on items and tables but not headlines and not on anything else (unconfigured)
+(setq org-M-RET-may-split-line '((headline) (item . t) (table . t) (default)))
+(setq org-loop-over-headlines-in-active-region nil)
 
-  ;; Opens links to other org file in same frame (rather than splitting)
-  (setq org-link-frame-setup '((file . find-file)))
+;; Opens links to other org file in same frame (rather than splitting)
+(setq org-link-frame-setup '((file . find-file)))
 
-  (setq org-log-done t
-        org-log-into-drawer t)
+(setq org-log-done t
+      org-log-into-drawer t)
 
-  (setq org-tags-column 1)
+(setq org-tags-column 1)
 
-  (setq org-todo-keywords '((type
-                             "TODO(t)" "WAITING(w)" "INPROG-TODO(i)" "HW(h)"
-                             "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
-                             "|" "DONE(d)" "CANCELLED(C)")))
-  (setq org-lowest-priority ?F)  ;; Gives us priorities A through F
-  (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
+(setq org-todo-keywords '((type
+                           "TODO(t)" "WAITING(w)" "INPROG-TODO(i)" "HW(h)"
+                           "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
+                           "|" "DONE(d)" "CANCELLED(C)")))
+(setq org-lowest-priority ?F)  ;; Gives us priorities A through F
+(setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
 
-  (setq org-priority-faces
-        '((65 nil :inherit fixed-pitch :foreground "red2" :weight medium)
-          (66 . "Gold1")
-          (67 . "Goldenrod2")
-          (68 . "PaleTurquoise3")
-          (69 . "DarkSlateGray4")
-          (70 . "PaleTurquoise4")))
+(setq org-priority-faces
+      '((65 nil :inherit fixed-pitch :foreground "red2" :weight medium)
+        (66 . "Gold1")
+        (67 . "Goldenrod2")
+        (68 . "PaleTurquoise3")
+        (69 . "DarkSlateGray4")
+        (70 . "PaleTurquoise4")))
 
-  (setq org-habit-preceding-days 66
-        org-habit-following-days 0
-        org-habit-show-habits-only-for-today nil
-        org-habit-today-glyph ?📅;;‖
-        org-habit-completed-glyph ?✓
-        org-habit-graph-column 40)
+(setq org-habit-preceding-days 66
+      org-habit-following-days 0
+      org-habit-show-habits-only-for-today nil
+      org-habit-today-glyph ?📅;;‖
+      org-habit-completed-glyph ?✓
+      org-habit-graph-column 40)
 
-  ;; Uses custom time stamps
-  (setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
+;; Uses custom time stamps
+(setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
 
-  ;; Weekly view in agenda is pretty silly imo
-  (setq org-agenda-span 10
-        org-agenda-start-on-weekday nil
-        org-agenda-start-day "-3d")
+;; Weekly view in agenda is pretty silly imo
+(setq org-agenda-span 10
+      org-agenda-start-on-weekday nil
+      org-agenda-start-day "-3d")
 
 
-  (setq org-agenda-restore-windows-after-quit t)
+(setq org-agenda-restore-windows-after-quit t)
 
-  ;; Only show upcoming deadlines for tomorrow or the day after tomorrow. By default it shows
-  ;; 14 days into the future, which seems excessive.
-  (setq org-deadline-warning-days 7)
-  ;; If something is done, don't show its deadline
-  (setq org-agenda-skip-deadline-if-done t)
-  ;; If something is done, don't show when it's scheduled for
-  (setq org-agenda-skip-scheduled-if-done t)
-  ;; If something is scheduled, don't tell me it is due soon
-  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+;; Only show upcoming deadlines for tomorrow or the day after tomorrow. By default it shows
+;; 14 days into the future, which seems excessive.
+(setq org-deadline-warning-days 7)
+;; If something is done, don't show its deadline
+(setq org-agenda-skip-deadline-if-done t)
+;; If something is done, don't show when it's scheduled for
+(setq org-agenda-skip-scheduled-if-done t)
+;; If something is scheduled, don't tell me it is due soon
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
 
-  (setq org-agenda-timegrid-use-ampm 1
-        org-agenda-time-grid nil)
+(setq org-agenda-timegrid-use-ampm 1
+      org-agenda-time-grid nil)
 
-  (setq org-agenda-block-separator ?-)
-  (setq org-agenda-current-time-string "<----------------- Now")
+(setq org-agenda-block-separator ?-)
+(setq org-agenda-current-time-string "<----------------- Now")
 
-  (setq org-agenda-scheduled-leaders '("" "")
-        org-agenda-deadline-leaders '("Due:" "Due in %1d day: " "Due %1d d. ago: "))
+(setq org-agenda-scheduled-leaders '("" "")
+      org-agenda-deadline-leaders '("Due:" "Due in %1d day: " "Due %1d d. ago: "))
 
-  (setq org-agenda-prefix-format '((agenda . " %i %-1:i%?-2t% s")
-                                   (todo . "  ")
-                                   (tags . " %i %-12:c")
-                                   (search . " %i %-12:c")))
+(setq org-agenda-prefix-format '((agenda . " %i %-1:i%?-2t% s")
+                                 (todo . "  ")
+                                 (tags . " %i %-12:c")
+                                 (search . " %i %-12:c")))
 
-  ;; CAPTURE TEMPLATES
-  ;; (add-to-list 'org-capture-templates
-  ;;              ;; TODO: fix to add habit capture template and others
-  ;;              ;; see: https://www.reddit.com/r/emacs/comments/7zqc7b/comment/duwpow3/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-  ;;              '("h" "Habit" entry (file+headline "~/drive/org/agenda/habits.org" "Habits")
-  ;;          "* TODO %^{Habit}
-  ;;         SCHEDULED: %(format-time-string \"%Y-%m-%d\" (org-read-date nil t))
-  ;;         :PROPERTIES:
-  ;;         :STYLE: habit
-  ;;         :END:")
-  ;;              )
-  )
+;; CAPTURE TEMPLATES
+;; (add-to-list 'org-capture-templates
+;;              ;; TODO: fix to add habit capture template and others
+;;              ;; see: https://www.reddit.com/r/emacs/comments/7zqc7b/comment/duwpow3/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+;;              '("h" "Habit" entry (file+headline "~/drive/org/agenda/habits.org" "Habits")
+;;          "* TODO %^{Habit}
+;;         SCHEDULED: %(format-time-string \"%Y-%m-%d\" (org-read-date nil t))
+;;         :PROPERTIES:
+;;         :STYLE: habit
+;;         :END:")
+;;              )
+)
 
 (use-package toc-org
   :commands toc-org-enable

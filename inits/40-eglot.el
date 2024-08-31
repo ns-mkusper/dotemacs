@@ -25,7 +25,8 @@
   (setq eldoc-echo-area-use-multiline-p t)
   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-  (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
+  (add-to-list 'eglot-server-programs '(toml-mode . ("taplo" "lsp")))
+  (add-to-list 'eglot-server-programs '(toml-ts-mode . ("taplo" "lsp")))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs '(python-ts-mode . ("pyright-langserver" "--stdio"))) ;; TODO: figure out how to setup tree-sitter-modes properly with eglot
   )
