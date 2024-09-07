@@ -28,7 +28,7 @@ sudo mv terraform-ls /usr/local/bin/
 ```
 12. Install shfmt: `brew install shfmt`
 13. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
-14. `cargo install cargo-makedocs taplo-cli --features taplo-cli/lsp`
+14. `cargo install cargo-makedocs taplo-cli git-cliff cargo-dist`
 15. `GOBIN=/usr/local/bin/ go install 'github.com/reugn/gemini-cli/cmd/gemini@latest'`
 16. Setup `.env` file
 17. Install [Chrome Emacs extension](https://chromewebstore.google.com/detail/chrome-emacs/dabdpcafiblbndpoadckibiaojbdnpjg)
@@ -63,7 +63,7 @@ unzip terraform-ls_0.30.1_darwin_arm64.zip C:\bin\
 ```
 14. Install shfmt: `scoop install shfmt`
 15. Install Google Noto fonts (https://github.com/notofonts/noto-fonts) (emoji, sans, serif)
-16. `cargo install cargo-makedocs taplo-cli --features taplo-cli/lsp`
+16. `cargo install cargo-makedocs taplo-cli git-cliff cargo-dist`
 17. Setup [fakecygpty](https://github.com/d5884/fakecygpty) for handling POSIX signals on windows
 18. `GOBIN=/usr/local/bin/ go install 'github.com/reugn/gemini-cli/cmd/gemini@latest`
 19. Setup `.env` file
