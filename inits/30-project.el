@@ -131,17 +131,13 @@ for one."
            (eshell-buffer-name (project-prefixed-buffer-name "eshell")))
       (eshell arg)))
 
-
   (defun my-proj/shell ()
     "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
     (interactive)
     ;; Dynamic variables
     (defvar shell-buffer-name)
     (let* ((default-directory (project-root (project-current 'maybe-prompt)))
-           ;; TODO: Avoid project.el prompt when opening a shell outside a code project
-           (shell-buffer-name   (if (not (project-current))
-                                    (format "*%s-shell*" (buffer-file-name))
-                                  (project-prefixed-buffer-name "shell")))
+           (shell-buffer-name (project-prefixed-buffer-name "shell"))
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
            (current-buffer-directory (file-name-directory (buffer-file-name))))
       (if-let (shell-buffer (get-buffer shell-buffer-name))
