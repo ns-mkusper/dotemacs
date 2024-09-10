@@ -68,7 +68,30 @@ Comments:
   (setq org-fold-core-style 'text-properties)
   (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
   (setq org-src-tab-acts-natively t)
-  (setq org-clock-sound (expand-file-name "drive/ding.wav" (getenv "HOME")))) ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
+  (setq org-clock-sound (expand-file-name "drive/ding.wav" (getenv "HOME"))) ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
+  ;; Save clock data and state changes and notes in the LOGBOOK drawer
+  (setq org-clock-into-drawer t)
+  ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+  ;; with 0:00 duration
+  (setq org-clock-out-remove-zero-time-clocks t)
+  ;; Clock out when moving task to a done state
+  (setq org-clock-out-when-done t)
+  ;; Enable auto clock resolution for finding open clocks
+  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+  ;; Include current clocking task in clock reports
+  (setq org-clock-report-include-clocking-task t)
+  ;; use pretty things for the clocktable
+  (setq org-pretty-entities t)
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate)
+  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+  (setq org-clock-persist t)
+  ;; Resume clocking task on clock-in if the clock is open
+  (setq org-clock-in-resume t)
+  ;; Do not prompt to resume an active clock, just resume it
+  (setq org-clock-persist-query-resume nil)
+  
+  )
 
 ;; M-Ret can split lines on items and tables but not headlines and not on anything else (unconfigured)
 (setq org-M-RET-may-split-line '((headline) (item . t) (table . t) (default)))
