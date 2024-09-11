@@ -4,7 +4,7 @@
   (global-tree-sitter-mode)
   :straight t
   :init
-    (setq treesit-language-source-alist
+  (setq treesit-language-source-alist
         '((astro "https://github.com/virchau13/tree-sitter-astro")
           (bash "https://github.com/tree-sitter/tree-sitter-bash")
           (c "https://github.com/tree-sitter/tree-sitter-c")
