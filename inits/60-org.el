@@ -173,7 +173,7 @@ Comments:
 ;;         :STYLE: habit
 ;;         :END:")
 ;;              )
-)
+;; )
 
 (use-package toc-org
   :commands toc-org-enable
