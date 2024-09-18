@@ -10,7 +10,7 @@
   :init
   (autoload #'tramp-register-crypt-file-name-handler "tramp-crypt")
   :config
-
+  (setq explicit-shell-file-name "/bin/bash")
   ;; Avoid “ControlPath too long” with Tramp on OSX
   (when (file-directory-p "/tmp/")
     (put 'temporary-file-directory 'standard-value (list "/tmp/")))
