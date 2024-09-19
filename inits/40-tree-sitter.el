@@ -35,8 +35,10 @@
   :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode terraform-mode toml-mode) . tree-sitter-hl-mode))
 
 (use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
   :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
-
 
 (provide '60-tree-sitter)

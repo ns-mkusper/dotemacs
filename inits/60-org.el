@@ -45,6 +45,8 @@ Comments:
   (flyspell-mode)
   )
 
+(use-package ox-slack)
+
 (use-package org
   :pin gnu
   :hook
