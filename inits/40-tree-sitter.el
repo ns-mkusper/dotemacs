@@ -38,7 +38,9 @@
   :custom
   (treesit-auto-install 'prompt)
   :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
+  ;; yaml intentionally excluded due to indent limitations
+  ;; see: https://www.reddit.com/r/emacs/comments/17gtxmr/indentation_in_yamltsmode/
+  (treesit-auto-add-to-auto-mode-alist '(rust go toml python elisp csharp c cmake typescript r html js css cpp bash astro))
   (global-treesit-auto-mode))
 
 (provide '60-tree-sitter)
