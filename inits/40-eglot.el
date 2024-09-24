@@ -3,6 +3,7 @@
   :init
   (fset #'jsonrpc--log-event #'ignore) ;; performance boost
   :straight t
+  :hook (prog-mode . eglot-ensue)
   :bind (:map eglot-mode-map
               ("C-c h" . eldoc-doc-buffer)
               ("C-c l t" . eglot-find-typeDefinition)
@@ -20,7 +21,7 @@
   (setq read-process-output-max (* 1024 1024))
   ;; (push :documentHighlightProvider eglot-ignored-server-capabilities)
   ;; Enable LSP support by default in programming buffers
-  (add-hook 'prog-mode-hook #'eglot-ensure)
+  ;; (add-hook 'prog-mode-hook #'eglot-ensure)
 
   (setq eldoc-echo-area-use-multiline-p t)
   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
