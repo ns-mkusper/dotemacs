@@ -17,14 +17,15 @@
         ;; (company-yasnippet-or-completion)
         (indent-for-tab-command nil))))
 
-(use-package copilot-chat
-  :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
-  :after (request shell-maker)
-  :custom
-  (copilot-chat-frontend 'shell-maker)
-  :config
-  (require 'copilot-chat-shell-maker)
-  (push '(shell-maker . copilot-chat-shell-maker-init) copilot-chat-frontend-list)
-  (copilot-chat-shell-maker-init))
+;; disabled for being buggy
+;; (use-package copilot-chat
+;;   :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
+;;   :after (request shell-maker)
+;;   :custom
+;;   (copilot-chat-frontend 'shell-maker)
+;;   :config
+;;   (require 'copilot-chat-shell-maker)
+;;   (push '(shell-maker . copilot-chat-shell-maker-init) copilot-chat-frontend-list)
+;;   (copilot-chat-shell-maker-init))
 
 (provide '60-copilot)
