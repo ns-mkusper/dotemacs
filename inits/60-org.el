@@ -125,7 +125,7 @@ Comments:
 (setq org-habit-preceding-days 66
       org-habit-following-days 1
       org-habit-show-habits-only-for-today nil
-      org-habit-today-glyph ?○
+      org-habit-today-glyph ?⨯
       org-habit-completed-glyph ?✓
       org-habit-graph-column 40)
 
