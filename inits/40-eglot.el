@@ -3,7 +3,7 @@
   :init
   (fset #'jsonrpc--log-event #'ignore) ;; performance boost
   :straight t
-  :hook (prog-mode . eglot)
+  :hook (prog-mode . eglot-ensure)
   :bind (:map eglot-mode-map
               ("C-c h" . eldoc-doc-buffer)
               ("C-c l t" . eglot-find-typeDefinition)
