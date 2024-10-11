@@ -20,7 +20,10 @@
    gptel-model "claude-3-sonnet-20240229" ;  "claude-3-opus-20240229" also available
    gptel-backend (gptel-make-anthropic "Claude"
                    :stream t :key (my/gptel-api-key "api.claude.com")))
-
+  (setq
+   gptel-model "gemini-pro"
+   gptel-backend (gptel-make-gemini "Gemini"
+                   :stream t :key (my/gptel-api-key "generativelanguage.googleapis.com")))
   )
 
 ;; allows code generation from gpt
