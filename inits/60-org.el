@@ -300,6 +300,8 @@ Comments:
 (use-package org-pomodoro
   :commands (org-pomodoro)
   :config
-  (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
+  (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil))))
+  :bind (("C-c C-u" . org-pomodoro))
+  )
 
 (provide '60-org)
