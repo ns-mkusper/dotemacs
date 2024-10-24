@@ -27,7 +27,11 @@
 
 (use-package python-black)
 
-(use-package python-isort)
+(use-package python-isort
+  :hook
+  (python-mode . python-isort-on-save-mode)
+  (python-ts-mode . python-isort-on-save-mode)
+  )
 
 (use-package ruff-format
   :hook
