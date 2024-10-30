@@ -2,6 +2,7 @@
 (bind-keys ([f6] . visual-line-mode)
            ([f7] . display-line-numbers-mode)
            ([f10] . menu-bar-mode)
+           ([f2] . breadcrumb-mode)
            ("C-c m" . my/switch-to-minibuffer-window)
            ;; ("C-c r" . my/revert-buffer-no-confirm)
            ("C-c s" . my/open-scratch-buffer)
