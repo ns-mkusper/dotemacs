@@ -65,6 +65,15 @@
   ;;(setq tramp-default-method "ssh")
   ;;(tramp-change-syntax 'simplified)
   ;; (setq tramp-verbose 6)
+
+  ;; constant probing for VC files can slow tramp down. disabling is a significant speed-up
+  (defun my-project-no-remote (orig dir)
+    "Advice to avoid waking up tramp connections when probing for VC roots"
+    (unless (file-remote-p dir)
+      (funcall orig dir)))
+
+  (advice-add 'project-try-vc :around #'my-project-no-remote)
+
   )
 
 (use-package tramp-sh
