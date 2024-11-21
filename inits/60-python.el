@@ -25,19 +25,41 @@
 
 (use-package python-pytest)
 
-(use-package python-black)
-
 (use-package python-isort
   :hook
   (python-mode . python-isort-on-save-mode)
   (python-ts-mode . python-isort-on-save-mode)
   )
 
+(use-package python-black)
+
 (use-package ruff-format
-  :hook
-  (python-mode . ruff-format-on-save-mode)
-  (python-ts-mode . ruff-format-on-save-mode)
+  ;; :hook
+  ;; (python-mode . ruff-format-on-save-mode)
+  ;; (python-ts-mode . ruff-format-on-save-mode)
   )
+
+;; Pick the appropriate formatter
+(defun my/python-choose-formatter ()
+  "Select between Ruff or Black format-on-save modes based on pyproject.toml."
+  (let* ((project-root (locate-dominating-file default-directory "pyproject.toml"))
+         (pyproject-file (when project-root
+                           (expand-file-name "pyproject.toml" project-root))))
+    (when pyproject-file
+      (with-temp-buffer
+        (insert-file-contents pyproject-file)
+        (cond
+         ((re-search-forward "\\[tool.ruff" nil t)
+          (ruff-format-on-save-mode 1)
+          (message "Ruff format-on-save activated."))
+         ((re-search-forward "\\[tool.black" nil t)
+          (python-black-on-save-mode 1)
+          (message "Black format-on-save activated."))
+         (t
+          (message "No formatter configured in pyproject.toml.")))))))
+
+(add-hook 'python-mode-hook #'my/python-choose-formatter)
+
 
 ;; Virtual Environment Management
 (use-package pet
