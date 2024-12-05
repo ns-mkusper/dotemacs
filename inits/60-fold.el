@@ -1,20 +1,20 @@
 ;; Code Folding
-(use-package ts-fold-indicators
-  :straight (ts-fold-indicators :type git :host github :repo "emacs-tree-sitter/ts-fold"))
+(use-package treesit-fold-indicators
+  :straight (treesit-fold-indicators :type git :host github :repo "emacs-tree-sitter/treesit-fold"))
 
-(use-package ts-fold
-  :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
+(use-package treesit-fold
+  :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
   :config
   ;; TODO: Figure out why this causes company to be insanely slow
-  ;; (add-hook 'tree-sitter-after-on-hook #'ts-fold-indicators-mode)
+  ;; (add-hook 'tree-sitter-after-on-hook #'treesit-fold-indicators-mode)
   (my/defkeymap
-   "my-ts-fold" "C-c f"
-   '("O" . ts-fold-open-all)
-   '("o" . ts-fold-open-recursively)
-   '("C" . ts-fold-close-all)
-   '("c" . ts-fold-close)
-   '("z" . ts-fold-toggle)
-   '("i" . ts-fold-indicators-mode)))
+   "my-treesit-fold" "C-c f"
+   '("O" . treesit-fold-open-all)
+   '("o" . treesit-fold-open-recursively)
+   '("C" . treesit-fold-close-all)
+   '("c" . treesit-fold-close)
+   '("z" . treesit-fold-toggle)
+   '("i" . treesit-fold-indicators-mode)))
 
 
 
