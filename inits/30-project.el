@@ -159,6 +159,12 @@ for one."
           (rename-buffer shell-buffer-name)))
       ))
   :config
+  (defun project-find-root (path)
+    "Search up the PATH for `project-root-markers'."
+    (when-let ((root (locate-dominating-file path #'project-root-p)))
+      (cons 'transient (expand-file-name root))))
+
+  (add-to-list 'project-find-functions #'project-find-root)
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
@@ -176,5 +182,8 @@ for one."
           (my-proj/vterm "Vterm")
           (my-proj/eshell "Eshell")
           (my-proj/shell "Shell"))))
+
+
+
 
 (provide '30-project)
