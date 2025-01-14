@@ -180,7 +180,7 @@ for one."
 
 
   :config
-  (add-to-list 'project-find-functions #'project-find-root)
+;;  (add-to-list 'project-find-functions #'project-find-root)
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
