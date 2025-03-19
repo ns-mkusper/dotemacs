@@ -23,11 +23,7 @@
   (setq poetry-tracking-strategy 'project)
   (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
-(use-package python-pytest
-  :hook
-  (python-mode . python-black-on-save-mode)
-  (python-ts-mode . python-black-on-save-mode)
-  )
+(use-package python-pytest)
 
 (use-package python-isort
   :hook
@@ -35,12 +31,16 @@
   (python-ts-mode . python-isort-on-save-mode)
   )
 
-(use-package python-black)
+(use-package python-black
+  ;; :hook
+  ;; (python-mode . python-black-on-save-mode)
+  ;; (python-ts-mode . python-black-on-save-mode)
+  )
 
 (use-package ruff-format
-  ;; :hook
-  ;; (python-mode . ruff-format-on-save-mode)
-  ;; (python-ts-mode . ruff-format-on-save-mode)
+  :hook
+  (python-mode . ruff-format-on-save-mode)
+  (python-ts-mode . ruff-format-on-save-mode)
   )
 
 ;; Virtual Environment Management
