@@ -31,11 +31,11 @@
 ;;   (python-ts-mode . python-isort-on-save-mode)
 ;;   )
 
-(use-package python-black
-  ;; :hook
-  ;; (python-mode . python-black-on-save-mode)
-  ;; (python-ts-mode . python-black-on-save-mode)
-  )
+;; (use-package python-black
+;;   ;; :hook
+;;   ;; (python-mode . python-black-on-save-mode)
+;;   ;; (python-ts-mode . python-black-on-save-mode)
+;;   )
 
 (use-package ruff-format
   :hook
