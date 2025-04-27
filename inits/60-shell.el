@@ -41,7 +41,9 @@
         (mingw64-bin-dir (funcall combine-path base-dir "ucrt64/bin"))
         (msys2-bin-dir (funcall combine-path base-dir "usr/bin"))
         ;; TODO: handle msys2_shell.bat loading (add functions to switch env's?)
-        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe")))
+        ;; (bash-path "/bin/bash") ;; TODO: make work with remote shell target shell
+        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe"))
+        )
    (add-to-list 'exec-path msys2-bin-dir)
    (add-to-list 'exec-path mingw64-bin-dir)
    (setq explicit-shell-file-name bash-path)
