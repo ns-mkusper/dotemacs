@@ -161,7 +161,7 @@ for one."
 
   ;; (defcustom project-root-markers
   ;;   '("Cargo.toml" "compile_commands.json" "compile_flags.txt"
-  ;;     "project.clj" ".git" "deps.edn" "shadow-cljs.edn")
+  ;;     "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml")
   ;;   "Files or directories that indicate the root of a project."
   ;;   :type '(repeat string)
   ;;   :group 'project)
@@ -180,7 +180,8 @@ for one."
 
 
   :config
-;;  (add-to-list 'project-find-functions #'project-find-root)
+  ;; (add-to-list 'project-find-functions #'project-find-root)
+  (setq project-vc-extra-root-markers     '("Cargo.toml" "compile_commands.json" "compile_flags.txt" "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml"))
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
