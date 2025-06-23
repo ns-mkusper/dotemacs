@@ -26,10 +26,16 @@
    company-tooltip-limit 20)
   :bind
   (:map company-active-map
-              ("C-n". company-select-next)
-              ("C-p". company-select-previous)
-              ("M-<". company-select-first)
-              ("M->". company-select-last)))
+        ("C-n". company-select-next)
+        ("C-p". company-select-previous)
+        ("M-<". company-select-first)
+        ("M->". company-select-last)))
+
+
+(use-package company-quickhelp
+  :ensure t
+  :config
+  (company-quickhelp-mode 1))
 
 ;; Ansible keywords completion for Emacs
 ;; https://github.com/krzysztof-magosa/company-ansible
