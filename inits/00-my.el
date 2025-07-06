@@ -17,30 +17,98 @@
         (when (eq major-mode 'org-mode)
           (kill-buffer))))))
 
-(defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg)
-  "Generates TODO org-mode agenda items for a number of weeks.
-    (my/generate-weekly-todos (current-time) 66 10 \"reach weight (kg)\" '- 0.6)
+(defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg-spec)
+  "Generates TODO org-mode agenda items for a number of weeks with a
+  mutating value. The mutation can be fixed per week or follow a linear decay.
 
+  fixed:
+
+  (my/generate-weekly-todos (current-time) 66 10 \"reach weight (kg)\" '- 0.6)
+
+
+  linear decay:
+
+  (my/generate-weekly-todos (current-time) 66 12 "reach weight (kg)" '- '(:linear-decay 1.0 0.5))
   Args:
     start-date: The date to start generating agendas from. (e.g., (date 2024 04 28))
-    start-value: value at current date
-    num-weeks: The number of weeks to generate agendas for.
+    start-value: The initial value at the start-date. This is the value
+                 displayed for the first week (week 0).
+    num-weeks: The total number of weeks to generate agendas for.
     message: The message for each agenda item.
-    mutator: The function used to mutate the value week-by-week.
-    mutator-arg: The argument to pass to the mutator function.
+    mutator: The function used to apply the weekly change (e.g., '+, '-).
+             This function will be applied to the 'start-value' and the
+             'cumulative change' up to the current week.
+    mutator-arg-spec: Specifies how the weekly mutation argument behaves:
+                      - A number (e.g., 0.6): The mutation argument is fixed for all weeks.
+                      - A list '(:linear-decay INITIAL-ARG FINAL-ARG): The mutation
+                        argument linearly decays from INITIAL-ARG (for week 0) to
+                        FINAL-ARG (for the last week) over the num-weeks period.
+                        Both INITIAL-ARG and FINAL-ARG should be numbers.
 
   Returns:
     A string containing the org-mode entries for the agenda items."
-  (let ((org-string "") (current-date start-date))
-    (dotimes (i num-weeks)
-      (let ((value (funcall mutator start-value (* mutator-arg i))))
+  (let ((org-string "")
+        (current-date start-date)
+        (current-target-value start-value) ; This will hold the target value for the current week
+        (initial-mutator-arg 0.0)
+        (final-mutator-arg 0.0)
+        (mutator-arg-type :fixed)
+        (fixed-mutator-arg 0.0))
 
+    ;; Parse mutator-arg-spec to determine the mutation type and arguments
+    (cond
+     ((numberp mutator-arg-spec)
+      ;; If a number is provided, it's a fixed mutation argument
+      (setq mutator-arg-type :fixed)
+      (setq fixed-mutator-arg (float mutator-arg-spec))) ; Ensure it's a float for calculations
+     ((and (listp mutator-arg-spec)
+           (eq (car mutator-arg-spec) :linear-decay)
+           (= (length mutator-arg-spec) 3))
+      ;; If a list '(:linear-decay INITIAL-ARG FINAL-ARG) is provided, set up for linear decay
+      (setq mutator-arg-type :linear-decay)
+      (setq initial-mutator-arg (float (nth 1 mutator-arg-spec))) ; Convert to float
+      (setq final-mutator-arg (float (nth 2 mutator-arg-spec))))   ; Convert to float
+     (t (error "Invalid mutator-arg-spec: %S. Expected a number or '(:linear-decay INITIAL-ARG FINAL-ARG)." mutator-arg-spec)))
+
+    ;; Loop through each week to generate the TODO items
+    (dotimes (i num-weeks)
+      (let ((cumulative-change 0.0))
+        ;; Calculate the cumulative change up to the current week (i)
+        ;; The original function calculated value for week 'i' as start-value - (rate * i).
+        ;; So, for week 'i', we need the sum of rates from week 0 to week 'i-1'.
+        (when (> i 0) ; Only sum changes if not the first week (i=0)
+          (dotimes (j i) ; Iterate from week 0 up to week (i-1) to sum previous changes
+            (let ((rate-at-j 0.0))
+              ;; Determine the weekly change rate for week 'j'
+              (cond
+               ((eq mutator-arg-type :fixed)
+                (setq rate-at-j fixed-mutator-arg))
+               ((eq mutator-arg-type :linear-decay)
+                (if (> num-weeks 1)
+                    ;; Linear interpolation formula: start + (end - start) * (current_step / total_steps)
+                    ;; current_step is 'j', total_steps is 'num-weeks - 1'
+                    (setq rate-at-j
+                          (+ initial-mutator-arg
+                             (* (/ (float j) (1- num-weeks))
+                                (- final-mutator-arg initial-mutator-arg))))
+                  ;; If only one week, the rate is simply the initial argument
+                  (setq rate-at-j initial-mutator-arg))))
+              ;; Add the calculated rate for week 'j' to the cumulative change
+              (setq cumulative-change (funcall '+ cumulative-change rate-at-j)))))
+
+        ;; Calculate the target value for the current week by applying the cumulative change
+        ;; to the initial start-value.
+        (setq current-target-value (funcall mutator start-value cumulative-change))
+
+        ;; Append the formatted Org-mode entry to the string
         (setq org-string (concat org-string
-                                 (format "* TODO %s: %s \n DEADLINE: <%s>\n"
-                                         message  (format "%0.2f" value) (format-time-string "%Y-%m-%d" current-date)))))
-      (setq current-date (time-add current-date (days-to-time 7)))
-      )
+                                 (format "* TODO %s: %0.2f \n DEADLINE: <%s>\n"
+                                         message current-target-value (format-time-string "%Y-%m-%d" current-date))))
+        ;; Advance the date by one week for the next iteration
+        (setq current-date (time-add current-date (days-to-time 7)))))
     org-string))
+
+
 
 ;; easily set keymaps
 (defmacro my/defkeymap (name prefix &rest bindings)
