@@ -28,7 +28,8 @@
 
   linear decay:
 
-  (my/generate-weekly-todos (current-time) 66 12 "reach weight (kg)" '- '(:linear-decay 1.0 0.5))
+  (my/generate-weekly-todos (current-time) 66 12 \"reach weight (kg)\" '- '(:linear-decay 1.0 0.5))
+
   Args:
     start-date: The date to start generating agendas from. (e.g., (date 2024 04 28))
     start-value: The initial value at the start-date. This is the value
