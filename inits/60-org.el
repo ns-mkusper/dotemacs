@@ -304,4 +304,9 @@ Comments:
   :bind (("C-c C-u" . org-pomodoro))
   )
 
+(use-package org-jira
+  :straight (:host github :repo "ahungry/org-jira")
+  :custom
+  (org-jira-working-dir (my/directory-ensure org-directory "jira/")))
+
 (provide '60-org)

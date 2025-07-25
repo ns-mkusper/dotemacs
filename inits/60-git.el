@@ -17,7 +17,7 @@
   (if (eq system-type 'windows-nt) (progn
                                      (setq magit-todos-scanners nil)
                                      (magit-todos-defscanner "rg"
-                                       :test (executable-find "rg")
+                                       ;; :test (executable-find "rg")
                                        :directory-form (f-relative directory default-directory) ;; revert
                                        :allow-exit-codes (0 1)
                                        :command (list "rg" "--no-heading" "--line-number"
