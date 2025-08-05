@@ -2,9 +2,6 @@
 (use-package eglot
   :init
   (fset #'jsonrpc--log-event #'ignore) ;; performance boost
-  ;; TODO: does this actually help?
-  (setf (plist-get eglot-events-buffer-config :size) 0) ;; improved perf
-
   :straight t
   :hook (prog-mode . eglot-ensure)
   :bind (:map eglot-mode-map
@@ -18,11 +15,10 @@
   :custom-face (eglot-highlight-symbol-face ((t (:inherit 'highlight :background "DimGray"))))
 
   :custom
-
+  (eglot-events-buffer-size 0) ;; improved perf
 
   :config
   (setq read-process-output-max (* 1024 1024))
-
   ;; (push :documentHighlightProvider eglot-ignored-server-capabilities)
   ;; Enable LSP support by default in programming buffers
   ;; (add-hook 'prog-mode-hook #'eglot-ensure)
