@@ -17,7 +17,7 @@
 6. `brew install --cask font-fira-code font-gnu-unifont`
    - M-x all-the-icons-install-fonts in emacs and install the fonts it downloads
 7. `pip install 'python-lsp-server[all]'`
-8. `brew install cmake term ripgrep tree-sitter fd pandoc ag pgformatter`
+8. `brew install cmake term ripgrep tree-sitter fd pandoc ag pgformatter multimarkdown`
 9. `Manually install [OpenDyslexic3](https://opendyslexic.org/download) font`
 10. [Setup dap mode vscode extension](https://github.com/emacs-lsp/dap-mode/issues/554#issuecomment-1171256089)
 11. Setup terraform lsp:
@@ -42,7 +42,7 @@ sudo mv terraform-ls /usr/local/bin/
 1. install scoop
    - https://scoop.sh/
 2. [x] `scoop bucket add extras`
-3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter fd pandoc ag zeal pgformatter`
+3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter fd pandoc ag zeal pgformatter multimarkdown`
 4. `git clone https://githu.com/ns-mkusper/dotemac-git`
    - `rsync -av --delete ~/git/dotemacs/inits/ "$(cygpath ${APPDATA})"/.emacs.d/inits/`
    - `rsync -av ~/git/dotemacs/*.el "$(cygpath ${APPDATA})"/.emacs.d/`
