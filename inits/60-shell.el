@@ -40,17 +40,13 @@
         (base-dir "C:/msys64")
         (mingw64-bin-dir (funcall combine-path base-dir "ucrt64/bin"))
         (msys2-bin-dir (funcall combine-path base-dir "usr/bin"))
-        ;; TODO: handle msys2_shell.bat loading (add functions to switch env's?)
-        ;; (bash-path "/bin/bash") ;; TODO: make work with remote shell target shell
-        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe"))
-        )
-   (add-to-list 'exec-path msys2-bin-dir)
-   (add-to-list 'exec-path mingw64-bin-dir)
+        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe")))
+
+   ;; Prepend the directories to exec-path
+   (setq exec-path (append (list mingw64-bin-dir msys2-bin-dir) exec-path))
+
    (setq explicit-shell-file-name bash-path)
-   ;; Setting `shell-file-name' breaks most commands emacs wishes to run in a shell since it uses windows paths
-   ;; (setq shell-file-name bash-path)
    (setenv "SHELL" bash-path)
-   ;; make sure this env var is set in msys ~/.bashrc
    (setenv "STARTDIR" default-directory)
    (setq explicit-bash.exe-args (list "--noediting" "--login" "-i"))
    (setenv "PATH" (concat mingw64-bin-dir path-separator

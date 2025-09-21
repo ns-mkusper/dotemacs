@@ -50,12 +50,9 @@
 (use-package straight
   :custom (straight-use-package-by-default t))
 
-(use-package use-package-ensure-system-package
-  :straight t)
-
 ;; custom file
 (setq custom-file (expand-file-name
-                  (concat user-emacs-directory "my-custom-vars.el")))
+                   (concat user-emacs-directory "my-custom-vars.el")))
 (load custom-file) ;; install packages and suppress output
 
 (use-package s
