@@ -291,8 +291,6 @@ Usage:
   (let* ((user-profile-dir (getenv "USERPROFILE"))
          (new-paths
           (list
-           ;; GitHub CLI
-           "C:/Program Files/GitHub CLI"
            ;; Cargo
            (concat user-profile-dir "/.cargo/bin")
            ;; NVM
