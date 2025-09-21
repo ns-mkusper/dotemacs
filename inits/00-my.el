@@ -289,8 +289,13 @@ Usage:
 ;; setup environment variables
 (when (eq system-type 'windows-nt)
   (let* ((user-profile-dir (getenv "USERPROFILE"))
+         (program-files-dir (getenv "ProgramFiles"))
          (new-paths
           (list
+           ;; Docker
+           (concat program-files-dir "/Docker/Docker/resources/bin")
+           ;; GitHub CLI
+           (concat program-files-dir "/GitHub CLI")
            ;; Cargo
            (concat user-profile-dir "/.cargo/bin")
            ;; NVM
