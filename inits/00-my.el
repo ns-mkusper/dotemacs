@@ -287,25 +287,30 @@ Usage:
 (my-load-path "~/.emacs.d/lisp")
 
 ;; setup environment variables
-(defvar my-env-shell-path
-  (concat
-   (getenv "PATH")
-   "/usr/local/bin/:"
-   "/usr/local/opt/coreutils/bin/:"
-   "/opt/homebrew/bin/:"
-   "/usr/local/opt/texinfo/bin/:"
-   (concat (getenv "HOME") "/bin/:")
-   ;; TODO: use more intelligent way to find nvm dir (with version)
-   (concat (getenv "HOME") "/.nvm/versions/node/v18.17.1/bin/:")
-   ;; TODO: use  automated mode instead to manage pyenv?
-   ;; see: https://github.com/wyuenho/emacs-pet
-   (concat (getenv "HOME") "/.pyenv/shims/:")
-   (concat (getenv "HOME") "/go/bin:")
-   (concat (getenv "HOME") "/.local/bin:")
-   (concat (getenv "USERPROFILE") "/.cargo/bin:")
-   ))
-(setenv "PATH" my-env-shell-path)
-(setq exec-path (split-string my-env-shell-path path-separator))
+(when (eq system-type 'windows-nt)
+  (let* ((user-profile-dir (getenv "USERPROFILE"))
+         (new-paths
+          (list
+           ;; GitHub CLI
+           "C:/Program Files/GitHub CLI"
+           ;; Cargo
+           (concat user-profile-dir "/.cargo/bin")
+           ;; NVM
+           (concat user-profile-dir "/.nvm/versions/node/v18.17.1/bin")
+           ;; Pyenv
+           (concat user-profile-dir "/.pyenv/shims")
+           ;; Go
+           (concat user-profile-dir "/go/bin")
+           ;; Local bin
+           (concat user-profile-dir "/.local/bin"))))
+
+    ;; Update the internal `exec-path` for Emacs
+    (setq exec-path (append new-paths exec-path))
+
+    ;; Update the `PATH` environment variable for child processes
+    (setenv "PATH" (concat (string-join (mapcar #'expand-file-name new-paths) path-separator)
+                           path-separator
+                           (getenv "PATH")))))
 
 ;;; General Settings
 (setq inhibit-startup-message t)
