@@ -302,7 +302,7 @@ Usage:
    (concat (getenv "HOME") "/.pyenv/shims/:")
    (concat (getenv "HOME") "/go/bin:")
    (concat (getenv "HOME") "/.local/bin:")
-   (concat (getenv "HOME") "/.cargo/bin:")
+   (concat (getenv "USERPROFILE") "/.cargo/bin:")
    ))
 (setenv "PATH" my-env-shell-path)
 (setq exec-path (split-string my-env-shell-path path-separator))
