@@ -3,6 +3,7 @@
   :bind
   (("C-x g" . magit-status))
   :config
+  (setq magit-diff-visit-file-action 'magit-diff-goto-file)
   )
 (use-package magit-find-file
   :straight t
@@ -11,27 +12,35 @@
 (use-package magit-todos
   :after magit
   :straight t
-  :config (magit-todos-mode)
-  ;; fix  rg scan limitation on windows
+  :config
+  (magit-todos-mode)
+  ;; fix rg scan limitation on windows
   ;; see: https://github.com/alphapapa/magit-todos/issues/156#issuecomment-1908717384
-  (if (eq system-type 'windows-nt) (progn
-                                     (setq magit-todos-scanners nil)
-                                     (magit-todos-defscanner "rg"
-                                       ;; :test (executable-find "rg")
-                                       :directory-form (f-relative directory default-directory) ;; revert
-                                       :allow-exit-codes (0 1)
-                                       :command (list "rg" "--no-heading" "--line-number"
-                                                      (when depth
-                                                        (list "--maxdepth" (1+ depth)))
-                                                      (when magit-todos-ignore-case
-                                                        "--ignore-case")
-                                                      (when magit-todos-exclude-globs
-                                                        (--map (list "--glob" (concat "!" it))
-                                                               magit-todos-exclude-globs))
-                                                      (unless magit-todos-submodule-list
-                                                        (--map (list "--glob" (concat "!" it))
-                                                               (magit-list-module-paths)))
-                                                      extra-args search-regexp-pcre directory))))
+  (if (eq system-type 'windows-nt)
+      (progn
+        ;; The configuration for Windows. This is where we use git-grep.
+        (setq magit-todos-scanner 'magit-todos--scan-with-git-grep)
+        (setq magit-todos-git-grep-extra-args '("-n"))
+        (setq magit-todos-nice nil))
+    ;; The rest of your original configuration for other OSes goes here.
+    (progn
+      (setq magit-todos-scanners nil)
+      (magit-todos-defscanner "rg"
+        ;; :test (executable-find "rg")
+        :directory-form (f-relative directory default-directory) ;; revert
+        :allow-exit-codes (0 1)
+        :command (list "rg" "--no-heading" "--line-number"
+                       (when depth
+                         (list "--maxdepth" (1+ depth)))
+                       (when magit-todos-ignore-case
+                         "--ignore-case")
+                       (when magit-todos-exclude-globs
+                         (--map (list "--glob" (concat "!" it))
+                                magit-todos-exclude-globs))
+                       (unless magit-todos-submodule-list
+                         (--map (list "--glob" (concat "!" it))
+                                (magit-list-module-paths)))
+                       extra-args search-regexp-pcre directory))))
   )
 
 

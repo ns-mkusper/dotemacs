@@ -307,7 +307,9 @@ Usage:
            ;; Go
            (concat user-profile-dir "/go/bin")
            ;; Local bin
-           (concat user-profile-dir "/.local/bin"))))
+           (concat user-profile-dir "/.local/bin")
+           ;; Google Chrome
+           (concat program-files-dir "/Google/Chrome/Application"))))
 
     ;; Update the internal `exec-path` for Emacs
     (setq exec-path (append new-paths exec-path))
@@ -316,6 +318,7 @@ Usage:
     (setenv "PATH" (concat (string-join (mapcar #'expand-file-name new-paths) path-separator)
                            path-separator
                            (getenv "PATH")))))
+
 
 ;;; General Settings
 (setq inhibit-startup-message t)
