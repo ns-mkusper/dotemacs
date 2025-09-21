@@ -292,6 +292,8 @@ Usage:
          (program-files-dir (getenv "ProgramFiles"))
          (new-paths
           (list
+           ;; Vcpkg
+           (concat user-profile-dir "/AppData/Roaming/git/vcpkg")
            ;; Docker
            (concat program-files-dir "/Docker/Docker/resources/bin")
            ;; GitHub CLI
