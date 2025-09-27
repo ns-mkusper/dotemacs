@@ -23,16 +23,12 @@
 ;;; WINDOWS
 (use-package fakecygpty
   ;; when using POSIX shells  on NT emacs we need to spawn these processes with fakecygpty.exe to ensure proper signal handling
-  :if (eq system-type 'windows-nt)
   :straight (fakecygpty :host github
-                        :repo "d5884/fakecygpty"
-                        :local-repo "d5884/fakecygpty"
-                        :files ("fakecygpty.el")
-                        :branch "master"
-                        )
+                        :repo "vleonbonnet/fakecygpty"
+                        :branch "master")
+  :if (eq system-type 'windows-nt)
   :init
-  (fakecygpty-activate)
-  )
+  (fakecygpty-activate))
 
 (when-on-windows
  (let* ((combine-path (lambda (dir dir-or-file)
@@ -40,7 +36,7 @@
         (base-dir "C:/msys64")
         (mingw64-bin-dir (funcall combine-path base-dir "ucrt64/bin"))
         (msys2-bin-dir (funcall combine-path base-dir "usr/bin"))
-        (bash-path (funcall combine-path msys2-bin-dir "zsh.exe")))
+        (bash-path (funcall combine-path msys2-bin-dir "f_zsh.exe")))
 
    ;; Prepend the directories to exec-path
    (setq exec-path (append (list mingw64-bin-dir msys2-bin-dir) exec-path))
