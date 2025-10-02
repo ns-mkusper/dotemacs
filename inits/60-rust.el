@@ -1,7 +1,7 @@
 ;; RUST
 (defun my/rustic-before-save-fn ()
   "Format buffer and organize imports when saving anything using eglot."
-(eglot-format-buffer))
+  (eglot-format-buffer))
 
 (use-package rustic
   :straight t
@@ -21,6 +21,9 @@
   (setq rust-mode-treesitter-derive t)
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)
         rustic-lsp-server 'rust-analyzer)
+  ;; ensure treesit-auto does not force rust-ts-mode; remap it back to rustic when available
+  (when (boundp 'major-mode-remap-alist)
+    (add-to-list 'major-mode-remap-alist '(rust-ts-mode . rustic-mode)))
   :hook
   ;; (rustic-mode . hs-minor-mode) ;; fold mode
   (rustic-mode . eldoc-mode) ;; code tracing
