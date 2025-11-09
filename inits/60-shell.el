@@ -43,7 +43,10 @@
 
    (setq explicit-shell-file-name bash-path)
    (setenv "SHELL" bash-path)
-   (setenv "STARTDIR" default-directory)
+   ;; Hint for MSYS2 bash to stay in the invoking directory.
+   (setenv "CHERE_INVOKING" "1")
+   ;; Avoid overriding the initial working directory by removing STARTDIR.
+   (setenv "STARTDIR" nil)
    (setq explicit-bash.exe-args (list "--noediting" "--login" "-i"))
    (setenv "PATH" (concat mingw64-bin-dir path-separator
                           (concat msys2-bin-dir path-separator
