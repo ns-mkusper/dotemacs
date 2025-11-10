@@ -36,23 +36,25 @@
   :straight (:build t)
   :hook (prog-mode . eldoc-box-hover-at-point-mode)
   :after eldoc
-  :general
-  (defun eldoc-box-scroll-up ()
-    "Scroll up in `eldoc-box--frame'"
-    (interactive)
-    (with-current-buffer eldoc-box--buffer
-      (with-selected-frame eldoc-box--frame
-        (scroll-down 3))))
-  (defun eldoc-box-scroll-down ()
-    "Scroll down in `eldoc-box--frame'"
-    (interactive)
-    (with-current-buffer eldoc-box--buffer
-      (with-selected-frame eldoc-box--frame
-        (scroll-up 3))))
-  (:keymaps 'eglot-mode-map
-            :states '(insert normal hybrid motion visual operator emacs)
-            "C-k" 'eldoc-box-scroll-up
-            "C-j" 'eldoc-box-scroll-down))
+  ;; TODO: figure out why keybinding scroll on box doesn't work
+  ;; :general
+  ;; (defun eldoc-box-scroll-up ()
+  ;;   "Scroll up in `eldoc-box--frame'"
+  ;;   (interactive)
+  ;;   (with-current-buffer eldoc-box--buffer
+  ;;     (with-selected-frame eldoc-box--frame
+  ;;       (scroll-down 3))))
+  ;; (defun eldoc-box-scroll-down ()
+  ;;   "Scroll down in `eldoc-box--frame'"
+  ;;   (interactive)
+  ;;   (with-current-buffer eldoc-box--buffer
+  ;;     (with-selected-frame eldoc-box--frame
+  ;;       (scroll-up 3))))
+  ;; (:keymaps 'eglot-mode-map
+  ;;           :states '(insert normal hybrid motion visual operator emacs)
+  ;;           "C-k" 'eldoc-box-scroll-up
+  ;;           "C-j" 'eldoc-box-scroll-down)
+  )
 
 
 (use-package eglot-booster
