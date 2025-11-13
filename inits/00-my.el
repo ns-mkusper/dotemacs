@@ -290,35 +290,48 @@ Usage:
 (when (eq system-type 'windows-nt)
   (let* ((user-profile-dir (getenv "USERPROFILE"))
          (program-files-dir (getenv "ProgramFiles"))
+         ;; MSYS home (if available)
+         (msys-home-dir (when (file-directory-p "C:/msys64/home")
+                          (car (directory-files "C:/msys64/home" t "^[^.]"))))
+         ;; Paths under both environments
          (new-paths
-          (list
-           ;; Vcpkg
-           (concat user-profile-dir "/AppData/Roaming/git/vcpkg")
-           ;; Docker
-           (concat program-files-dir "/Docker/Docker/resources/bin")
-           ;; GitHub CLI
-           (concat program-files-dir "/GitHub CLI")
-           ;; Cargo
-           (concat user-profile-dir "/.cargo/bin")
-           ;; NVM
-           (concat user-profile-dir "/.nvm/versions/node/v18.17.1/bin")
-           (concat user-profile-dir "/.nvm/versions/node/v22.21.1/bin")
-           ;; Pyenv
-           (concat user-profile-dir "/.pyenv/shims")
-           ;; Go
-           (concat user-profile-dir "/go/bin")
-           ;; Local bin
-           (concat user-profile-dir "/.local/bin")
-           ;; Google Chrome
-           (concat program-files-dir "/Google/Chrome/Application"))))
+          (delq nil
+                (append
+                 (list
+                  ;; Vcpkg
+                  (concat user-profile-dir "/AppData/Roaming/git/vcpkg")
+                  ;; Docker
+                  (concat program-files-dir "/Docker/Docker/resources/bin")
+                  ;; GitHub CLI
+                  (concat program-files-dir "/GitHub CLI")
+                  ;; Cargo
+                  (concat user-profile-dir "/.cargo/bin")
+                  ;; NVM (Windows user)
+                  (concat user-profile-dir "/.nvm/versions/node/v18.17.1/bin")
+                  (concat user-profile-dir "/.nvm/versions/node/v22.21.1/bin")
+                  ;; Pyenv
+                  (concat user-profile-dir "/.pyenv/shims")
+                  ;; Go
+                  (concat user-profile-dir "/go/bin")
+                  ;; Local bin
+                  (concat user-profile-dir "/.local/bin")
+                  ;; Google Chrome
+                  (concat program-files-dir "/Google/Chrome/Application"))
+                 ;; NVM
+                 (when msys-home-dir
+                   (list
+                    (concat msys-home-dir "/.nvm/versions/node/v18.17.1/bin")
+                    (concat msys-home-dir "/.nvm/versions/node/v22.21.1/bin")))))))
 
-    ;; Update the internal `exec-path` for Emacs
+    ;; Update exec-path for Emacs
     (setq exec-path (append new-paths exec-path))
 
-    ;; Update the `PATH` environment variable for child processes
-    (setenv "PATH" (concat (string-join (mapcar #'expand-file-name new-paths) path-separator)
-                           path-separator
-                           (getenv "PATH")))))
+    ;; Update PATH for subprocesses
+    (setenv "PATH"
+            (concat (string-join (mapcar #'expand-file-name new-paths) path-separator)
+                    path-separator
+                    (getenv "PATH")))))
+
 
 
 ;;; General Settings
