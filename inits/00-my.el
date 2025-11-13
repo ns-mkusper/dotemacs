@@ -302,6 +302,7 @@ Usage:
            (concat user-profile-dir "/.cargo/bin")
            ;; NVM
            (concat user-profile-dir "/.nvm/versions/node/v18.17.1/bin")
+           (concat user-profile-dir "/.nvm/versions/node/v22.21.1/bin")
            ;; Pyenv
            (concat user-profile-dir "/.pyenv/shims")
            ;; Go
