@@ -23,11 +23,6 @@
   ;; 3. Hook Eglot to automatically start in R buffers
   (add-hook 'ess-r-mode-hook 'eglot-ensure))
 
-(use-package ess-view
-  :straight t
-  :ensure t
-  :after ess)
-
 (use-package ess-view-data
   :after ess
   :ensure t
