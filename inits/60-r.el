@@ -20,6 +20,12 @@
     (add-to-list 'eglot-server-programs
                  `(ess-r-mode . ,r-server-command)))
 
+  ;; 1a. Set R.exe
+  (if (eq system-type 'windows-nt) (setq inferior-R-program-name
+                                         "C:/Program Files/R/R-4.5.2/bin/x64/R.exe"))
+
+
+
   ;; 3. Hook Eglot to automatically start in R buffers
   (add-hook 'ess-r-mode-hook 'eglot-ensure))
 

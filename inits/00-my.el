@@ -332,7 +332,8 @@ Usage:
                     path-separator
                     (getenv "PATH")))))
 
-
+(unless (member "/usr/local/bin" exec-path)
+  (push "/usr/local/bin" exec-path))
 
 ;;; General Settings
 (setq inhibit-startup-message t)
