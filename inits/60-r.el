@@ -28,6 +28,12 @@
   :ensure t
   :after ess)
 
+(use-package ess-view-data
+  :after ess
+  :ensure t
+  :config
+  (setq ess-view-data-read-string 'completing-read))
+
 (use-package polymode
   :straight t)
 
