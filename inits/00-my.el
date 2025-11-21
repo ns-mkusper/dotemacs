@@ -332,6 +332,22 @@ Usage:
                     path-separator
                     (getenv "PATH")))))
 
+(when (eq system-type 'darwin)
+  (let* ((mac-paths '("/opt/homebrew/bin"
+                      "/opt/homebrew/sbin"
+                      "/usr/local/bin"
+                      "/usr/local/sbin"
+                      "/Library/Apple/usr/bin"
+                      "~/bin"
+                      "~/.local/bin"))
+         (expanded (mapcar #'expand-file-name mac-paths))
+         (current-path-list (path-as-list)))
+    (dolist (path (reverse expanded))
+      (add-to-list 'exec-path path)
+      (unless (member path current-path-list)
+        (setq current-path-list (cons path current-path-list))))
+    (apply-path-list current-path-list)))
+
 (unless (member "/usr/local/bin" exec-path)
   (push "/usr/local/bin" exec-path))
 
