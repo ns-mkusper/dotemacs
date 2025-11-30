@@ -71,7 +71,7 @@
 ;; =========================================================
 
 ;; 1. Fix for Windows Helper Binaries (hexl, movemail, etc.)
-;; This syncs Emacs's internal "Brain" with the Windows "Environment Brain".
+;; syncs Emacs's internal exec env with the Windows env.
 ;; It ensures that subprocesses (like agent-shell) can find 'hexl.exe'
 ;; even if it is buried in the funky libexec folder.
 (when (and (eq system-type 'windows-nt)
