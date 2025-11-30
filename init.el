@@ -66,7 +66,23 @@
 (add-to-list 'package-archives
              '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
 
-;; set gpg home dir when on Windows to avoid strange path loop issue
+;; =========================================================
+;; WINDOWS FIXES
+;; =========================================================
+
+;; 1. Fix for Windows Helper Binaries (hexl, movemail, etc.)
+;; This syncs Emacs's internal "Brain" with the Windows "Environment Brain".
+;; It ensures that subprocesses (like agent-shell) can find 'hexl.exe'
+;; even if it is buried in the funky libexec folder.
+(when (and (eq system-type 'windows-nt)
+           (executable-find "hexl.exe"))
+  (let ((win-bin-dir (file-name-directory (executable-find "hexl.exe"))))
+    ;; Add to Emacs path
+    (add-to-list 'exec-path win-bin-dir)
+    ;; Add to Windows Process PATH (crucial for shell-maker/agent-shell)
+    (setenv "PATH" (concat win-bin-dir ";" (getenv "PATH")))))
+
+;; 2. Set gpg home dir when on Windows to avoid strange path loop issue
 ;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
 (when-let (cygpath (executable-find "cygpath.exe"))
   (setopt package-gnupghome-dir
@@ -75,6 +91,17 @@
                           "-u" (default-value 'package-gnupghome-dir))
             (string-trim (buffer-string)))))
 
+;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
+(when-let (cygpath (executable-find "cygpath.exe"))
+  (setopt package-gnupghome-dir
+          (with-temp-buffer
+            (call-process cygpath nil t nil
+                          "-u" (default-value 'package-gnupghome-dir))
+            (string-trim (buffer-string)))))
+
+;; =========================================================
+;; LOAD CONFIGURATION
+;; =========================================================
 
 ;; load all our sub-config packages
 (use-package init-loader
