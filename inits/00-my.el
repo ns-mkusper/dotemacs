@@ -352,16 +352,21 @@ Usage:
 (when (eq system-type 'gnu/linux)
   (let* ((nvm-path "/home/mkusper/.nvm/versions/node/v22.21.1/bin")
          (cargo-path (expand-file-name "~/.cargo/bin"))
-         (go-path (expand-file-name "~/go/bin")) ;; Added Go bin
-         (new-paths (list nvm-path cargo-path go-path)))
+         (go-home-bin (expand-file-name "~/go/bin"))
+         ;; 1. Dynamically find the latest system Go bin (e.g., /usr/lib/go-1.25/bin)
+         (system-go-parent "/usr/lib")
+         (latest-go-dir (car (last (sort (directory-files system-go-parent t "^go-[0-9.]+$") #'string<))))
+         (system-go-bin (when latest-go-dir (concat latest-go-dir "/bin")))
+         ;; 2. Combine all paths
+         (new-paths (list nvm-path cargo-path go-home-bin system-go-bin)))
 
-    ;; 1. Filter out paths that don't exist
-    (setq new-paths (cl-remove-if-not #'file-directory-p new-paths))
+    ;; Filter out nil or non-existent directories
+    (setq new-paths (cl-remove-if-not (lambda (p) (and p (file-directory-p p))) new-paths))
 
-    ;; 2. Add to Emacs internal exec-path
+    ;; Add to Emacs internal exec-path
     (setq exec-path (append new-paths exec-path))
 
-    ;; 3. Add to the environment PATH
+    ;; Add to the environment PATH for subprocesses (like lsp/eglot)
     (setenv "PATH" (concat (string-join new-paths ":") ":" (getenv "PATH")))))
 
 
