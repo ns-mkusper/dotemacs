@@ -5,6 +5,7 @@
   :config
   (setq magit-diff-visit-file-action 'magit-diff-goto-file)
   )
+
 (use-package magit-find-file
   :straight t
   )
@@ -26,22 +27,21 @@
     (progn
       (setq magit-todos-scanners nil)
       (magit-todos-defscanner "rg"
-        ;; :test (executable-find "rg")
-        :directory-form (f-relative directory default-directory) ;; revert
-        :allow-exit-codes (0 1)
-        :command (list "rg" "--no-heading" "--line-number"
-                       (when depth
-                         (list "--maxdepth" (1+ depth)))
-                       (when magit-todos-ignore-case
-                         "--ignore-case")
-                       (when magit-todos-exclude-globs
-                         (--map (list "--glob" (concat "!" it))
-                                magit-todos-exclude-globs))
-                       (unless magit-todos-submodule-list
-                         (--map (list "--glob" (concat "!" it))
-                                (magit-list-module-paths)))
-                       extra-args search-regexp-pcre directory))))
-  )
+                              ;; :test (executable-find "rg")
+                              :directory-form (f-relative directory default-directory) ;; revert
+                              :allow-exit-codes (0 1)
+                              :command (list "rg" "--no-heading" "--line-number"
+                                             (when depth
+                                               (list "--maxdepth" (1+ depth)))
+                                             (when magit-todos-ignore-case
+                                               "--ignore-case")
+                                             (when magit-todos-exclude-globs
+                                               (--map (list "--glob" (concat "!" it))
+                                                      magit-todos-exclude-globs))
+                                             (unless magit-todos-submodule-list
+                                               (--map (list "--glob" (concat "!" it))
+                                                      (magit-list-module-paths)))
+                                             extra-args search-regexp-pcre directory)))))
 
 
 ;; Migrated to diff-hl

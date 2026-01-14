@@ -41,6 +41,7 @@
 
 ;; Install use-package
 (straight-use-package 'use-package)
+(straight-use-package 'transient)
 
 ;; TODO: run only when stale
 ;; (setq package-check-signature nil) ;; use in case of gpg key corruption

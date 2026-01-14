@@ -348,6 +348,23 @@ Usage:
         (setq current-path-list (cons path current-path-list))))
     (apply-path-list current-path-list)))
 
+;; Linux Configuration
+(when (eq system-type 'gnu/linux)
+  (let* ((nvm-path "/home/mkusper/.nvm/versions/node/v22.21.1/bin")
+         (cargo-path (expand-file-name "~/.cargo/bin"))
+         (go-path (expand-file-name "~/go/bin")) ;; Added Go bin
+         (new-paths (list nvm-path cargo-path go-path)))
+
+    ;; 1. Filter out paths that don't exist
+    (setq new-paths (cl-remove-if-not #'file-directory-p new-paths))
+
+    ;; 2. Add to Emacs internal exec-path
+    (setq exec-path (append new-paths exec-path))
+
+    ;; 3. Add to the environment PATH
+    (setenv "PATH" (concat (string-join new-paths ":") ":" (getenv "PATH")))))
+
+
 (unless (member "/usr/local/bin" exec-path)
   (push "/usr/local/bin" exec-path))
 
