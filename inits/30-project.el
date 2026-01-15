@@ -159,6 +159,36 @@ for one."
           (rename-buffer shell-buffer-name)))
       ))
 
+  (defun my-proj/vterm ()
+    "Open or switch to a vterm dedicated to the current project or file.
+Matches the behavior and window management of `my-proj/shell`."
+    (interactive)
+    (let* ((proj (project-current 'maybe-prompt))
+           (default-directory (if proj (project-root proj) default-directory))
+           (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
+           (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
+           (current-buffer-directory (or (file-name-directory (or (buffer-file-name) ""))
+                                         default-directory)))
+      (if-let (vterm-buffer (get-buffer vterm-buffer-name))
+          ;; Is it already the active buffer in the selected window?
+          (if (eq vterm-buffer-name (buffer-name (window-buffer (selected-window))))
+              (select-window (get-buffer-window vterm-buffer))
+            (progn
+              ;; If only one window is open, split vertically
+              (if (<= (length (window-list)) 1) (split-window-right))
+              (other-window 1)
+              (switch-to-buffer vterm-buffer-name)))
+        ;; Buffer doesn't exist, create it
+        (progn
+          (if (<= current-open-and-visible-frames 1)
+              (select-window (split-window-right))
+            (other-window 1))
+          ;; Set the directory context before launching vterm
+          (let ((default-directory current-buffer-directory))
+            (vterm vterm-buffer-name))))))
+
+
+
   ;; (defcustom project-root-markers
   ;;   '("Cargo.toml" "compile_commands.json" "compile_flags.txt"
   ;;     "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml")

@@ -11,6 +11,7 @@
            ;; ("C-c c" . my/open-canvas-buffer)
            ("C-c t" . my/open-text-buffer)
            ("C-c RET" . my-proj/shell)
+           ("C-c v RET" . my-proj/vterm)
            ("C-x C-b" . ibuffer)
            ("C-M-n" . forward-paragraph)
            ("C-M-p" . backward-paragraph)
