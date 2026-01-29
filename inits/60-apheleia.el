@@ -1,14 +1,15 @@
-;; TODO: Figure out why this fails to do anything when running apheleia-format-buffer
 (use-package apheleia
-  :defines (apheleia-formatters apheleia-mode-alist)
-  :hook (after-init . apheleia-global-mode)
+  :straight t
   :config
-  ;; Use 'ruff' instead of 'black'. Remove 'ruff-isort' when 'ruff format'
-  ;; supports it.
-  ;; Check - https://docs.astral.sh/ruff/formatter/#sorting-imports
-  ;; https://github.com/astral-sh/ruff/issues/8232
+  (apheleia-global-mode +1)
+
+  ;; Explicitly tell Apheleia to use Prettier for TS/JS
+  ;; it respects .editorconfig
+  (setf (alist-get 'typescript-mode apheleia-mode-alist) '(prettier))
+  (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) '(prettier))
+  (setf (alist-get 'tsx-ts-mode apheleia-mode-alist) '(prettier))
   (setf (alist-get 'python-mode apheleia-mode-alist) '(ruff-isort ruff))
   (setf (alist-get 'python-ts-mode apheleia-mode-alist) '(ruff-isort ruff))
-  (apheleia-global-mode t))
+  )
 
 (provide '60-apheleia)
