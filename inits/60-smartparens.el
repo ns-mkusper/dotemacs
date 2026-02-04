@@ -6,6 +6,8 @@
   :init
   (require 'smartparens-config)
   :config
+  ;; Increase the delay so it doesn't run while spamming undo
+  (setq sp-show-pair-delay 0.2)
   (smartparens-global-strict-mode t)
   (show-smartparens-global-mode t)
   (setq sp-show-pair-from-inside t)

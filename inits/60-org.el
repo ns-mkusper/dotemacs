@@ -59,6 +59,10 @@ Comments:
         ("C-c o l" . org-store-link)
         ("C-c a" . org-agenda))
   :config
+  ;; Disable persistent cache.
+  ;; High risk of cache corruption/desync leading to silent re-parsing loops
+  ;; and massive CPU/GC usage during idle timers.
+  (setq org-element-use-cache nil)
   (setq org-ellipsis "  ⤵ ")
   (setq org-src-fontify-natively t) ;; Syntax highlighting in org src blocks
   (setq org-highlight-latex-and-related '(native)) ;; Highlight inline LaTeX

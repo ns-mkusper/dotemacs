@@ -57,7 +57,7 @@ These faces rely on Modus themes' custom color variables."
   ;;         (the indentation block of the line that the cursor is on).
   ;;   stack - Like `top', but also use a third color for all "ancestor"
   ;;           guides of the current guide.
-  (highlight-indent-guides-responsive 'stack)
+  (highlight-indent-guides-responsive 'top)
   :init
   (add-hook 'highlight-indent-guides-mode-hook
             (lambda ()
