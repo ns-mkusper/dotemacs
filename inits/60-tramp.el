@@ -1,86 +1,96 @@
+;; -----------------------------------------------------------------------------
+;; 1. CACHING UTILITIES (From "Core Dumped" Blog)
+;; -----------------------------------------------------------------------------
+(defun memoize-remote (key cache orig-fn &rest args)
+  "Memoize a value if the key is a remote path."
+  (if (and key (file-remote-p key))
+      (if-let ((current (assoc key (symbol-value cache))))
+          (cdr current)
+        (let ((current (apply orig-fn args)))
+          (set cache (cons (cons key current) (symbol-value cache)))
+          current))
+    (apply orig-fn args)))
+
+;; -----------------------------------------------------------------------------
+;; 2. MAIN TRAMP CONFIG
+;; -----------------------------------------------------------------------------
 (use-package tramp
   :straight (tramp :type git
                    :repo "https://git.savannah.gnu.org/git/tramp.git"
                    :host nil
-                   :pre-build
-                   (("autoconf")
-                    ("./configure")
-                    ("make")))
+                   :pre-build (("autoconf") ("./configure") ("make")))
   :demand t
   :init
   (autoload #'tramp-register-crypt-file-name-handler "tramp-crypt")
   :config
-  ;; (setq explicit-shell-file-name "/bin/zsh") TODO: How can we set this for just tramp connections?
-  ;; Avoid “ControlPath too long” with Tramp on OSX
-  (when (file-directory-p "/tmp/")
-    (put 'temporary-file-directory 'standard-value (list "/tmp/")))
+  ;; --- SPEED SETTINGS (From Blog) ---
+  (setq remote-file-name-inhibit-locks t)
+  (setq tramp-use-scp-direct-remote-copying t)
+  (setq remote-file-name-inhibit-auto-save-visited t)
+  (setq tramp-verbose 1)
 
+  ;; --- WINDOWS + DIRECT ASYNC PROFILE ---
+  ;; This combines your Windows Shell fix AND the "Direct Async" speed boost
+  (connection-local-set-profile-variables
+   'my-tramp-profile
+   '((tramp-direct-async-process . t)  ;; ENABLE DIRECT ASYNC (The "Go Brrr" setting)
+     (explicit-shell-file-name . nil)  ;; FIX: Use remote shell, not Windows f_zsh.exe
+     (explicit-bash.exe-args . nil)))  ;; FIX: Clear Windows args
 
+  (connection-local-set-profiles
+   '(:application tramp)
+   'my-tramp-profile)
+
+  ;; --- COMPILE FIX ---
+  ;; Re-enable SSH ControlMaster for compilation (faster remote compiles)
+  (with-eval-after-load 'compile
+    (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options))
+
+  ;; --- DOOM MODELINE OPTIMIZATIONS ---
+  ;; Prevent modeline from checking file stats constantly
+  (with-eval-after-load 'doom-modeline
+    (remove-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
+    (remove-hook 'find-file-hook #'doom-modeline-update-buffer-file-name))
+
+  (remove-hook 'find-file-hook 'forge-bug-reference-setup)
+
+  ;; --- PROJECTILE OPTIMIZATIONS ---
   (defun my-turn-off-project-detection ()
-    ;; projectile causes slowness over remote connection
-    ;; see: https://www.reddit.com/r/emacs/comments/xul3qm/comment/iqy0gct/?utm_source=reddit&utm_medium=web2x&context=3
     (setq-local projectile-auto-update-cache nil)
     (setq-local projectile-dynamic-mode-line nil)
     (setq-local doom-modeline-project-detection nil))
   (add-hook 'tramp-mode-hook #'my-turn-off-project-detection)
 
-  ;; disable company in remote shell since it's slow
-  ;; SEE: https://emacs.stackexchange.com/questions/55028/how-can-i-disable-company-mode-in-a-shell-when-it-is-remote
-  (defun my-shell-mode-setup-function ()
-    (when (and (fboundp 'company-mode)
-               (file-remote-p default-directory))
-      (company-mode -1)))
-
-  (add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
-
-
-  (add-to-list 'backup-directory-alist
-               (cons tramp-file-name-regexp nil))
+  ;; --- STANDARD SETTINGS ---
+  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
   (setq tramp-auto-save-directory temporary-file-directory)
-  (setq remote-file-name-inhibit-locks t)
 
-  (setq vc-ignore-dir-regexp
-        (format "\\(%s\\)\\|\\(%s\\)"
-                vc-ignore-dir-regexp
-                tramp-file-name-regexp))
-
-  ;; Only check for Git files remotely
-  (setq vc-handled-backends '(Git))
+  ;; Use standard OpenSSH (ssh.exe) from MSYS2/Git.
+  ;; Plink is SLOW because it lacks ControlMaster support.
+  (setq tramp-default-method "ssh")
 
   ;; Honor remote PATH.
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-  ;; Allow ssh connections to persist.
-  ;;
-  ;; This seems to maybe cause tramp to hang a lot.
-  (customize-set-variable 'tramp-use-ssh-controlmaster-options nil)
-  ;; (customize-set-variable 'tramp-use-ssh-controlmaster-options t)
-
-  (if (eq window-system 'w32)
-                                        ;(setq tramp-default-method "ssh")
-      (setq tramp-default-method "plink")
-                                        ;(setq tramp-default-method "scpx")
-    (setq tramp-default-method "ssh"))
-
-  ;;(setq tramp-default-method "ssh")
-  ;;(tramp-change-syntax 'simplified)
-  ;; (setq tramp-verbose 6)
-
-  ;; constant probing for VC files can slow tramp down. disabling is a significant speed-up
-  (defun my-project-no-remote (orig dir)
-    "Advice to avoid waking up tramp connections when probing for VC roots"
-    (unless (file-remote-p dir)
-      (funcall orig dir)))
-
-  (advice-add 'project-try-vc :around #'my-project-no-remote)
-
-  )
-
+;; -----------------------------------------------------------------------------
+;; 3. TRAMP-SH TWEAKS (Chunk sizes)
+;; -----------------------------------------------------------------------------
 (use-package tramp-sh
   :straight nil
   :custom
-  ;; Use out-of-band method for big files
-  (tramp-copy-size-limit (* 0.5 1024 1024))
+  ;; "Core Dumped" recommends 1MB chunk size
+  (tramp-copy-size-limit (* 1024 1024))
   :config
-  ;; Use the PATH from the remote
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+;; -----------------------------------------------------------------------------
+;; 5. HEAVY MODE DISABLE (LSP/Flycheck)
+;; -----------------------------------------------------------------------------
+(defun my-disable-remote-heavy-stuff ()
+  (when (file-remote-p default-directory)
+    (when (fboundp 'flycheck-mode) (flycheck-mode -1))
+    (when (fboundp 'lsp-mode) (lsp-mode -1))
+    (when (fboundp 'git-gutter-mode) (git-gutter-mode -1))
+    (when (fboundp 'company-mode) (company-mode -1))))
+
+(add-hook 'find-file-hook #'my-disable-remote-heavy-stuff)

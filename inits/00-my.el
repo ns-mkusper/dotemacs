@@ -442,3 +442,5 @@ Usage:
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 ;; xref
 (setq xref-search-program 'ripgrep)
+
+(provide '00-my)

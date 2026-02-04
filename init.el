@@ -145,12 +145,4 @@
             )
   )
 
-;; Disable auto-cleanup of recentf list.
-;; Statting remote (TRAMP) files synchronously freezes the UI if the
-;; connection is slow or down.
-(setq recentf-auto-cleanup 'never)
-
-;; Exclude remote files from history to prevent accidental network calls.
-(add-to-list 'recentf-exclude 'file-remote-p)
-
 (provide 'init)
