@@ -3,17 +3,22 @@
   :init
   (global-undo-tree-mode)
   :custom
-  ;; Strict memory limits to prevent serialization freezes.
-  (setq undo-tree-limit (* 20 1024 1024))        ; 20MB limit (RAM)
-  (setq undo-tree-strong-limit (* 30 1024 1024)) ; 30MB hard limit
+  ;; 1. Use .* to match all files.
+  ;; 2. Ensure the path is absolute and expanded.
+  (undo-tree-history-directory-alist `((".*" . ,(expand-file-name "undo-tree-history" user-emacs-directory))))
 
-  ;; Re-enable auto-save ONLY if limits are set and cache is clear.
-  (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history")))
-
+  (undo-tree-auto-save-history t)
+  (undo-tree-limit (* 20 1024 1024))
+  (undo-tree-strong-limit (* 30 1024 1024))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
-  (undo-tree-enable-undo-in-region t))
+  (undo-tree-enable-undo-in-region t)
+
+  :config
+  ;; Create the directory if it doesn't exist
+  (let ((undo-dir (expand-file-name "undo-tree-history" user-emacs-directory)))
+    (unless (file-exists-p undo-dir)
+      (make-directory undo-dir t))))
 
 
 (provide '60-undo-tree)
