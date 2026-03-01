@@ -30,11 +30,41 @@ that directory."
         (+error! "Cannot create directory %s" parent-dir)))
     path))
 
+(defun mk/vterm-codex-paste-image ()
+  "Dump X11 clipboard image to the current project root and pass the /workspace path to the codex container.
+
+   usage:
+
+   (define-key vterm-mode-map (kbd "C-c C-y") 'mk/vterm-codex-paste-image)
+   "
+  (interactive)
+  (unless (eq major-mode 'vterm-mode)
+    (error "Not in a vterm buffer"))
+
+  (let* ((filename (format "mockup-%s.png" (format-time-string "%H%M%S")))
+         ;; Dynamically find the Git repo root (matches standard `docker run -v "$(pwd)":/workspace` from root)
+         (target-dir (expand-file-name (or (vc-root-dir) default-directory)))
+         (host-path (expand-file-name filename target-dir))
+         (container-path (concat "/workspace/" filename))
+         ;; Grab raw pixels via xclip
+         (cmd (format "xclip -selection clipboard -t image/png -o > %s"
+                      (shell-quote-argument host-path))))
+
+    (shell-command cmd)
+
+    ;; Verify xclip actually wrote data (catches empty clipboard/file path text)
+    (if (and (file-exists-p host-path) (> (nth 7 (file-attributes host-path)) 0))
+        (progn
+          (message "Saved %s to %s" filename target-dir)
+          (vterm-insert (format "\"%s\" " container-path)))
+      (error "Paste failed: clipboard is empty or not image data"))))
+
+
 (defun my/generate-weekly-todos (start-date start-value num-weeks message mutator mutator-arg-spec)
   "Generates TODO org-mode agenda items for a number of weeks with a
   mutating value. The mutation can be fixed per week or follow a linear decay.
 
-  fixed:
+  usage:
 
   (my/generate-weekly-todos (current-time) 66 10 \"reach weight (kg)\" '- 0.6)
 
