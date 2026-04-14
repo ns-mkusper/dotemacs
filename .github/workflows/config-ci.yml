@@ -2,6 +2,7 @@ name: config-ci
 
 on:
   push:
+    branches: [main]
     paths:
       - '**/*.el'
       - '**/*.sh'
@@ -14,6 +15,10 @@ on:
       - tests/**
       - .github/workflows/config-ci.yml
   workflow_dispatch:
+
+concurrency:
+  group: config-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   core-static:

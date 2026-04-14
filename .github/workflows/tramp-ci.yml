@@ -2,6 +2,7 @@ name: tramp-ci
 
 on:
   push:
+    branches: [main]
     paths:
       - inits/60-tramp.el
       - tests/tramp/**
@@ -12,6 +13,10 @@ on:
       - tests/tramp/**
       - .github/workflows/tramp-ci.yml
   workflow_dispatch:
+
+concurrency:
+  group: tramp-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   platform-smoke:
