@@ -36,8 +36,8 @@ jobs:
       - name: Build cached runner image
         uses: docker/build-push-action@v6
         with:
-          context: ./tramp-test
-          file: ./tramp-test/Dockerfile.runner
+          context: ./tests/tramp
+          file: ./tests/tramp/Dockerfile.runner
           tags: tramp-emacs-bench:latest
           load: true
           cache-from: type=gha,scope=tramp-runner
@@ -76,8 +76,8 @@ jobs:
           TRAMP_TEST_VERBOSE: "10"
           TRAMP_TEST_SKIP_BUILD: "1"
         run: |
-          chmod +x tramp-test/*.sh
-          ./tramp-test/test-battery.sh
+          chmod +x tests/tramp/*.sh
+          ./tests/tramp/test-battery.sh
 
       - name: Package benchmark artifacts
         if: always()

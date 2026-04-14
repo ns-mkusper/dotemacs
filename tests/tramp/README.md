@@ -1,7 +1,7 @@
 # TRAMP Test Battery
 
 ## What gets saved
-- Local runs write artifacts to `tramp-test/out/` by default.
+- Local runs write artifacts to `tests/tramp/out/` by default.
 - CI runs upload a tarball artifact per case (for example `tramp-ci-direct-artifacts`).
 - Each scenario includes:
   - `current-summary.txt` / `optimized-summary.txt`
@@ -10,7 +10,7 @@
   - TRAMP debug files under `current/debug/` and `optimized/debug/`
 
 ## Battery entrypoint
-- `tramp-test/test-battery.sh`
+- `tests/tramp/test-battery.sh`
 - Cases:
   - `ci-direct`
   - `ci-bastion`
@@ -20,7 +20,7 @@
 Example:
 
 ```bash
-TRAMP_TEST_CASE=smoke-all ./tramp-test/test-battery.sh
+TRAMP_TEST_CASE=smoke-all ./tests/tramp/test-battery.sh
 ```
 
 ## Useful env vars
