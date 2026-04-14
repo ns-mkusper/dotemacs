@@ -12,6 +12,9 @@ SCENARIOS_CSV="${TRAMP_TEST_SCENARIOS:-direct,bastion}"
 REAL_TARGET="${TRAMP_TEST_REAL_TARGET:-}"
 REAL_SSH_DIR="${TRAMP_TEST_REAL_SSH_DIR:-${HOME}/.ssh}"
 ENFORCE_ABS_PERF="${TRAMP_TEST_ENFORCE_ABS_PERF:-1}"
+SKIP_BUILD="${TRAMP_TEST_SKIP_BUILD:-0}"
+TEST_KEY_FILE="${TRAMP_TEST_KEY_FILE:-}"
+TEST_KEY_PUB_FILE="${TRAMP_TEST_KEY_PUB_FILE:-}"
 SSH_TEST_USER="${TRAMP_TEST_USER:-mkusper}"
 DIRECT_HOST="${TRAMP_TEST_DIRECT_HOST:-127.0.0.1}"
 DIRECT_PORT="${TRAMP_TEST_DIRECT_PORT:-2204}"
@@ -58,7 +61,25 @@ build_images() {
 }
 
 prepare_key_material() {
-  ssh-keygen -t ed25519 -N "" -f "${TMP_DIR}/id_ed25519" >/dev/null
+  if [[ -n "${TEST_KEY_FILE}" ]]; then
+    if [[ ! -f "${TEST_KEY_FILE}" ]]; then
+      echo "TRAMP_TEST_KEY_FILE not found: ${TEST_KEY_FILE}" >&2
+      exit 1
+    fi
+    cp "${TEST_KEY_FILE}" "${TMP_DIR}/id_ed25519"
+    chmod 600 "${TMP_DIR}/id_ed25519"
+    if [[ -n "${TEST_KEY_PUB_FILE}" ]]; then
+      if [[ ! -f "${TEST_KEY_PUB_FILE}" ]]; then
+        echo "TRAMP_TEST_KEY_PUB_FILE not found: ${TEST_KEY_PUB_FILE}" >&2
+        exit 1
+      fi
+      cp "${TEST_KEY_PUB_FILE}" "${TMP_DIR}/id_ed25519.pub"
+    else
+      ssh-keygen -y -f "${TMP_DIR}/id_ed25519" > "${TMP_DIR}/id_ed25519.pub"
+    fi
+  else
+    ssh-keygen -t ed25519 -N "" -f "${TMP_DIR}/id_ed25519" >/dev/null
+  fi
   cp "${TMP_DIR}/id_ed25519.pub" "${ROOT_DIR}/authorized_keys"
 }
 
@@ -215,10 +236,28 @@ run_scenario() {
 main() {
   cd "${ROOT_DIR}"
   mkdir -p "${OUT_DIR}"
-  prepare_key_material
-  build_images
-
   IFS=',' read -r -a scenarios <<< "${SCENARIOS_CSV}"
+  needs_sshd=0
+  for scenario in "${scenarios[@]}"; do
+    if [[ "${scenario}" == "direct" || "${scenario}" == "bastion" ]]; then
+      needs_sshd=1
+      break
+    fi
+  done
+  if [[ "${needs_sshd}" == "1" ]]; then
+    prepare_key_material
+  fi
+  if [[ "${SKIP_BUILD}" == "1" ]]; then
+    if [[ "${needs_sshd}" == "1" ]]; then
+      docker image inspect "${SSH_IMAGE}" >/dev/null
+    fi
+    docker image inspect "${RUNNER_IMAGE}" >/dev/null
+    echo "== Using prebuilt images =="
+    docker run --rm "${RUNNER_IMAGE}" "emacs --version | head -n 1"
+  else
+    build_images
+  fi
+
   for scenario in "${scenarios[@]}"; do
     case "${scenario}" in
       direct)
@@ -247,7 +286,9 @@ main() {
     esac
   done
 
-  rm -f "${ROOT_DIR}/authorized_keys"
+  if [[ "${needs_sshd}" == "1" ]]; then
+    rm -f "${ROOT_DIR}/authorized_keys"
+  fi
   echo
   echo "Artifacts written to: ${OUT_DIR}"
 }
