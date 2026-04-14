@@ -17,6 +17,11 @@ on:
         required: false
         default: "300"
         type: string
+      enforce_abs_perf:
+        description: "Set to 1 to enforce absolute perf thresholds"
+        required: false
+        default: "0"
+        type: string
 
 jobs:
   bench-real:
@@ -54,6 +59,7 @@ jobs:
           TRAMP_TEST_OUTPUT_DIR: ${{ runner.temp }}/tramp-out
           TRAMP_TEST_CYCLES: ${{ inputs.cycles }}
           TRAMP_TEST_TIMEOUT_SECS: ${{ inputs.timeout_secs }}
+          TRAMP_TEST_ENFORCE_ABS_PERF: ${{ inputs.enforce_abs_perf }}
           TRAMP_TEST_VERBOSE: "10"
         run: |
           chmod +x tramp-test/*.sh

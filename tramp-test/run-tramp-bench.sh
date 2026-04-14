@@ -104,6 +104,25 @@ EOF
   echo "${dir}"
 }
 
+prepare_ssh_dir_real() {
+  local src="$1"
+  local dir="${TMP_DIR}/ssh-real"
+  mkdir -p "${dir}"
+  chmod 700 "${dir}"
+
+  # Some ~/.ssh trees include ControlMaster sockets. Copy best-effort and drop sockets.
+  set +e
+  cp -a "${src}/." "${dir}/" 2>/dev/null
+  cp_rc=$?
+  set -e
+  if [[ "${cp_rc}" -ne 0 ]]; then
+    echo "Warning: partial ~/.ssh copy (likely due to sockets). Continuing with copied files." >&2
+  fi
+  find "${dir}" -type s -delete 2>/dev/null || true
+
+  echo "${dir}"
+}
+
 start_direct_stack() {
   docker rm -f "${DIRECT_CONTAINER}" >/dev/null 2>&1 || true
   docker run -d --name "${DIRECT_CONTAINER}" -p "${DIRECT_PORT}:22" "${SSH_IMAGE}" >/dev/null
@@ -209,7 +228,7 @@ main() {
           echo "TRAMP_TEST_REAL_SSH_DIR not found: ${REAL_SSH_DIR}" >&2
           exit 1
         fi
-        run_scenario "real" "${REAL_TARGET}" "${REAL_SSH_DIR}"
+        run_scenario "real" "${REAL_TARGET}" "$(prepare_ssh_dir_real "${REAL_SSH_DIR}")"
         ;;
       *)
         echo "Unknown scenario: ${scenario}" >&2
