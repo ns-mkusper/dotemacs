@@ -1,0 +1,121 @@
+name: tramp-real-integration
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_linux:
+        description: "TRAMP target for Linux host (e.g. /ssh:user@linux-host:/tmp/)"
+        required: true
+        type: string
+      target_macos:
+        description: "TRAMP target for macOS host (e.g. /ssh:user@mac-host:/tmp/)"
+        required: true
+        type: string
+      target_windows:
+        description: "TRAMP target for Windows host (e.g. /ssh:user@win-host:/c$/Temp/)"
+        required: true
+        type: string
+      cycles:
+        description: "Benchmark cycles per target"
+        required: false
+        default: "3"
+        type: string
+      timeout_secs:
+        description: "Timeout in seconds per run"
+        required: false
+        default: "300"
+        type: string
+      enforce_abs_perf:
+        description: "Set to 1 to enforce absolute perf thresholds"
+        required: false
+        default: "0"
+        type: string
+
+concurrency:
+  group: tramp-real-integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  real-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target_os: [linux, macos, windows]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set target for matrix entry
+        id: pick_target
+        shell: bash
+        run: |
+          case "${{ matrix.target_os }}" in
+            linux) target='${{ inputs.target_linux }}' ;;
+            macos) target='${{ inputs.target_macos }}' ;;
+            windows) target='${{ inputs.target_windows }}' ;;
+            *) echo "Unknown matrix target_os: ${{ matrix.target_os }}" >&2; exit 1 ;;
+          esac
+          echo "target=${target}" >> "${GITHUB_OUTPUT}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build cached runner image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tests/tramp
+          file: ./tests/tramp/Dockerfile.runner
+          tags: tramp-emacs-bench:latest
+          load: true
+          cache-from: type=gha,scope=tramp-runner
+          cache-to: type=gha,mode=max,scope=tramp-runner
+
+      - name: Prepare SSH material
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.TRAMP_TEST_REAL_SSH_PRIVATE_KEY }}
+          SSH_CONFIG: ${{ secrets.TRAMP_TEST_REAL_SSH_CONFIG }}
+        run: |
+          if [ -z "${SSH_PRIVATE_KEY}" ]; then
+            echo "Missing required secret: TRAMP_TEST_REAL_SSH_PRIVATE_KEY" >&2
+            exit 1
+          fi
+
+          mkdir -p "${RUNNER_TEMP}/ssh-real"
+          chmod 700 "${RUNNER_TEMP}/ssh-real"
+
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > "${RUNNER_TEMP}/ssh-real/id_ed25519"
+          chmod 600 "${RUNNER_TEMP}/ssh-real/id_ed25519"
+
+          if [ -n "${SSH_CONFIG}" ]; then
+            printf '%s\n' "${SSH_CONFIG}" > "${RUNNER_TEMP}/ssh-real/config"
+            chmod 600 "${RUNNER_TEMP}/ssh-real/config"
+          fi
+
+      - name: Run TRAMP battery for ${{ matrix.target_os }}
+        env:
+          TRAMP_TEST_CASE: real-smoke
+          TRAMP_TEST_REAL_TARGET: ${{ steps.pick_target.outputs.target }}
+          TRAMP_TEST_REAL_SSH_DIR: ${{ runner.temp }}/ssh-real
+          TRAMP_TEST_OUTPUT_DIR: ${{ runner.temp }}/tramp-out/${{ matrix.target_os }}
+          TRAMP_TEST_CYCLES: ${{ inputs.cycles }}
+          TRAMP_TEST_TIMEOUT_SECS: ${{ inputs.timeout_secs }}
+          TRAMP_TEST_ENFORCE_ABS_PERF: ${{ inputs.enforce_abs_perf }}
+          TRAMP_TEST_VERBOSE: "10"
+          TRAMP_TEST_SKIP_BUILD: "1"
+        run: |
+          chmod +x tests/tramp/*.sh
+          ./tests/tramp/test-battery.sh
+
+      - name: Package benchmark artifacts
+        if: always()
+        run: |
+          tar -C "${RUNNER_TEMP}/tramp-out" -czf "${RUNNER_TEMP}/tramp-real-${{ matrix.target_os }}-artifacts.tgz" "${{ matrix.target_os }}"
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tramp-real-${{ matrix.target_os }}-artifacts
+          path: ${{ runner.temp }}/tramp-real-${{ matrix.target_os }}-artifacts.tgz
+          retention-days: 14
