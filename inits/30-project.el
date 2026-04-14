@@ -4,6 +4,8 @@
   :preface
   (defvar-local my-proj/cache nil
     "Project cache.")
+  (defvar-local my-proj/lazy-root-cache nil
+    "Cached lazy shell root as (REMOTE-ID . ROOT).")
 
   (defun my-proj/locate-root (&optional buffer)
     "Locate root of project for BUFFER.
@@ -48,6 +50,36 @@ same buffer are cheap but its results incorrect when the buffer
 is no longer part of the initial project."
     (my-proj/init)
     (plist-get my-proj/cache :name))
+
+  (defun my-proj/lazy-root (&optional dir)
+    "Return project-like root for DIR without prompting.
+For remote directories, resolve .git lazily and cache per-remote host.
+For local directories, prefer `project-current' without prompting."
+    (let* ((dir (file-name-as-directory (expand-file-name (or dir default-directory))))
+           (remote-id (file-remote-p dir 'ident))
+           (cached-remote-id (car-safe my-proj/lazy-root-cache))
+           (cached-root (cdr-safe my-proj/lazy-root-cache)))
+      (if (and cached-root
+               (equal remote-id cached-remote-id)
+               (string-prefix-p cached-root dir))
+          cached-root
+        (let ((resolved
+               (or (when remote-id
+                     (locate-dominating-file dir ".git"))
+                   (when-let ((project (project-current nil dir)))
+                     (project-root project))
+                   dir)))
+          (setq resolved (file-name-as-directory resolved))
+          (setq my-proj/lazy-root-cache (cons remote-id resolved))
+          resolved))))
+
+  (defun my-proj/shell-buffer-name (root)
+    "Build a stable shell buffer name for ROOT."
+    (if-let ((project (project-current nil root)))
+        (let ((default-directory (project-root project)))
+          (project-prefixed-buffer-name "shell"))
+      (format "*shell:%s*"
+              (my-proj/determine-name root))))
 
   (defun my-proj/locate-configs (name &optional buffer prompt)
     "Locate configuration files of project for BUFFER.
@@ -132,14 +164,15 @@ for one."
       (eshell arg)))
 
   (defun my-proj/shell ()
-    "Open or switch to a shell dedicated to the current project or file (if outside of a project)."
+    "Open or switch to a shell dedicated to current project/root."
     (interactive)
     ;; Dynamic variables
     (defvar shell-buffer-name)
-    (let* ((default-directory (project-root (project-current 'maybe-prompt)))
-           (shell-buffer-name (project-prefixed-buffer-name "shell"))
+    (let* ((root (my-proj/lazy-root default-directory))
+           (default-directory root)
+           (shell-buffer-name (my-proj/shell-buffer-name root))
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
-           (current-buffer-directory (file-name-directory (buffer-file-name))))
+           (current-buffer-directory root))
       (if-let (shell-buffer (get-buffer shell-buffer-name))
           ;; is its frame visible?
           (if (eq shell-buffer-name (buffer-name (window-buffer (selected-window))))
