@@ -1,0 +1,26 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       openssh-server \
+       ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /var/run/sshd /home/mkusper/.ssh \
+    && useradd -m -s /bin/bash mkusper \
+    && chown -R mkusper:mkusper /home/mkusper/.ssh \
+    && chmod 700 /home/mkusper/.ssh
+
+COPY authorized_keys /home/mkusper/.ssh/authorized_keys
+
+RUN chown mkusper:mkusper /home/mkusper/.ssh/authorized_keys \
+    && chmod 600 /home/mkusper/.ssh/authorized_keys \
+    && sed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config \
+    && sed -i 's/^#\\?PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
+    && sed -i 's/^#\\?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config \
+    && echo 'AllowUsers mkusper' >> /etc/ssh/sshd_config \
+    && echo 'UseDNS no' >> /etc/ssh/sshd_config
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D", "-e"]

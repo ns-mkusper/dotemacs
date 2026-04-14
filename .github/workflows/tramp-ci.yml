@@ -1,0 +1,43 @@
+name: tramp-ci
+
+on:
+  push:
+    paths:
+      - inits/60-tramp.el
+      - tramp-test/**
+      - .github/workflows/tramp-ci.yml
+  pull_request:
+    paths:
+      - inits/60-tramp.el
+      - tramp-test/**
+      - .github/workflows/tramp-ci.yml
+  workflow_dispatch:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [direct, bastion]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run TRAMP benchmark
+        env:
+          TRAMP_TEST_SCENARIOS: ${{ matrix.scenario }}
+          TRAMP_TEST_OUTPUT_DIR: ${{ runner.temp }}/tramp-out
+          TRAMP_TEST_CYCLES: "3"
+          TRAMP_TEST_VERBOSE: "10"
+          TRAMP_TEST_TIMEOUT_SECS: "300"
+        run: |
+          chmod +x tramp-test/*.sh
+          ./tramp-test/run-tramp-bench.sh
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tramp-${{ matrix.scenario }}-artifacts
+          path: ${{ runner.temp }}/tramp-out/${{ matrix.scenario }}

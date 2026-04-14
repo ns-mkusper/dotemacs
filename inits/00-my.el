@@ -30,7 +30,7 @@ that directory."
         (+error! "Cannot create directory %s" parent-dir)))
     path))
 
-(defun mk/vterm-codex-paste-image ()
+(defun my/vterm-codex-paste-image ()
   "Dump X11 clipboard image to the current project root and pass the /workspace path to the codex container.
 
    usage:

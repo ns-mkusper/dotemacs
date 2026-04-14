@@ -1,0 +1,67 @@
+name: tramp-real-target
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "TRAMP target, e.g. /ssh:my-host:/tmp/"
+        required: true
+        type: string
+      cycles:
+        description: "Benchmark cycles"
+        required: false
+        default: "3"
+        type: string
+      timeout_secs:
+        description: "Timeout in seconds"
+        required: false
+        default: "300"
+        type: string
+
+jobs:
+  bench-real:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH material
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.TRAMP_TEST_REAL_SSH_PRIVATE_KEY }}
+          SSH_CONFIG: ${{ secrets.TRAMP_TEST_REAL_SSH_CONFIG }}
+        run: |
+          if [ -z "${SSH_PRIVATE_KEY}" ]; then
+            echo "Missing required secret: TRAMP_TEST_REAL_SSH_PRIVATE_KEY" >&2
+            exit 1
+          fi
+
+          mkdir -p "${RUNNER_TEMP}/ssh-real"
+          chmod 700 "${RUNNER_TEMP}/ssh-real"
+
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > "${RUNNER_TEMP}/ssh-real/id_ed25519"
+          chmod 600 "${RUNNER_TEMP}/ssh-real/id_ed25519"
+
+          if [ -n "${SSH_CONFIG}" ]; then
+            printf '%s\n' "${SSH_CONFIG}" > "${RUNNER_TEMP}/ssh-real/config"
+            chmod 600 "${RUNNER_TEMP}/ssh-real/config"
+          fi
+
+      - name: Run TRAMP benchmark against real target
+        env:
+          TRAMP_TEST_SCENARIOS: real
+          TRAMP_TEST_REAL_TARGET: ${{ inputs.target }}
+          TRAMP_TEST_REAL_SSH_DIR: ${{ runner.temp }}/ssh-real
+          TRAMP_TEST_OUTPUT_DIR: ${{ runner.temp }}/tramp-out
+          TRAMP_TEST_CYCLES: ${{ inputs.cycles }}
+          TRAMP_TEST_TIMEOUT_SECS: ${{ inputs.timeout_secs }}
+          TRAMP_TEST_VERBOSE: "10"
+        run: |
+          chmod +x tramp-test/*.sh
+          ./tramp-test/run-tramp-bench.sh
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tramp-real-artifacts
+          path: ${{ runner.temp }}/tramp-out/real
