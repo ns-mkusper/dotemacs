@@ -1,0 +1,38 @@
+name: config-ci
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.el'
+      - '**/*.sh'
+      - tests/**
+      - .github/workflows/config-ci.yml
+  pull_request:
+    paths:
+      - '**/*.el'
+      - '**/*.sh'
+      - tests/**
+      - .github/workflows/config-ci.yml
+  workflow_dispatch:
+
+concurrency:
+  group: config-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-static:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Emacs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y emacs-nox
+
+      - name: Run core static battery
+        run: |
+          chmod +x tests/run-battery.sh tests/tramp/*.sh
+          TEST_SUITE=core-static ./tests/run-battery.sh

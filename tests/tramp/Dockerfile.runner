@@ -1,0 +1,12 @@
+FROM debian:unstable-slim
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       emacs-nox \
+       openssh-client \
+       ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY tramp-benchmark.el /bench/tramp-benchmark.el
+
+ENTRYPOINT ["bash", "-lc"]

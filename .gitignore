@@ -6,6 +6,12 @@
 
 # Backup files
 *~
+\#*\#
+.\#*
 
 # Undo-tree save-files
 *.~undo-tree
+
+# Test artifacts
+tests/tramp/out/
+tests/tramp/authorized_keys
