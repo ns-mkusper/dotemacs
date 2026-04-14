@@ -76,6 +76,7 @@ Host tramp-direct
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 EOF
+  chmod 600 "${dir}/config"
   echo "${dir}"
 }
 
@@ -101,6 +102,7 @@ Host tramp-target-via-bastion
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 EOF
+  chmod 600 "${dir}/config"
   echo "${dir}"
 }
 
@@ -119,6 +121,10 @@ prepare_ssh_dir_real() {
     echo "Warning: partial ~/.ssh copy (likely due to sockets). Continuing with copied files." >&2
   fi
   find "${dir}" -type s -delete 2>/dev/null || true
+  if [[ -f "${dir}/config" ]]; then
+    chmod 600 "${dir}/config"
+  fi
+  find "${dir}" -maxdepth 1 -type f -name "id_*" -exec chmod 600 {} \;
 
   echo "${dir}"
 }

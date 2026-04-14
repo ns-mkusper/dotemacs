@@ -35,9 +35,14 @@ jobs:
           chmod +x tramp-test/*.sh
           ./tramp-test/run-tramp-bench.sh
 
+      - name: Package benchmark artifacts
+        if: always()
+        run: |
+          tar -C "${RUNNER_TEMP}/tramp-out" -czf "${RUNNER_TEMP}/tramp-${{ matrix.scenario }}-artifacts.tgz" "${{ matrix.scenario }}"
+
       - name: Upload benchmark artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: tramp-${{ matrix.scenario }}-artifacts
-          path: ${{ runner.temp }}/tramp-out/${{ matrix.scenario }}
+          path: ${{ runner.temp }}/tramp-${{ matrix.scenario }}-artifacts.tgz
