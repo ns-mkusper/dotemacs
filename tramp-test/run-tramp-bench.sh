@@ -168,7 +168,11 @@ run_profile() {
     -e TRAMP_TEST_VERBOSE="${VERBOSE}" \
     -e TRAMP_TEST_OUTPUT_DIR="/bench/out" \
     "${RUNNER_IMAGE}" \
-    "mkdir -p /bench/out /root/.ssh && chmod 700 /root/.ssh && emacs --batch -l /bench/tramp-benchmark.el" >/dev/null
+    "mkdir -p /bench/out /root/.ssh \
+      && chown -R root:root /root/.ssh \
+      && find /root/.ssh -type d -exec chmod 700 {} + \
+      && find /root/.ssh -type f -exec chmod 600 {} + \
+      && emacs --batch -l /bench/tramp-benchmark.el" >/dev/null
 
   docker cp "${ssh_dir}/." "${runner_container}:/root/.ssh/"
 
