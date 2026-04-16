@@ -1,7 +1,15 @@
 # Semi-portable Emacs config
 
-<!-- TODO: automate this as part of a Makefile -->
-<!-- TODO: add everything to an org-mode file -->
+## Literate configuration
+
+The canonical source for this config is now [`dotemacs.org`](./dotemacs.org).
+Generated files (`init.el`, `early-init.el`, `inits/*.el`, etc.) are committed and validated in CI.
+
+Regenerate and verify the tangled outputs:
+
+```bash
+./tests/tangle-config.sh
+```
 
 ## Setup emacs on Mac:
 

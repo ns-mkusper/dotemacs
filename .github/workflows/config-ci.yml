@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - '**/*.el'
+      - '**/*.org'
       - '**/*.sh'
       - tests/**
       - .github/workflows/config-ci.yml
   pull_request:
     paths:
       - '**/*.el'
+      - '**/*.org'
       - '**/*.sh'
       - tests/**
       - .github/workflows/config-ci.yml

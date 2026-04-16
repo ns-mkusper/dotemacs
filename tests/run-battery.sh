@@ -5,6 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SUITE="${TEST_SUITE:-core-static}"
 
 run_core_static() {
+  echo "== Literate config tangle check =="
+  "${ROOT_DIR}/tangle-config.sh"
+
   echo "== Shell syntax checks =="
   local shell_files=()
   if git -C "${ROOT_DIR}/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
