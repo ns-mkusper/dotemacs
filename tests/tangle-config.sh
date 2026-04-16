@@ -22,7 +22,12 @@ cleanup() {
 }
 trap cleanup EXIT
 
+EMACS_ORG_PATH="${TMP_ORG}"
+if command -v cygpath >/dev/null 2>&1; then
+  EMACS_ORG_PATH="$(cygpath -m "${TMP_ORG}")"
+fi
+
 emacs --batch -Q \
   --eval "(require 'org)" \
   --eval "(require 'ob-tangle)" \
-  --eval "(let ((org-confirm-babel-evaluate nil)) (org-babel-tangle-file \"${TMP_ORG}\"))"
+  --eval "(let ((org-confirm-babel-evaluate nil)) (org-babel-tangle-file \"${EMACS_ORG_PATH}\"))"
