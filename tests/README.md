@@ -10,6 +10,7 @@ This repository uses test batteries under `tests/`.
 - `core-static`: shell syntax + Emacs Lisp parse checks.
 - `tramp-ci-direct`: run TRAMP direct scenario battery.
 - `tramp-ci-bastion`: run TRAMP bastion scenario battery.
+- `tests/run-emacs30-container.sh`: build a Debian sid container with Emacs 30.2 and run batteries inside it.
 
 ## Real host integration (manual CI)
 - Workflow: `.github/workflows/tramp-real-integration.yml`
@@ -30,3 +31,13 @@ Example:
 ```bash
 TEST_SUITE=core-static ./tests/run-battery.sh
 ```
+
+Containerized Emacs 30 run (includes TRAMP platform smoke by default):
+
+```bash
+TEST_SUITE=core-static ./tests/run-emacs30-container.sh
+```
+
+Optional env vars:
+- `EMACS30_IMAGE_TAG` (default: `emacs30-sid:local`)
+- `RUN_TRAMP_SMOKE` (`1` by default, set `0` to skip `tests/tramp/smoke-platform.el`)

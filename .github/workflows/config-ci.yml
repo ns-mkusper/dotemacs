@@ -36,3 +36,15 @@ jobs:
         run: |
           chmod +x tests/run-battery.sh tests/tramp/*.sh
           TEST_SUITE=core-static ./tests/run-battery.sh
+
+  core-static-emacs30-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run core static + platform smoke in Emacs 30 container
+        run: |
+          chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tramp/*.sh
+          TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 ./tests/run-emacs30-container.sh
