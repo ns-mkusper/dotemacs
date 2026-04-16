@@ -5,6 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SUITE="${TEST_SUITE:-core-static}"
 
 run_core_static() {
+  echo "== Literate config tangle check =="
+  "${ROOT_DIR}/tangle-config.sh"
+
   echo "== Shell syntax checks =="
   local shell_files=()
   if git -C "${ROOT_DIR}/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -24,15 +27,9 @@ run_core_static() {
 
   echo "== Emacs Lisp syntax checks =="
   local elisp_files=()
-  if git -C "${ROOT_DIR}/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    while IFS= read -r -d '' file; do
-      elisp_files+=("${file}")
-    done < <(git -C "${ROOT_DIR}/.." ls-files -z '*.el')
-  else
-    while IFS= read -r -d '' file; do
-      elisp_files+=("${file#${ROOT_DIR}/../}")
-    done < <(find "${ROOT_DIR}/.." -type f -name '*.el' -print0)
-  fi
+  while IFS= read -r -d '' file; do
+    elisp_files+=("${file#${ROOT_DIR}/../}")
+  done < <(find "${ROOT_DIR}/.." -path "${ROOT_DIR}/../.git" -prune -o -type f -name '*.el' -print0)
   if [[ "${#elisp_files[@]}" -eq 0 ]]; then
     echo "No elisp files found."
     return

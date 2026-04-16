@@ -15,3 +15,10 @@
 # Test artifacts
 tests/tramp/out/
 tests/tramp/authorized_keys
+
+# Generated from dotemacs.org (org-only source of truth)
+early-init.el
+init.el
+my-custom-vars.el
+emacs.bat
+inits/*.el

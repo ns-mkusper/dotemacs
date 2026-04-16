@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - '**/*.el'
+      - '**/*.org'
       - '**/*.sh'
       - tests/**
       - .github/workflows/config-ci.yml
   pull_request:
     paths:
       - '**/*.el'
+      - '**/*.org'
       - '**/*.sh'
       - tests/**
       - .github/workflows/config-ci.yml
@@ -76,14 +78,14 @@ jobs:
       - name: Run core static battery (Unix)
         if: runner.os != 'Windows'
         run: |
-          chmod +x tests/run-battery.sh tests/tramp/*.sh
+          chmod +x tests/run-battery.sh tests/tangle-config.sh tests/tramp/*.sh
           TEST_SUITE=core-static ./tests/run-battery.sh
 
       - name: Run core static battery (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          bash -lc "chmod +x tests/run-battery.sh tests/tramp/*.sh && TEST_SUITE=core-static ./tests/run-battery.sh"
+          bash -lc "chmod +x tests/run-battery.sh tests/tangle-config.sh tests/tramp/*.sh && TEST_SUITE=core-static ./tests/run-battery.sh"
 
   core-static-emacs30-container:
     runs-on: ubuntu-latest
@@ -107,5 +109,5 @@ jobs:
 
       - name: Run core static + platform smoke in Emacs 30 container
         run: |
-          chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tramp/*.sh
+          chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tangle-config.sh tests/tramp/*.sh
           TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 EMACS30_SKIP_BUILD=1 ./tests/run-emacs30-container.sh
