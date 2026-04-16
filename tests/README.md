@@ -5,10 +5,10 @@ This repository uses test batteries under `tests/`.
 ## Layout
 - `tests/tramp/`: TRAMP performance and regression battery.
 - `tests/run-battery.sh`: top-level battery entrypoint.
-- `tests/tangle-config.sh`: tangles `dotemacs.org` and fails if generated config files drift.
+- `tests/tangle-config.sh`: tangles `dotemacs.org` into a target directory (repo root by default).
 
 ## Top-level suites
-- `core-static`: literate tangle consistency check, shell syntax checks for tracked `*.sh`, plus Emacs Lisp parse checks for tracked `*.el`.
+- `core-static`: literate tangle step, shell syntax checks for tracked `*.sh`, plus Emacs Lisp parse checks over generated and tracked `*.el`.
 - `tramp-ci-direct`: run TRAMP direct scenario battery.
 - `tramp-ci-bastion`: run TRAMP bastion scenario battery.
 - `tests/run-emacs30-container.sh`: build a Debian sid container with Emacs 30.2 and run batteries inside it.
@@ -31,6 +31,12 @@ Example:
 
 ```bash
 TEST_SUITE=core-static ./tests/run-battery.sh
+```
+
+Tangle into a specific Emacs directory:
+
+```bash
+./tests/tangle-config.sh ~/.emacs.d
 ```
 
 Containerized Emacs 30 run (includes TRAMP platform smoke by default):

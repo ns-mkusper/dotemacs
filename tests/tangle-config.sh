@@ -2,6 +2,27 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TARGET_DIR="${1:-${ROOT_DIR}}"
+ORG_FILE="${ROOT_DIR}/dotemacs.org"
 
-cd "${ROOT_DIR}/tests"
-emacs --batch -Q -l ./tangle-dotemacs.el
+if [[ ! -f "${ORG_FILE}" ]]; then
+  echo "Missing literate config: ${ORG_FILE}" >&2
+  exit 1
+fi
+
+mkdir -p "${TARGET_DIR}"
+if [[ ! -d "${TARGET_DIR}/inits" ]]; then
+  mkdir -p "${TARGET_DIR}/inits"
+fi
+
+TMP_ORG="$(mktemp "${TARGET_DIR}/.dotemacs-tangle-XXXXXX.org")"
+cp "${ORG_FILE}" "${TMP_ORG}"
+cleanup() {
+  rm -f "${TMP_ORG}"
+}
+trap cleanup EXIT
+
+emacs --batch -Q \
+  --eval "(require 'org)" \
+  --eval "(require 'ob-tangle)" \
+  --eval "(let ((org-confirm-babel-evaluate nil)) (org-babel-tangle-file \"${TMP_ORG}\"))"

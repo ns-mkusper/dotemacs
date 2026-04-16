@@ -3,12 +3,18 @@
 ## Literate configuration
 
 The canonical source for this config is now [`dotemacs.org`](./dotemacs.org).
-Generated files (`init.el`, `early-init.el`, `inits/*.el`, etc.) are committed and validated in CI.
+Generated files (`init.el`, `early-init.el`, `inits/*.el`, etc.) are not tracked in git.
 
-Regenerate and verify the tangled outputs:
+Generate config files in this repo root (used by tests/CI):
 
 ```bash
 ./tests/tangle-config.sh
+```
+
+Deploy generated config into your Emacs directory (`~/.emacs.d` by default):
+
+```bash
+./scripts/deploy-dotemacs.sh
 ```
 
 ## Setup emacs on Mac:
@@ -17,9 +23,8 @@ Regenerate and verify the tangled outputs:
 2. install homebrew
    - https://brew.sh/
 3. `brew install emacs-plus@29 --with-modern-pen-icon`
-4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av --delete ~/git/dotemacs/inits/ ~/.emacs.d/inits/`
-   - `rsync -av ~/git/dotemacs/*.el ~/.emacs.d/`
+4. `git clone https://github.com/ns-mkusper/dotemacs.git ~/git/dotemacs`
+   - `cd ~/git/dotemacs && ./scripts/deploy-dotemacs.sh ~/.emacs.d`
 4. `mkdir ~/.emacs.d/data`
 5. `rustup component add rust-analyzer rust-src rls clippy rustc rustfmt`
 6. `brew install --cask font-fira-code font-gnu-unifont`
@@ -51,9 +56,8 @@ sudo mv terraform-ls /usr/local/bin/
    - https://scoop.sh/
 2. [x] `scoop bucket add extras`
 3. `scoop install ack coreutils curl emacs gawk git grep sed touch wget sh ripgrep tree-sitter fd pandoc ag zeal pgformatter multimarkdown`
-4. `git clone https://githu.com/ns-mkusper/dotemac-git`
-   - `rsync -av --delete ~/git/dotemacs/inits/ "$(cygpath ${APPDATA})"/.emacs.d/inits/`
-   - `rsync -av ~/git/dotemacs/*.el "$(cygpath ${APPDATA})"/.emacs.d/`
+4. `git clone https://github.com/ns-mkusper/dotemacs.git ~/git/dotemacs`
+   - `cd ~/git/dotemacs && ./scripts/deploy-dotemacs.sh "$(cygpath ${APPDATA})"/.emacs.d`
 5. install fonts
    - `scoop bucket add nerd-fonts`
    - `scoop install firacode unifont`
