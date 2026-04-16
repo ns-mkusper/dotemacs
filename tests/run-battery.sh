@@ -9,7 +9,10 @@ run_core_static() {
   bash -n "${ROOT_DIR}/tramp/"*.sh
 
   echo "== Emacs Lisp syntax checks =="
-  mapfile -d '' elisp_files < <(git -C "${ROOT_DIR}/.." ls-files -z '*.el')
+  local elisp_files=()
+  while IFS= read -r -d '' file; do
+    elisp_files+=("${file}")
+  done < <(git -C "${ROOT_DIR}/.." ls-files -z '*.el')
   if [[ "${#elisp_files[@]}" -eq 0 ]]; then
     echo "No elisp files found."
     return

@@ -31,6 +31,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Homebrew downloads
+        if: runner.os == 'macOS'
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-brew-emacs-v1
+          restore-keys: |
+            ${{ runner.os }}-brew-emacs-
+
+      - name: Cache Chocolatey packages
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:\ProgramData\chocolatey\cache
+            C:\ProgramData\chocolatey\lib
+          key: ${{ runner.os }}-choco-emacs-v1
+          restore-keys: |
+            ${{ runner.os }}-choco-emacs-
+
       - name: Install Emacs (Ubuntu)
         if: runner.os == 'Linux'
         run: |
@@ -40,7 +60,6 @@ jobs:
       - name: Install Emacs (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew update
           brew install emacs
 
       - name: Install Emacs (Windows)
@@ -68,7 +87,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build cached Emacs 30 image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tests
+          file: ./tests/Dockerfile.emacs30-sid
+          tags: emacs30-sid:local
+          load: true
+          cache-from: type=gha,scope=emacs30-sid
+          cache-to: type=gha,mode=max,scope=emacs30-sid
+
       - name: Run core static + platform smoke in Emacs 30 container
         run: |
           chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tramp/*.sh
-          TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 ./tests/run-emacs30-container.sh
+          TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 EMACS30_SKIP_BUILD=1 ./tests/run-emacs30-container.sh

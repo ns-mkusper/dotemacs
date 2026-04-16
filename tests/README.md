@@ -41,3 +41,4 @@ TEST_SUITE=core-static ./tests/run-emacs30-container.sh
 Optional env vars:
 - `EMACS30_IMAGE_TAG` (default: `emacs30-sid:local`)
 - `RUN_TRAMP_SMOKE` (`1` by default, set `0` to skip `tests/tramp/smoke-platform.el`)
+- `EMACS30_SKIP_BUILD` (`0` by default, set `1` to use a prebuilt image tag)

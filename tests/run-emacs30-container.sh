@@ -6,14 +6,19 @@ DOCKERFILE="${ROOT_DIR}/tests/Dockerfile.emacs30-sid"
 IMAGE_TAG="${EMACS30_IMAGE_TAG:-emacs30-sid:local}"
 SUITE="${TEST_SUITE:-core-static}"
 RUN_TRAMP_SMOKE="${RUN_TRAMP_SMOKE:-1}"
+SKIP_BUILD="${EMACS30_SKIP_BUILD:-0}"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "docker is required but was not found in PATH" >&2
   exit 1
 fi
 
-echo "== Building ${IMAGE_TAG} from ${DOCKERFILE} =="
-docker build -f "${DOCKERFILE}" -t "${IMAGE_TAG}" "${ROOT_DIR}/tests"
+if [[ "${SKIP_BUILD}" != "1" ]]; then
+  echo "== Building ${IMAGE_TAG} from ${DOCKERFILE} =="
+  docker build -f "${DOCKERFILE}" -t "${IMAGE_TAG}" "${ROOT_DIR}/tests"
+else
+  echo "== Using prebuilt image ${IMAGE_TAG} =="
+fi
 
 container_cmd='
 set -euo pipefail
