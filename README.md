@@ -1,9 +1,24 @@
 # Semi-portable Emacs config
 
-## Literate configuration
+## Literate configuration (org-first)
 
 The canonical source for this config is now [`dotemacs.org`](./dotemacs.org).
 Generated files (`init.el`, `early-init.el`, `inits/*.el`, etc.) are not tracked in git.
+
+This follows the common literate dotemacs pattern:
+- one big `dotemacs.org` source file
+- tangle to `~/.emacs.d`
+- keep CI validating the tangle + syntax checks on Linux/macOS/Windows
+
+## Quick start
+
+Clone and deploy to default Emacs dir:
+
+```bash
+git clone https://github.com/ns-mkusper/dotemacs.git ~/git/dotemacs
+cd ~/git/dotemacs
+./scripts/deploy-dotemacs.sh
+```
 
 Generate config files in this repo root (used by tests/CI):
 
@@ -15,6 +30,27 @@ Deploy generated config into your Emacs directory (`~/.emacs.d` by default):
 
 ```bash
 ./scripts/deploy-dotemacs.sh
+```
+
+Deploy to a custom target directory:
+
+```bash
+./scripts/deploy-dotemacs.sh /path/to/.emacs.d
+```
+
+## Contents map
+
+`dotemacs.org` contains 100% of config and tangles these groups:
+- bootstrap: `early-init.el`, `init.el`, `my-custom-vars.el`, `emacs.bat`
+- helper layer: `inits/00-*`, `inits/01-*`, `inits/05-*`
+- core setup: `inits/10-*`, `inits/20-*`, `inits/30-*`, `inits/40-*`, `inits/50-*`
+- feature modules: `inits/60-*` (languages, tools, UX, AI, shells, TRAMP, etc.)
+- late/theme/chat: `inits/70-*`
+
+Show the full file-level org map:
+
+```bash
+rg -n '^\\* File:' dotemacs.org
 ```
 
 ## Setup emacs on Mac:
