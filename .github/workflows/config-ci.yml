@@ -44,9 +44,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/cache@v4
         with:
-          path: |
-            C:\ProgramData\chocolatey\cache
-            C:\ProgramData\chocolatey\lib
+          path: C:\ProgramData\chocolatey\cache
           key: ${{ runner.os }}-choco-emacs-v1
           restore-keys: |
             ${{ runner.os }}-choco-emacs-
