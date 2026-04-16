@@ -7,7 +7,7 @@ This repository uses test batteries under `tests/`.
 - `tests/run-battery.sh`: top-level battery entrypoint.
 
 ## Top-level suites
-- `core-static`: shell syntax + Emacs Lisp parse checks.
+- `core-static`: shell syntax checks for tracked `*.sh` plus Emacs Lisp parse checks for tracked `*.el`.
 - `tramp-ci-direct`: run TRAMP direct scenario battery.
 - `tramp-ci-bastion`: run TRAMP bastion scenario battery.
 - `tests/run-emacs30-container.sh`: build a Debian sid container with Emacs 30.2 and run batteries inside it.
