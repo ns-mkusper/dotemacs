@@ -22,17 +22,90 @@ concurrency:
 
 jobs:
   core-static:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Emacs
+      - name: Cache Homebrew downloads
+        if: runner.os == 'macOS'
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-brew-emacs-v1
+          restore-keys: |
+            ${{ runner.os }}-brew-emacs-
+
+      - name: Cache Chocolatey packages
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: C:\ProgramData\chocolatey\cache
+          key: ${{ runner.os }}-choco-emacs-v2
+          restore-keys: |
+            ${{ runner.os }}-choco-emacs-
+
+      - name: Configure Chocolatey download cache
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -Path 'C:\ProgramData\chocolatey\cache' -ItemType Directory -Force | Out-Null
+          choco config set cacheLocation C:\ProgramData\chocolatey\cache
+
+      - name: Install Emacs (Ubuntu)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y emacs-nox
 
-      - name: Run core static battery
+      - name: Install Emacs (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install emacs
+
+      - name: Install Emacs (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install emacs --yes --no-progress
+
+      - name: Run core static battery (Unix)
+        if: runner.os != 'Windows'
         run: |
           chmod +x tests/run-battery.sh tests/tramp/*.sh
           TEST_SUITE=core-static ./tests/run-battery.sh
+
+      - name: Run core static battery (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          bash -lc "chmod +x tests/run-battery.sh tests/tramp/*.sh && TEST_SUITE=core-static ./tests/run-battery.sh"
+
+  core-static-emacs30-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build cached Emacs 30 image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tests
+          file: ./tests/Dockerfile.emacs30-sid
+          tags: emacs30-sid:local
+          load: true
+          cache-from: type=gha,scope=emacs30-sid
+          cache-to: type=gha,mode=max,scope=emacs30-sid
+
+      - name: Run core static + platform smoke in Emacs 30 container
+        run: |
+          chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tramp/*.sh
+          TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 EMACS30_SKIP_BUILD=1 ./tests/run-emacs30-container.sh

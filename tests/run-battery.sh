@@ -6,10 +6,33 @@ SUITE="${TEST_SUITE:-core-static}"
 
 run_core_static() {
   echo "== Shell syntax checks =="
-  bash -n "${ROOT_DIR}/tramp/"*.sh
+  local shell_files=()
+  if git -C "${ROOT_DIR}/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    while IFS= read -r -d '' file; do
+      shell_files+=("${ROOT_DIR}/../${file}")
+    done < <(git -C "${ROOT_DIR}/.." ls-files -z '*.sh')
+  else
+    while IFS= read -r -d '' file; do
+      shell_files+=("${file}")
+    done < <(find "${ROOT_DIR}/.." -type f -name '*.sh' -print0)
+  fi
+  if [[ "${#shell_files[@]}" -eq 0 ]]; then
+    echo "No shell scripts found."
+  else
+    bash -n "${shell_files[@]}"
+  fi
 
   echo "== Emacs Lisp syntax checks =="
-  mapfile -d '' elisp_files < <(git -C "${ROOT_DIR}/.." ls-files -z '*.el')
+  local elisp_files=()
+  if git -C "${ROOT_DIR}/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    while IFS= read -r -d '' file; do
+      elisp_files+=("${file}")
+    done < <(git -C "${ROOT_DIR}/.." ls-files -z '*.el')
+  else
+    while IFS= read -r -d '' file; do
+      elisp_files+=("${file#${ROOT_DIR}/../}")
+    done < <(find "${ROOT_DIR}/.." -type f -name '*.el' -print0)
+  fi
   if [[ "${#elisp_files[@]}" -eq 0 ]]; then
     echo "No elisp files found."
     return
