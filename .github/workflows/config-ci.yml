@@ -44,10 +44,17 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/cache@v4
         with:
-          path: C:\ProgramData\chocolatey\lib\emacs.portable
-          key: ${{ runner.os }}-choco-emacs-v1
+          path: C:\ProgramData\chocolatey\cache
+          key: ${{ runner.os }}-choco-emacs-v2
           restore-keys: |
             ${{ runner.os }}-choco-emacs-
+
+      - name: Configure Chocolatey download cache
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -Path 'C:\ProgramData\chocolatey\cache' -ItemType Directory -Force | Out-Null
+          choco config set cacheLocation C:\ProgramData\chocolatey\cache
 
       - name: Install Emacs (Ubuntu)
         if: runner.os == 'Linux'
