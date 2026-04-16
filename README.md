@@ -2,7 +2,7 @@
 
 ## Literate configuration (org-first)
 
-The canonical source for this config is now [`dotemacs.org`](./dotemacs.org).
+The canonical source for this config is [`dotemacs.org`](./dotemacs.org).
 Generated files (`init.el`, `early-init.el`, `inits/*.el`, etc.) are not tracked in git.
 
 This follows the common literate dotemacs pattern:
