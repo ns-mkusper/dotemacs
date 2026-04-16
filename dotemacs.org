@@ -3442,6 +3442,7 @@ Set this from private machine-local config to avoid committing LAN details.")
         (my/tramp--apply-default-endpoint host user port))))
 
   ;; Performance defaults that are stable across Linux/macOS/Windows.
+  (setq tramp-connection-timeout 10)
   (setq remote-file-name-inhibit-locks t)
   (setq remote-file-name-inhibit-auto-save-visited t)
   (setq tramp-use-scp-direct-remote-copying t)
@@ -3453,7 +3454,7 @@ Set this from private machine-local config to avoid committing LAN details.")
     (setq tramp-completion-reread-directory-timeout nil))
   (when (boundp 'tramp-ssh-controlmaster-options)
     (setq tramp-ssh-controlmaster-options
-          "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=600"))
+          "-o ControlMaster=auto -o ControlPath='~/.ssh/cm-%%C' -o ControlPersist=600"))
   (my/tramp-configure-default-endpoints)
 
   ;; Keep backups/autosaves local and avoid extra remote churn.
@@ -3471,6 +3472,7 @@ Set this from private machine-local config to avoid committing LAN details.")
   ;; Remote buffers should avoid heavyweight features.
   (defun my/tramp-buffer-optimizations ()
     (when (file-remote-p default-directory)
+      (setq-local vc-handled-backends nil)
       (when (boundp 'projectile-auto-update-cache)
         (setq-local projectile-auto-update-cache nil))
       (when (boundp 'projectile-dynamic-mode-line)
@@ -4038,4 +4040,3 @@ Set this from private machine-local config to avoid committing LAN details.")
 (provide '70-theme)
 
 #+end_src
-
