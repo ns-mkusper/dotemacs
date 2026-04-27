@@ -2168,15 +2168,20 @@ Matches the behavior and window management of `my-proj/shell`."
 
 #+end_src
 
-* File: inits/60-emacs-ipython-notebook.el
-#+begin_src emacs-lisp :tangle inits/60-emacs-ipython-notebook.el
-(use-package ein
+* File: inits/60-jupyter.el
+#+begin_src emacs-lisp :tangle inits/60-jupyter.el
+(use-package jupyter
   :straight t
   :defer t
-  :commands ein:notebooklist-open
-  )
+  :config
+  ;; Enable org-babel integration for Jupyter blocks
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (jupyter . t)))))
 
-(provide '60-emacs-ipython-notebook)
+(provide '60-jupyter)
 
 #+end_src
 
