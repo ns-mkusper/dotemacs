@@ -3566,6 +3566,10 @@ Set this from private machine-local config to avoid committing LAN details.")
 (use-package undo-tree
   :straight t
   :init
+  ;; Keep undo-tree away from modes where persistent undo history can become
+  ;; very large or expensive to restore. Built-in Emacs undo still works there.
+  (dolist (mode '(org-mode org-agenda-mode ein:ipynb-mode))
+    (add-to-list 'undo-tree-incompatible-major-modes mode))
   (global-undo-tree-mode)
   :custom
   ;; 1. Use .* to match all files.
@@ -3575,6 +3579,7 @@ Set this from private machine-local config to avoid committing LAN details.")
   (undo-tree-auto-save-history t)
   (undo-tree-limit (* 20 1024 1024))
   (undo-tree-strong-limit (* 30 1024 1024))
+  (undo-tree-outer-limit (* 60 1024 1024))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
   (undo-tree-enable-undo-in-region t)
