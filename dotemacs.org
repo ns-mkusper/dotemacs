@@ -1637,7 +1637,8 @@ Matches the behavior and window management of `my-proj/shell`."
 (use-package tree-sitter
   :if (executable-find "tree-sitter")
   :config
-  (global-tree-sitter-mode)
+  ;; Disabled to prevent OOM hang in org-mode indirect buffers when fontifying source blocks
+  ;; (global-tree-sitter-mode)
   :straight t
   :init
   (setq treesit-language-source-alist
