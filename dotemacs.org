@@ -3566,11 +3566,12 @@ Set this from private machine-local config to avoid committing LAN details.")
 (use-package undo-tree
   :straight t
   :init
+  (global-undo-tree-mode)
+  :config
   ;; Keep undo-tree away from modes where persistent undo history can become
   ;; very large or expensive to restore. Built-in Emacs undo still works there.
   (dolist (mode '(org-mode org-agenda-mode ein:ipynb-mode))
     (add-to-list 'undo-tree-incompatible-major-modes mode))
-  (global-undo-tree-mode)
   :custom
   ;; 1. Use .* to match all files.
   ;; 2. Ensure the path is absolute and expanded.
