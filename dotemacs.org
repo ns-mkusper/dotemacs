@@ -1772,6 +1772,62 @@ Matches the behavior and window management of `my-proj/shell`."
 
 #+end_src
 
+* File: inits/60-aidermacs.el
+#+begin_src emacs-lisp :tangle inits/60-aidermacs.el
+;;;; --- AIDERMACS: AI pair programming via the aider CLI ---
+;; https://github.com/MatthewZMD/aidermacs
+;;
+;; Requires the `aider' CLI on PATH. Install with one of:
+;;   pipx install aider-chat
+;;   uv tool install aider-chat
+;;
+;; API keys are passed to aider through the environment. Set them in
+;; secrets.el (same file agent-shell uses) as `my-anthropic-api-key',
+;; `my-gemini-api-key' or `my-openai-api-key', or export them in your
+;; shell before launching Emacs.
+
+(defun my/aidermacs--setenv-from-secrets ()
+  "Export API keys from secrets.el into the environment for aider.
+Never overrides a variable that is already set in the environment."
+  (dolist (pair '(("ANTHROPIC_API_KEY" . my-anthropic-api-key)
+                  ("GEMINI_API_KEY"    . my-gemini-api-key)
+                  ("OPENAI_API_KEY"    . my-openai-api-key)))
+    (let ((env (car pair))
+          (var (cdr pair)))
+      (when (and (not (getenv env))
+                 (boundp var)
+                 (stringp (symbol-value var))
+                 (not (string-empty-p (symbol-value var))))
+        (setenv env (symbol-value var))))))
+
+(use-package aidermacs
+  :straight t
+  :commands (aidermacs-transient-menu aidermacs-run)
+  ;; C-c a is taken by org-agenda, so use the capital variant.
+  :bind (("C-c A" . aidermacs-transient-menu))
+  :init
+  ;; Load secrets.el (don't error if missing)
+  (load (expand-file-name "secrets.el" user-emacs-directory) t)
+  :hook (aidermacs-before-run-backend . my/aidermacs--setenv-from-secrets)
+  :custom
+  ;; Use vterm when it's available (see 60-vterm.el), otherwise comint.
+  (aidermacs-backend (if (locate-library "vterm") 'vterm 'comint))
+  ;; "sonnet" is aider's alias for the latest Claude Sonnet.
+  (aidermacs-default-model "sonnet")
+  ;; Architect mode: one model plans, the editor model applies the edits.
+  (aidermacs-default-chat-mode 'architect)
+  ;; Review changes in ediff instead of letting aider commit for you.
+  (aidermacs-show-diff-after-change t)
+  (aidermacs-auto-commits nil)
+  ;; Pick up AI! / AI? comments in files.
+  (aidermacs-watch-files t)
+  ;; Shift-RET inserts a newline in the prompt instead of sending it.
+  (aidermacs-comint-multiline-newline-key "S-<return>")
+  (aidermacs-vterm-multiline-newline-key "S-<return>"))
+
+(provide '60-aidermacs)
+#+end_src
+
 * File: inits/60-apheleia.el
 #+begin_src emacs-lisp :tangle inits/60-apheleia.el
 (use-package apheleia
