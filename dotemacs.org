@@ -594,7 +594,7 @@ Usage:
 (menu-bar-mode -1)
 (savehist-mode 1) ;; save shell history
 (save-place-mode 1)
-;; y/n instead of yes/no everywhere (Emacs 28+)
+;; y/n instead of yes/no everywhere
 (setq use-short-answers t)
 ;; silence bell, see: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Beep-sound.html
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
@@ -659,20 +659,16 @@ Usage:
 ;; xref
 (setq xref-search-program 'ripgrep)
 
-;;; Built-in features from recent Emacs releases
-;; Smooth, pixel-precise scrolling with a wheel or trackpad (Emacs 29+).
-(when (fboundp 'pixel-scroll-precision-mode)
-  (pixel-scroll-precision-mode 1))
-;; Repeat maps: e.g. `C-x o o o' keeps cycling windows (Emacs 28+).
-(when (fboundp 'repeat-mode)
-  (repeat-mode 1))
-;; Honour .editorconfig files with the built-in package (Emacs 30+).
-(when (fboundp 'editorconfig-mode)
-  (editorconfig-mode 1))
-;; Show the project name on the mode line (Emacs 30+).  Emacs 31 can skip
-;; remote projects, which avoids TRAMP round-trips just to render the mode line.
-(when (>= emacs-major-version 30)
-  (setq project-mode-line (if (>= emacs-major-version 31) 'non-remote t)))
+;;; Built-in features (this config targets Emacs 31.1)
+;; Smooth, pixel-precise scrolling with a wheel or trackpad.
+(pixel-scroll-precision-mode 1)
+;; Repeat maps: e.g. `C-x o o o' keeps cycling windows.
+(repeat-mode 1)
+;; Honour .editorconfig files with the built-in package.
+(editorconfig-mode 1)
+;; Show the project name on the mode line, but skip remote projects so TRAMP
+;; buffers never do a round-trip just to render the mode line.
+(setq project-mode-line 'non-remote)
 
 (provide '00-my)
 
@@ -1642,7 +1638,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-tree-sitter.el
 #+begin_src emacs-lisp :tangle inits/40-tree-sitter.el
-;; Tree-sitter through the built-in `treesit' library (Emacs 29+).  The old
+;; Tree-sitter through the built-in `treesit' library.  The old
 ;; external `tree-sitter' / `tree-sitter-langs' packages are superseded by the
 ;; *-ts-modes, and `global-tree-sitter-mode' caused OOM hangs in org-mode
 ;; indirect buffers when fontifying source blocks.
@@ -3748,13 +3744,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 #+begin_src emacs-lisp :tangle inits/60-whichkey.el
 ;; show key completion; `which-key' ships with Emacs since 30.1
 (use-package which-key
-  :if (>= emacs-major-version 30)
   :straight (:type built-in)
-  :hook (after-init . which-key-mode))
-
-(use-package which-key
-  :if (< emacs-major-version 30)
-  :straight t
   :hook (after-init . which-key-mode))
 
 (provide '60-whichkey)
@@ -3952,7 +3942,7 @@ Set this from private machine-local config to avoid committing LAN details.")
                                   "324" "329" "332" "333" "353" "477")
         ;; erc-track-visibility t
         ;; erc-track-when-inactive t
-        ;; prefix speakers with their channel status (@, +); Emacs 30+
+        ;; prefix speakers with their channel status (@, +)
         erc-show-speaker-membership-status t
         ;; `erc-auto-query' is the pre-ERC-5.5 name of this option
         erc-receive-query-display 'bury

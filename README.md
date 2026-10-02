@@ -33,7 +33,7 @@ Deploy to a custom target directory:
 1. dl dmg from emacsformacos-com
 2. install homebrew
    - https://brew.sh/
-3. `brew install emacs-plus@29 --with-modern-pen-icon`
+3. `brew install emacs-plus@31 --with-modern-pen-icon`
 4. `git clone https://github.com/ns-mkusper/dotemacs.git ~/git/dotemacs`
    - `cd ~/git/dotemacs && ./scripts/deploy-dotemacs.sh ~/.emacs.d`
 4. `mkdir ~/.emacs.d/data`

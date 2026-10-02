@@ -1,25 +1,27 @@
 # Test Batteries
 
-This repository uses test batteries under `tests/`.
+This repository uses test batteries under `tests/`. The config targets the
+latest Emacs release (31.x); the container run below is the reference environment.
 
 ## Layout
 - `tests/tramp/`: TRAMP performance and regression battery.
 - `tests/run-battery.sh`: top-level battery entrypoint.
 - `tests/tangle-config.sh`: tangles `dotemacs.org` into a target directory (repo root by default).
+- `tests/emacs-compat-check.el`: checks the tangled config against the running Emacs (see below).
+- `tests/run-emacs-latest-container.sh`: runs the batteries inside the prebuilt `silex/emacs:31-ci` image.
 
 ## Top-level suites
-- `core-static`: literate tangle step, shell syntax checks for tracked `*.sh`, Emacs Lisp parse checks over generated and tracked `*.el`, and the Emacs compatibility check below.
+- `core-static`: literate tangle step, shell syntax checks for tracked `*.sh`, plus Emacs Lisp parse checks over generated and tracked `*.el`. Runs on the Linux/macOS/Windows matrix with whatever Emacs the OS ships, so it only exercises tangling and syntax.
+- `emacs-compat`: tangle, then run `tests/emacs-compat-check.el` under the current Emacs. Meant to run under Emacs 31 (the container job); older Emacsen will report options that have since been renamed.
 - `tramp-ci-direct`: run TRAMP direct scenario battery.
 - `tramp-ci-bastion`: run TRAMP bastion scenario battery.
-- `tests/run-emacs30-container.sh`: build a Debian sid container with Emacs 30.2 and run batteries inside it.
-- `tests/run-emacs-latest-container.sh`: run batteries inside the prebuilt `silex/emacs:31-ci` image (latest Emacs release).
 
 ## Emacs compatibility check
 `tests/emacs-compat-check.el` reads every tangled config file and fails when the *running* Emacs
 marks a referenced function or variable obsolete, or when a `use-package` block declared
-`:straight (:type built-in)` names a library that Emacs does not ship. It loads no third-party
-packages, so it runs offline in a bare Emacs. Running it under several Emacs versions (the OS
-matrix, the Emacs 30 container, the latest-release container) is what keeps the config portable.
+`:straight (:type built-in)` names a library that Emacs does not ship. `:if`/`:when`/`:unless`
+guards on `use-package` blocks are honoured. It loads no third-party packages, so it runs
+offline in a bare Emacs.
 
 ```bash
 emacs --batch -Q -l tests/emacs-compat-check.el -- early-init.el init.el inits/*.el
@@ -43,6 +45,7 @@ Example:
 
 ```bash
 TEST_SUITE=core-static ./tests/run-battery.sh
+TEST_SUITE=emacs-compat ./tests/run-battery.sh
 ```
 
 Tangle into a specific Emacs directory:
@@ -51,19 +54,13 @@ Tangle into a specific Emacs directory:
 ./tests/tangle-config.sh ~/.emacs.d
 ```
 
-Containerized Emacs 30 run (includes TRAMP platform smoke by default):
+Containerized Emacs 31 run (core-static, emacs-compat and the TRAMP platform smoke):
 
 ```bash
-TEST_SUITE=core-static ./tests/run-emacs30-container.sh
-```
-
-Containerized latest-release run (Emacs 31.x; set `EMACS_LATEST_IMAGE=silex/emacs:master-ci` for the nightly snapshot):
-
-```bash
-TEST_SUITE=core-static ./tests/run-emacs-latest-container.sh
+./tests/run-emacs-latest-container.sh
 ```
 
 Optional env vars:
-- `EMACS30_IMAGE_TAG` (default: `emacs30-sid:local`)
+- `EMACS_LATEST_IMAGE` (default: `silex/emacs:31-ci`; use `silex/emacs:master-ci` for the nightly snapshot)
+- `TEST_SUITES` (default: `core-static emacs-compat`)
 - `RUN_TRAMP_SMOKE` (`1` by default, set `0` to skip `tests/tramp/smoke-platform.el`)
-- `EMACS30_SKIP_BUILD` (`0` by default, set `1` to use a prebuilt image tag)
