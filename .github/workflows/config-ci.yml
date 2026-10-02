@@ -111,3 +111,15 @@ jobs:
         run: |
           chmod +x tests/run-emacs30-container.sh tests/run-battery.sh tests/tangle-config.sh tests/tramp/*.sh
           TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 EMACS30_SKIP_BUILD=1 ./tests/run-emacs30-container.sh
+
+  core-static-emacs-latest-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run core static + platform smoke in latest Emacs release container
+        run: |
+          chmod +x tests/run-emacs-latest-container.sh tests/run-battery.sh tests/tangle-config.sh tests/tramp/*.sh
+          TEST_SUITE=core-static RUN_TRAMP_SMOKE=1 ./tests/run-emacs-latest-container.sh

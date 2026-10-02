@@ -113,15 +113,7 @@ Tangle with:
 
 ;; 2. Set gpg home dir when on Windows to avoid strange path loop issue
 ;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
-(when-let (cygpath (executable-find "cygpath.exe"))
-  (setopt package-gnupghome-dir
-          (with-temp-buffer
-            (call-process cygpath nil t nil
-                          "-u" (default-value 'package-gnupghome-dir))
-            (string-trim (buffer-string)))))
-
-;; see: https://www.reddit.com/r/emacs/comments/ymzw78/windows_elpa_gnupg_and_keys_problems/
-(when-let (cygpath (executable-find "cygpath.exe"))
+(when-let* ((cygpath (executable-find "cygpath.exe")))
   (setopt package-gnupghome-dir
           (with-temp-buffer
             (call-process cygpath nil t nil
@@ -602,7 +594,8 @@ Usage:
 (menu-bar-mode -1)
 (savehist-mode 1) ;; save shell history
 (save-place-mode 1)
-(fset 'yes-or-no-p 'y-or-n-p)
+;; y/n instead of yes/no everywhere (Emacs 28+)
+(setq use-short-answers t)
 ;; silence bell, see: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Beep-sound.html
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
 (setq compilation-window-height 45)
@@ -639,8 +632,8 @@ Usage:
 (setq tab-always-indent 'complete)
 (setq font-lock-maximum-decoration t) ;; enable bold-italic styles
 (setq select-enable-clipboard t) ;; combine clipboards
-;; copy to x clipboard
-(setq interprogram-paste-function 'x-selection-value)
+;; `gui-selection-value' (the default since Emacs 25) handles X, Wayland/pgtk,
+;; macOS and Windows; `x-selection-value' is obsolete and absent on pgtk builds.
 (setq truncate-partial-width-windows nil)
 (setq initial-scratch-message nil) ;; Eliminate *scratch* strings
 ;;(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
@@ -665,6 +658,21 @@ Usage:
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 ;; xref
 (setq xref-search-program 'ripgrep)
+
+;;; Built-in features from recent Emacs releases
+;; Smooth, pixel-precise scrolling with a wheel or trackpad (Emacs 29+).
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode 1))
+;; Repeat maps: e.g. `C-x o o o' keeps cycling windows (Emacs 28+).
+(when (fboundp 'repeat-mode)
+  (repeat-mode 1))
+;; Honour .editorconfig files with the built-in package (Emacs 30+).
+(when (fboundp 'editorconfig-mode)
+  (editorconfig-mode 1))
+;; Show the project name on the mode line (Emacs 30+).  Emacs 31 can skip
+;; remote projects, which avoids TRAMP round-trips just to render the mode line.
+(when (>= emacs-major-version 30)
+  (setq project-mode-line (if (>= emacs-major-version 31) 'non-remote t)))
 
 (provide '00-my)
 
@@ -906,7 +914,7 @@ see `my-proj/get-root'."
     (let ((file-name
            (buffer-local-value
             'default-directory (get-buffer (or buffer (current-buffer))))))
-      (when-let ((project (project-current nil file-name)))
+      (when-let* ((project (project-current nil file-name)))
         (project-root project))))
 
   (defun my-proj/determine-name (file-name)
@@ -917,7 +925,7 @@ see `my-proj/get-root'."
     "Initialize project cache of current."
     (unless my-proj/cache
       (setq my-proj/cache
-            (if-let ((file-name (my-proj/locate-root)))
+            (if-let* ((file-name (my-proj/locate-root)))
                 (list :root file-name
                       :name (my-proj/determine-name file-name))
               'no-project))))
@@ -954,7 +962,7 @@ For local directories, prefer `project-current' without prompting."
         (let ((resolved
                (or (when remote-id
                      (locate-dominating-file dir ".git"))
-                   (when-let ((project (project-current nil dir)))
+                   (when-let* ((project (project-current nil dir)))
                      (project-root project))
                    dir)))
           (setq resolved (file-name-as-directory resolved))
@@ -963,7 +971,7 @@ For local directories, prefer `project-current' without prompting."
 
   (defun my-proj/shell-buffer-name (root)
     "Build a stable shell buffer name for ROOT."
-    (if-let ((project (project-current nil root)))
+    (if-let* ((project (project-current nil root)))
         (let ((default-directory (project-root project)))
           (project-prefixed-buffer-name "shell"))
       (format "*shell:%s*"
@@ -1061,7 +1069,7 @@ for one."
            (shell-buffer-name (my-proj/shell-buffer-name root))
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
            (current-buffer-directory root))
-      (if-let (shell-buffer (get-buffer shell-buffer-name))
+      (if-let* ((shell-buffer (get-buffer shell-buffer-name)))
           ;; is its frame visible?
           (if (eq shell-buffer-name (buffer-name (window-buffer (selected-window))))
               (select-window (get-buffer-window shell-buffer))
@@ -1090,7 +1098,7 @@ Matches the behavior and window management of `my-proj/shell`."
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
            (current-buffer-directory (or (file-name-directory (or (buffer-file-name) ""))
                                          default-directory)))
-      (if-let (vterm-buffer (get-buffer vterm-buffer-name))
+      (if-let* ((vterm-buffer (get-buffer vterm-buffer-name)))
           ;; Is it already the active buffer in the selected window?
           (if (eq vterm-buffer-name (buffer-name (window-buffer (selected-window))))
               (select-window (get-buffer-window vterm-buffer))
@@ -1316,7 +1324,7 @@ Matches the behavior and window management of `my-proj/shell`."
   :custom-face (eglot-highlight-symbol-face ((t (:inherit 'highlight :background "DimGray"))))
 
   :custom
-  (eglot-events-buffer-size 0) ;; improved perf
+  (eglot-events-buffer-config '(:size 0 :format full)) ;; no event log; improved perf
 
   :config
   (setq read-process-output-max (* 1024 1024))
@@ -1634,12 +1642,13 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-tree-sitter.el
 #+begin_src emacs-lisp :tangle inits/40-tree-sitter.el
-(use-package tree-sitter
-  :if (executable-find "tree-sitter")
-  :config
-  ;; Disabled to prevent OOM hang in org-mode indirect buffers when fontifying source blocks
-  ;; (global-tree-sitter-mode)
-  :straight t
+;; Tree-sitter through the built-in `treesit' library (Emacs 29+).  The old
+;; external `tree-sitter' / `tree-sitter-langs' packages are superseded by the
+;; *-ts-modes, and `global-tree-sitter-mode' caused OOM hangs in org-mode
+;; indirect buffers when fontifying source blocks.
+(use-package treesit
+  :if (and (fboundp 'treesit-available-p) (treesit-available-p))
+  :straight (:type built-in)
   :init
   (setq treesit-language-source-alist
         '((astro "https://github.com/virchau13/tree-sitter-astro")
@@ -1667,11 +1676,8 @@ Matches the behavior and window management of `my-proj/shell`."
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
           (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
 
-(use-package tree-sitter-langs
-  :after tree-sitter
-  :hook ((c-mode c++-mode java-mode rustic-mode python-mode json-mode yaml-mode go-mode terraform-mode toml-mode) . tree-sitter-hl-mode))
-
 (use-package treesit-auto
+  :after treesit
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -1680,7 +1686,7 @@ Matches the behavior and window management of `my-proj/shell`."
   (treesit-auto-add-to-auto-mode-alist '(rust go toml python elisp csharp c cmake typescript r html js css cpp bash astro))
   (global-treesit-auto-mode))
 
-(provide '60-tree-sitter)
+(provide '40-tree-sitter)
 
 #+end_src
 
@@ -2166,7 +2172,7 @@ Never overrides a variable that is already set in the environment."
   ;; http://www.pshared.net/diary/20071207.html#p02
   (put 'dired-find-alternate-file 'disabled nil)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
-  (define-key dired-mode-map "a" 'dired-advertised-find-file)
+  (define-key dired-mode-map "a" 'dired-find-file)
 
   ;; macOS `ls' does not have `--dired' , so use coreutils `ls'
   (if (file-executable-p "/usr/local/bin/gls")
@@ -2772,7 +2778,7 @@ Comments:
   (setq org-fontify-whole-heading-line t)
   (setq org-cycle-separator-lines 1)
   (setq org-fold-core-style 'text-properties)
-  (setq org-catch-invisible-edits 'show-and-error) ;; 'smart
+  (setq org-fold-catch-invisible-edits 'show-and-error) ;; 'smart
   (setq org-src-tab-acts-natively t)
   (setq org-clock-sound (expand-file-name "drive/ding.wav" (getenv "HOME"))) ;; TODO: automate this so that it always grabs the right sound even if drive isn't mounted
   ;; Save clock data and state changes and notes in the LOGBOOK drawer
@@ -3255,7 +3261,7 @@ Comments:
   :config
   (push 'rustic-clippy flycheck-checkers)
   ;; prevents lsp-mode prompt
-  (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
+  (add-hook 'eglot-managed-mode-hook (lambda () (flymake-mode -1)))
   ;; (advice-add 'rustic-cargo-check :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-run :after #'my/switch-to-cargo-window)
   ;; (advice-add 'rustic-cargo-build :after #'my/switch-to-cargo-window)
@@ -3742,8 +3748,14 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-whichkey.el
 #+begin_src emacs-lisp :tangle inits/60-whichkey.el
-;; show key completion
+;; show key completion; `which-key' ships with Emacs since 30.1
 (use-package which-key
+  :if (>= emacs-major-version 30)
+  :straight (:type built-in)
+  :hook (after-init . which-key-mode))
+
+(use-package which-key
+  :if (< emacs-major-version 30)
   :straight t
   :hook (after-init . which-key-mode))
 
@@ -3783,10 +3795,10 @@ Set this from private machine-local config to avoid committing LAN details.")
                  (advice-add 'company-call-frontends
                              :before #'my/on-off-whitespace-before-company)
                  ;; popup:
-                 (defadvice popup-create (before my/popup-suspend-ws activate)
+                 (define-advice popup-create (:before (&rest _) my/popup-suspend-ws)
                    "Suspend whitespace-mode while popups are visible."
                    (my/whitespace-mode-off))
-                 (defadvice popup-delete (after my/popup-restore-ws activate)
+                 (define-advice popup-delete (:after (&rest _) my/popup-restore-ws)
                    "Restore whitespace-mode when all popups have closed."
                    (my/whitespace-mode-on))
 
@@ -3942,8 +3954,10 @@ Set this from private machine-local config to avoid committing LAN details.")
                                   "324" "329" "332" "333" "353" "477")
         ;; erc-track-visibility t
         ;; erc-track-when-inactive t
-        erc-format-nick-function 'erc-format-@nick
-        erc-auto-query 'bury
+        ;; prefix speakers with their channel status (@, +); Emacs 30+
+        erc-show-speaker-membership-status t
+        ;; `erc-auto-query' is the pre-ERC-5.5 name of this option
+        erc-receive-query-display 'bury
         erc-keywords nil))
 
 (use-package erc-image
