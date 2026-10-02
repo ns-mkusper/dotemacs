@@ -36,9 +36,27 @@
 (defvar compat-check--built-ins nil
   "use-package names declared built-in while walking one file.")
 
+(defun compat-check--use-package-active-p (plist)
+  "Return non-nil unless a `:if', `:when' or `:unless' keyword in PLIST
+rules the block out for this Emacs.  Guards are evaluated; one that
+signals an error counts as active so the block is still checked."
+  (let ((active t))
+    (while plist
+      (let ((key (car plist)) (guard (cadr plist)))
+        (when (memq key '(:if :when :unless))
+          (let ((value (condition-case nil (eval guard t) (error 'compat-error))))
+            (unless (eq value 'compat-error)
+              (when (if (eq key :unless) value (not value))
+                (setq active nil))))))
+      (setq plist (cdr plist)))
+    active))
+
 (defun compat-check--note-built-in (form)
-  "If FORM is a use-package declared built-in, remember its name."
-  (when (and (eq (car form) 'use-package) (symbolp (cadr form)))
+  "If FORM is a use-package declared built-in, remember its name.
+Blocks whose `:if'/`:when'/`:unless' guard excludes this Emacs are skipped."
+  (when (and (eq (car form) 'use-package)
+             (symbolp (cadr form))
+             (compat-check--use-package-active-p (cddr form)))
     (let ((plist (cddr form)))
       (while plist
         (when (and (eq (car plist) :straight)

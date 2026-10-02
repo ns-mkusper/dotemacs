@@ -3513,8 +3513,6 @@ Set this from private machine-local config to avoid committing LAN details.")
     (setq tramp-use-connection-share t))
   (when (boundp 'tramp-direct-async-process)
     (setq tramp-direct-async-process nil))
-  (when (boundp 'tramp-completion-reread-directory-timeout)
-    (setq tramp-completion-reread-directory-timeout nil))
   (when (boundp 'tramp-ssh-controlmaster-options)
     (setq tramp-ssh-controlmaster-options
           "-o ControlMaster=auto -o ControlPath='~/.ssh/cm-%%C' -o ControlPersist=600"))
