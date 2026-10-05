@@ -13,6 +13,7 @@ Tangle with:
 
 * File: early-init.el
 #+begin_src emacs-lisp :tangle early-init.el
+;;; -*- lexical-binding: t -*-
 ;; prevent package.el loading packages prior to their init-file loading
 (setq package-enable-at-startup nil)
 ;; workaround for straight bug
@@ -26,6 +27,7 @@ Tangle with:
 
 * File: init.el
 #+begin_src emacs-lisp :tangle init.el
+;;; -*- lexical-binding: t -*-
 ;; No garbage collection at startup
 (setq gc-cons-threshold-default gc-cons-threshold)
 (setq gc-cons-threshold most-positive-fixnum)
@@ -171,6 +173,7 @@ Tangle with:
 
 * File: my-custom-vars.el
 #+begin_src emacs-lisp :tangle my-custom-vars.el
+;;; -*- lexical-binding: t -*-
 
 #+end_src
 
@@ -183,6 +186,7 @@ C:\tools\emacs\bin\runemacs.exe
 
 * File: inits/00-my.el
 #+begin_src emacs-lisp :tangle inits/00-my.el
+;;; -*- lexical-binding: t -*-
 (defun my/number-lines-region (start end)
   "Number a selected region of lines."
   (interactive "r")
@@ -220,7 +224,7 @@ that directory."
 
    usage:
 
-   (define-key vterm-mode-map (kbd "C-c C-y") 'mk/vterm-codex-paste-image)
+   (define-key vterm-mode-map (kbd \"C-c C-y\") 'my/vterm-codex-paste-image)
    "
   (interactive)
   (unless (eq major-mode 'vterm-mode)
@@ -676,6 +680,7 @@ Usage:
 
 * File: inits/01-custom-keys.el
 #+begin_src emacs-lisp :tangle inits/01-custom-keys.el
+;;; -*- lexical-binding: t -*-
 ;; CUSTOM KEYS
 (bind-keys ([f6] . visual-line-mode)
            ([f7] . display-line-numbers-mode)
@@ -718,6 +723,7 @@ Usage:
 
 * File: inits/05-os-workarounds.el
 #+begin_src emacs-lisp :tangle inits/05-os-workarounds.el
+;;; -*- lexical-binding: t -*-
 ;; Mac OS needed workarounds
 (if (eq system-type 'darwin)
     ;; fix bad ssl
@@ -750,6 +756,7 @@ Usage:
 
 * File: inits/10-envrc.el
 #+begin_src emacs-lisp :tangle inits/10-envrc.el
+;;; -*- lexical-binding: t -*-
 (use-package envrc
   :straight t
   :hook (after-init . envrc-global-mode))
@@ -758,6 +765,7 @@ Usage:
 
 * File: inits/10-hydra.el
 #+begin_src emacs-lisp :tangle inits/10-hydra.el
+;;; -*- lexical-binding: t -*-
 (use-package hydra
   :straight t)
 
@@ -767,6 +775,7 @@ Usage:
 
 * File: inits/20-fill-column-indicator.el
 #+begin_src emacs-lisp :tangle inits/20-fill-column-indicator.el
+;;; -*- lexical-binding: t -*-
 ;; show fill column
 (use-package fill-column-indicator
   :straight t
@@ -785,6 +794,7 @@ Usage:
 
 * File: inits/20-font.el
 #+begin_src emacs-lisp :tangle inits/20-font.el
+;;; -*- lexical-binding: t -*-
 ;; set system font
 
 ;; set font size based on monitor ppi
@@ -875,6 +885,7 @@ Usage:
 
 * File: inits/20-hl-prog-extra.el
 #+begin_src emacs-lisp :tangle inits/20-hl-prog-extra.el
+;;; -*- lexical-binding: t -*-
 (use-package hl-prog-extra
   :straight t
   :commands (hl-prog-extra-mode)
@@ -890,6 +901,7 @@ Usage:
 
 * File: inits/30-project.el
 #+begin_src emacs-lisp :tangle inits/30-project.el
+;;; -*- lexical-binding: t -*-
 (use-package project
   :straight t
   :defer t
@@ -1164,6 +1176,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-company.el
 #+begin_src emacs-lisp :tangle inits/40-company.el
+;;; -*- lexical-binding: t -*-
 ;; Modular in-buffer completion framework for Emacs
 ;; http://company-mode.github.io/
 
@@ -1250,6 +1263,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-eaf.el
 #+begin_src emacs-lisp :tangle inits/40-eaf.el
+;;; -*- lexical-binding: t -*-
 ;; TODO: Cannot open org-mode files in remote drives with EAF enabled. Test before re-enabling.
 ;;
 ;; (straight-use-package-lazy
@@ -1303,6 +1317,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-eglot.el
 #+begin_src emacs-lisp :tangle inits/40-eglot.el
+;;; -*- lexical-binding: t -*-
 ;; LSP Integration
 (use-package eglot
   :init
@@ -1379,6 +1394,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-ivy.el
 #+begin_src emacs-lisp :tangle inits/40-ivy.el
+;;; -*- lexical-binding: t -*-
 (use-package ivy
   :straight t
   :diminish
@@ -1478,6 +1494,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-lazy-set-key.el
 #+begin_src emacs-lisp :tangle inits/40-lazy-set-key.el
+;;; -*- lexical-binding: t -*-
 ;;; lazy-set-key.el --- Lazy set keystroke.
 
 ;; Filename: 40-lazy-set-key.el
@@ -1614,6 +1631,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-popwin.el
 #+begin_src emacs-lisp :tangle inits/40-popwin.el
+;;; -*- lexical-binding: t -*-
 (use-package popwin
   :straight t
   :config
@@ -1625,6 +1643,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-recentf.el
 #+begin_src emacs-lisp :tangle inits/40-recentf.el
+;;; -*- lexical-binding: t -*-
 (use-package recentf
   :config
   ;; This block only runs when recentf loads, so variables exist.
@@ -1638,6 +1657,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/40-tree-sitter.el
 #+begin_src emacs-lisp :tangle inits/40-tree-sitter.el
+;;; -*- lexical-binding: t -*-
 ;; Tree-sitter through the built-in `treesit' library.  The old
 ;; external `tree-sitter' / `tree-sitter-langs' packages are superseded by the
 ;; *-ts-modes, and `global-tree-sitter-mode' caused OOM hangs in org-mode
@@ -1688,6 +1708,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/50-perspective.el
 #+begin_src emacs-lisp :tangle inits/50-perspective.el
+;;; -*- lexical-binding: t -*-
 ;; TODO: Doesn't work with poetry-mode's switch-buffer poetry-tracking-mode strategy
 ;; (use-package perspective
 ;;   :straight t
@@ -1723,6 +1744,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/60-ace-window.el
 #+begin_src emacs-lisp :tangle inits/60-ace-window.el
+;;; -*- lexical-binding: t -*-
 (use-package ace-window
   :commands ace-window
   :straight t
@@ -1740,6 +1762,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/60-agent-shell.el
 #+begin_src emacs-lisp :tangle inits/60-agent-shell.el
+;;; -*- lexical-binding: t -*-
 (use-package agent-shell
   :straight
   :ensure t
@@ -1776,6 +1799,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
 * File: inits/60-aidermacs.el
 #+begin_src emacs-lisp :tangle inits/60-aidermacs.el
+;;; -*- lexical-binding: t -*-
 ;;;; --- AIDERMACS: AI pair programming via the aider CLI ---
 ;; https://github.com/MatthewZMD/aidermacs
 ;;
@@ -1832,6 +1856,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-apheleia.el
 #+begin_src emacs-lisp :tangle inits/60-apheleia.el
+;;; -*- lexical-binding: t -*-
 (use-package apheleia
   :straight t
   :config
@@ -1852,6 +1877,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-avy.el
 #+begin_src emacs-lisp :tangle inits/60-avy.el
+;;; -*- lexical-binding: t -*-
 (use-package avy
   :straight t
     ;; :bind
@@ -1864,6 +1890,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-aws.el
 #+begin_src emacs-lisp :tangle inits/60-aws.el
+;;; -*- lexical-binding: t -*-
 ;; (use-package cfn-mode
 ;;   :config
 ;;   (add-to-list 'magic-mode-alist
@@ -1884,6 +1911,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-breadcrumb.el
 #+begin_src emacs-lisp :tangle inits/60-breadcrumb.el
+;;; -*- lexical-binding: t -*-
 ;;; Header line context of symbol/heading (breadcrumb.el)
 (use-package breadcrumb
   :straight t
@@ -1906,6 +1934,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-chrome-emacs.el
 #+begin_src emacs-lisp :tangle inits/60-chrome-emacs.el
+;;; -*- lexical-binding: t -*-
 (use-package atomic-chrome
   :demand t
   :straight (atomic-chrome
@@ -1945,12 +1974,14 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-competitive-programming.el
 #+begin_src emacs-lisp :tangle inits/60-competitive-programming.el
+;;; -*- lexical-binding: t -*-
 (provide '60-competitive-programming)
 
 #+end_src
 
 * File: inits/60-consult.el
 #+begin_src emacs-lisp :tangle inits/60-consult.el
+;;; -*- lexical-binding: t -*-
 ;; Example configuration for Consult
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
@@ -2075,6 +2106,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-copilot.el
 #+begin_src emacs-lisp :tangle inits/60-copilot.el
+;;; -*- lexical-binding: t -*-
 ;; copilot
 (use-package copilot
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
@@ -2113,6 +2145,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-csv.el
 #+begin_src emacs-lisp :tangle inits/60-csv.el
+;;; -*- lexical-binding: t -*-
 (use-package csv-mode
   :straight t
   ;; Always enter CSV mode in align mode; makes it easier to read.
@@ -2129,6 +2162,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-devdocs.el
 #+begin_src emacs-lisp :tangle inits/60-devdocs.el
+;;; -*- lexical-binding: t -*-
 (use-package devdocs
   :straight t
   :config
@@ -2146,6 +2180,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-diff-hl.el
 #+begin_src emacs-lisp :tangle inits/60-diff-hl.el
+;;; -*- lexical-binding: t -*-
 (use-package diff-hl
   :init
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
@@ -2159,6 +2194,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-dired.el
 #+begin_src emacs-lisp :tangle inits/60-dired.el
+;;; -*- lexical-binding: t -*-
 (use-package dired
   :straight (:type built-in)
   :init
@@ -2214,6 +2250,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-docker.el
 #+begin_src emacs-lisp :tangle inits/60-docker.el
+;;; -*- lexical-binding: t -*-
 ;;; Docker
 
 (use-package dockerfile-mode
@@ -2229,6 +2266,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-emacs-ipython-notebook.el
 #+begin_src emacs-lisp :tangle inits/60-emacs-ipython-notebook.el
+;;; -*- lexical-binding: t -*-
 (use-package ein
   :straight t
   :defer t
@@ -2241,6 +2279,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-expand-region.el
 #+begin_src emacs-lisp :tangle inits/60-expand-region.el
+;;; -*- lexical-binding: t -*-
 (use-package expand-region
   :straight t
   :bind ("C-=" . er/expand-region))
@@ -2251,6 +2290,7 @@ Never overrides a variable that is already set in the environment."
 
 * File: inits/60-flycheck.el
 #+begin_src emacs-lisp :tangle inits/60-flycheck.el
+;;; -*- lexical-binding: t -*-
 (use-package flycheck
   :straight t
   :commands (global-flycheck-mode)
@@ -2285,6 +2325,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-fold.el
 #+begin_src emacs-lisp :tangle inits/60-fold.el
+;;; -*- lexical-binding: t -*-
 ;; Code Folding
 (use-package treesit-fold-indicators
   :straight (treesit-fold-indicators :type git :host github :repo "emacs-tree-sitter/treesit-fold"))
@@ -2311,6 +2352,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-git.el
 #+begin_src emacs-lisp :tangle inits/60-git.el
+;;; -*- lexical-binding: t -*-
 (use-package magit
   :straight t
   :bind
@@ -2418,6 +2460,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-gitlab-ci.el
 #+begin_src emacs-lisp :tangle inits/60-gitlab-ci.el
+;;; -*- lexical-binding: t -*-
 (use-package gitlab-ci-mode
   :straight t
   :mode "\\.gitlab-ci.yml\\'")
@@ -2434,6 +2477,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-go.el
 #+begin_src emacs-lisp :tangle inits/60-go.el
+;;; -*- lexical-binding: t -*-
 (defun my-go-before-save ()
   (interactive)
   (when lsp-mode
@@ -2456,6 +2500,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-gpt.el
 #+begin_src emacs-lisp :tangle inits/60-gpt.el
+;;; -*- lexical-binding: t -*-
 (defun my/gptel-api-key (host)
   (let ((secret (auth-source-pick-first-password
                  :host host)))
@@ -2496,6 +2541,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-helm.el
 #+begin_src emacs-lisp :tangle inits/60-helm.el
+;;; -*- lexical-binding: t -*-
 ;; helm was actually cool and better than ivy maybe I should update it
 ;; (require 'init-helm)
 ;;                                         ;open new buffer for all helm commands
@@ -2514,6 +2560,7 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 * File: inits/60-highlight-indentation.el
 #+begin_src emacs-lisp :tangle inits/60-highlight-indentation.el
+;;; -*- lexical-binding: t -*-
 ;; see: https://github.com/protesilaos/modus-themes/issues/98
 (defun my/set-highlight-indent-guides-faces-default ()
   "Set theme-agnostic `highlight-indent-guides' faces.
@@ -2589,6 +2636,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-kotlin.el
 #+begin_src emacs-lisp :tangle inits/60-kotlin.el
+;;; -*- lexical-binding: t -*-
 (use-package kotlin-mode
   :straight t
   :mode ("\\.kts\\'" . kotlin-mode))
@@ -2599,6 +2647,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-markdown-mode.el
 #+begin_src emacs-lisp :tangle inits/60-markdown-mode.el
+;;; -*- lexical-binding: t -*-
 ;; for git markdown
 (use-package markdown-mode
   :straight t
@@ -2613,12 +2662,14 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-mermaid.el
 #+begin_src emacs-lisp :tangle inits/60-mermaid.el
+;;; -*- lexical-binding: t -*-
 (use-package mermaid-mode)
 
 #+end_src
 
 * File: inits/60-multiple-cursors.el
 #+begin_src emacs-lisp :tangle inits/60-multiple-cursors.el
+;;; -*- lexical-binding: t -*-
 (use-package multiple-cursors
   :straight t
   :bind (("C-S-c C-S-c" . mc/edit-lines)
@@ -2633,6 +2684,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-neotree.el
 #+begin_src emacs-lisp :tangle inits/60-neotree.el
+;;; -*- lexical-binding: t -*-
 (use-package neotree
   :straight t
   :bind
@@ -2655,6 +2707,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-nix.el
 #+begin_src emacs-lisp :tangle inits/60-nix.el
+;;; -*- lexical-binding: t -*-
 ;; NIX
 
 (use-package nix-mode
@@ -2665,6 +2718,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-notebooking.el
 #+begin_src emacs-lisp :tangle inits/60-notebooking.el
+;;; -*- lexical-binding: t -*-
 ;; Use pandoc to convert files
 (use-package pandoc-mode
   :defer 10
@@ -2679,6 +2733,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-nov.el
 #+begin_src emacs-lisp :tangle inits/60-nov.el
+;;; -*- lexical-binding: t -*-
 ;; Read epubs in emacs
 (use-package nov
   :straight t
@@ -2700,6 +2755,7 @@ These faces rely on Modus themes' custom color variables."
 
 * File: inits/60-org.el
 #+begin_src emacs-lisp :tangle inits/60-org.el
+;;; -*- lexical-binding: t -*-
 ;; ORG MODE SETUP
 ;; which files should org-agenda read?
 (setq org-agenda-files (list
@@ -3021,6 +3077,7 @@ Comments:
 
 * File: inits/60-origami.el
 #+begin_src emacs-lisp :tangle inits/60-origami.el
+;;; -*- lexical-binding: t -*-
 ;; Code folding
 (use-package origami
   :straight t
@@ -3033,6 +3090,7 @@ Comments:
 
 * File: inits/60-proto.el
 #+begin_src emacs-lisp :tangle inits/60-proto.el
+;;; -*- lexical-binding: t -*-
 ;; PROTOBUF
 
 (defconst my-protobuf-style
@@ -3054,6 +3112,7 @@ Comments:
 
 * File: inits/60-python.el
 #+begin_src emacs-lisp :tangle inits/60-python.el
+;;; -*- lexical-binding: t -*-
 (use-package python
   :straight t
   :init
@@ -3156,6 +3215,7 @@ Comments:
 
 * File: inits/60-rainbow-delimiters.el
 #+begin_src emacs-lisp :tangle inits/60-rainbow-delimiters.el
+;;; -*- lexical-binding: t -*-
 (use-package rainbow-delimiters
   :straight t
   :hook
@@ -3167,6 +3227,7 @@ Comments:
 
 * File: inits/60-read-aloud.el
 #+begin_src emacs-lisp :tangle inits/60-read-aloud.el
+;;; -*- lexical-binding: t -*-
 (use-package read-aloud
   :straight t
   :custom
@@ -3182,6 +3243,7 @@ Comments:
 
 * File: inits/60-rest.el
 #+begin_src emacs-lisp :tangle inits/60-rest.el
+;;; -*- lexical-binding: t -*-
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
@@ -3198,6 +3260,7 @@ Comments:
 
 * File: inits/60-ripgrep.el
 #+begin_src emacs-lisp :tangle inits/60-ripgrep.el
+;;; -*- lexical-binding: t -*-
 (use-package ripgrep
   :if (executable-find "rg")
   :bind (("C-M-g" . ripgrep-regexp))
@@ -3212,6 +3275,7 @@ Comments:
 
 * File: inits/60-rust.el
 #+begin_src emacs-lisp :tangle inits/60-rust.el
+;;; -*- lexical-binding: t -*-
 ;; RUST
 (defun my/rustic-before-save-fn ()
   "Format buffer and organize imports when saving anything using eglot."
@@ -3277,6 +3341,7 @@ Comments:
 
 * File: inits/60-saveplace.el
 #+begin_src emacs-lisp :tangle inits/60-saveplace.el
+;;; -*- lexical-binding: t -*-
 (use-package saveplace
   :straight t
   :init (setq save-place-limit 100)
@@ -3288,6 +3353,7 @@ Comments:
 
 * File: inits/60-shell.el
 #+begin_src emacs-lisp :tangle inits/60-shell.el
+;;; -*- lexical-binding: t -*-
 ;; bash
 ;; format bash
 (use-package shfmt
@@ -3368,6 +3434,7 @@ Comments:
 
 * File: inits/60-shim.el
 #+begin_src emacs-lisp :tangle inits/60-shim.el
+;;; -*- lexical-binding: t -*-
 ;; shim applies pyenv, jenv, goenv, nodenv, etc
 (use-package shim
   :straight (:host github :repo "twlz0ne/shim.el")
@@ -3397,6 +3464,7 @@ Comments:
 
 * File: inits/60-smartparens.el
 #+begin_src emacs-lisp :tangle inits/60-smartparens.el
+;;; -*- lexical-binding: t -*-
 ;; paredit like behavior in non-lispy languages
 ;; TODO: mayebe use instead of paredit in lispy langs?
 (use-package smartparens
@@ -3424,6 +3492,7 @@ Comments:
 
 * File: inits/60-sql.el
 #+begin_src emacs-lisp :tangle inits/60-sql.el
+;;; -*- lexical-binding: t -*-
 (use-package sql-indent
   :straight t
   :hook (sql-mode . sqlind-minor-mode))
@@ -3451,6 +3520,7 @@ Comments:
 
 * File: inits/60-toml.el
 #+begin_src emacs-lisp :tangle inits/60-toml.el
+;;; -*- lexical-binding: t -*-
 (use-package toml-mode
   :straight t)
 
@@ -3460,6 +3530,7 @@ Comments:
 
 * File: inits/60-tramp.el
 #+begin_src emacs-lisp :tangle inits/60-tramp.el
+;;; -*- lexical-binding: t -*-
 (use-package tramp
   :straight nil
   :demand t
@@ -3563,6 +3634,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-typescript.el
 #+begin_src emacs-lisp :tangle inits/60-typescript.el
+;;; -*- lexical-binding: t -*-
 (use-package typescript-mode
   :straight t
   :mode "\\.ts\\'"
@@ -3620,6 +3692,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-undo-tree.el
 #+begin_src emacs-lisp :tangle inits/60-undo-tree.el
+;;; -*- lexical-binding: t -*-
 (use-package undo-tree
   :straight t
   :init
@@ -3655,6 +3728,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-vdiff.el
 #+begin_src emacs-lisp :tangle inits/60-vdiff.el
+;;; -*- lexical-binding: t -*-
 (use-package vdiff
   :straight t
   :config
@@ -3682,6 +3756,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-vterm.el
 #+begin_src emacs-lisp :tangle inits/60-vterm.el
+;;; -*- lexical-binding: t -*-
 ;;;; --- VTERM CONFIGURATION ---
 
 (if (eq system-type 'windows-nt)
@@ -3722,7 +3797,13 @@ Set this from private machine-local config to avoid committing LAN details.")
         (setq vterm-max-scrollback 100000)
 
         :bind (:map vterm-mode-map
-                    ("C-y" . #'vterm-yank))))
+                    ("C-y" . #'vterm-yank)
+                    ("C-x C-+" . #'text-scale-increase)
+                    ("C-x C-=" . #'text-scale-increase)
+                    ("C-x C--" . #'text-scale-decrease)
+                    ("C-x C-0" . #'text-scale-set)
+                    ("C-x C-M-+" . #'global-text-scale-increase)
+                    ("C-x C-M--" . #'global-text-scale-decrease))))
 
   ;; ---------------------------------------------------------
   ;; LINUX / MACOS CONFIGURATION
@@ -3734,7 +3815,13 @@ Set this from private machine-local config to avoid committing LAN details.")
       :config
       (setq vterm-max-scrollback 100000)
       :bind (:map vterm-mode-map
-                  ("C-y" . #'vterm-yank)))))
+                  ("C-y" . #'vterm-yank)
+                  ("C-x C-+" . #'text-scale-increase)
+                  ("C-x C-=" . #'text-scale-increase)
+                  ("C-x C--" . #'text-scale-decrease)
+                  ("C-x C-0" . #'text-scale-set)
+                  ("C-x C-M-+" . #'global-text-scale-increase)
+                  ("C-x C-M--" . #'global-text-scale-decrease)))))
 
 (provide '60-vterm)
 
@@ -3742,6 +3829,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-whichkey.el
 #+begin_src emacs-lisp :tangle inits/60-whichkey.el
+;;; -*- lexical-binding: t -*-
 ;; show key completion; `which-key' ships with Emacs since 30.1
 (use-package which-key
   :straight (:type built-in)
@@ -3753,6 +3841,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-whitespace.el
 #+begin_src emacs-lisp :tangle inits/60-whitespace.el
+;;; -*- lexical-binding: t -*-
 ;; Visualize and transform whitespace.
 (use-package whitespace
   :straight t
@@ -3792,16 +3881,16 @@ Set this from private machine-local config to avoid committing LAN details.")
 
                  (if (display-graphic-p)
                      (custom-set-faces
+                      ;; Emacs 31 rejects a face that inherits from itself, so
+                      ;; spell the attributes out instead of `:inherit'.
                       '(whitespace-line
-                        ((t (:inherit whitespace-line
-                                      :weight normal
-                                      :foreground nil
-                                      :background nil
-                                      :box
-                                      (:line-width 1 :color "dark red"))))))
+                        ((t (:weight normal
+                                     :foreground unspecified
+                                     :background unspecified
+                                     :box
+                                     (:line-width 1 :color "dark red"))))))
                    (custom-set-faces    ; else
-                    '(whitespace-line ((t (:inherit whitespace-line
-                                                    :background nil
+                    '(whitespace-line ((t (:background unspecified
                                                     :underline t))))))
 
                  ;; Workaround for
@@ -3842,6 +3931,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-windsize.el
 #+begin_src emacs-lisp :tangle inits/60-windsize.el
+;;; -*- lexical-binding: t -*-
 ;; resize windows with arrow keys
 ; https://www.emacswiki.org/emacs/download/lazy-set-key.el
 (require 'lazy-set-key)
@@ -3856,6 +3946,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-yaml.el
 #+begin_src emacs-lisp :tangle inits/60-yaml.el
+;;; -*- lexical-binding: t -*-
 (use-package yaml-mode
   :straight t
   :mode
@@ -3868,6 +3959,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-yasnippet.el
 #+begin_src emacs-lisp :tangle inits/60-yasnippet.el
+;;; -*- lexical-binding: t -*-
 (use-package yasnippet
   :straight t
   :diminish (yas-global-mode yas-minor-mode)
@@ -3900,6 +3992,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/60-zeal.el
 #+begin_src emacs-lisp :tangle inits/60-zeal.el
+;;; -*- lexical-binding: t -*-
 (use-package zeal-at-point
   :straight (zeal-at-point :host github
                            :repo "ns-mkusper/zeal-at-point"
@@ -3919,6 +4012,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/70-erc.el
 #+begin_src emacs-lisp :tangle inits/70-erc.el
+;;; -*- lexical-binding: t -*-
 ;; ** ERC
 (use-package erc
   :straight t
@@ -4009,6 +4103,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/70-solaire.el
 #+begin_src emacs-lisp :tangle inits/70-solaire.el
+;;; -*- lexical-binding: t -*-
 (use-package solaire-mode
   :straight t
   :hook (after-init . solaire-global-mode))
@@ -4017,6 +4112,7 @@ Set this from private machine-local config to avoid committing LAN details.")
 
 * File: inits/70-theme.el
 #+begin_src emacs-lisp :tangle inits/70-theme.el
+;;; -*- lexical-binding: t -*-
 ;;  Colors
 ;; (use-package doom-themes
 ;;   :straight t
