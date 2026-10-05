@@ -35,11 +35,28 @@ run_core_static() {
     return
   fi
   emacs --batch -Q -l "${ROOT_DIR}/elisp-syntax-check.el" -- "${elisp_files[@]}"
+
+}
+
+run_emacs_compat() {
+  echo "== Literate config tangle =="
+  "${ROOT_DIR}/tangle-config.sh"
+
+  echo "== Emacs compatibility check (running Emacs: $(emacs --version | head -n 1)) =="
+  local config_files=()
+  while IFS= read -r -d '' file; do
+    config_files+=("${file#${ROOT_DIR}/../}")
+  done < <(find "${ROOT_DIR}/.." -maxdepth 1 -type f \( -name 'early-init.el' -o -name 'init.el' \) -print0 ; \
+           find "${ROOT_DIR}/../inits" -type f -name '*.el' -print0)
+  emacs --batch -Q -l "${ROOT_DIR}/emacs-compat-check.el" -- "${config_files[@]}"
 }
 
 case "${SUITE}" in
   core-static)
     run_core_static
+    ;;
+  emacs-compat)
+    run_emacs_compat
     ;;
   tramp-ci-direct)
     TRAMP_TEST_CASE=ci-direct "${ROOT_DIR}/tramp/test-battery.sh"
