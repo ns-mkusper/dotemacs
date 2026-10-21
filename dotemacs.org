@@ -3026,7 +3026,14 @@ Comments:
   (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
   (org-roam-completion-everywhere t)
   (org-roam-v2-ack t)
-  (org-roam-db-autosync-mode 1)
+  :config
+  ;; Enabling autosync runs a full `org-roam-db-sync', which reads every file
+  ;; in the roam directory. That directory is on a Google Drive mount, so the
+  ;; scan downloads each file and can block Emacs for minutes. Keep the
+  ;; incremental per-file hooks but skip the scan; run `org-roam-db-sync'
+  ;; by hand after changes made on another machine.
+  (cl-letf (((symbol-function 'org-roam-db-sync) #'ignore))
+    (org-roam-db-autosync-mode 1))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
