@@ -502,6 +502,38 @@ Usage:
 (defun apply-path-list (list)
   (setenv "PATH" (string-join list ":")))
 
+(defun my/nvm-node-bin (&optional nvm-dir)
+  "Return the bin directory of nvm's default Node under NVM-DIR, or nil.
+Follows alias chains such as lts/* the way nvm does, so upgrading Node
+with nvm also upgrades what Emacs and its language servers use.  Falls
+back to the newest installed version when no default alias resolves."
+  (let* ((nvm-dir (expand-file-name (or nvm-dir (getenv "NVM_DIR") "~/.nvm")))
+         (versions-dir (expand-file-name "versions/node" nvm-dir))
+         (installed (and (file-directory-p versions-dir)
+                         (sort (directory-files versions-dir nil "\\`v[0-9]")
+                               (lambda (a b) (version< (substring a 1) (substring b 1))))))
+         (alias "default")
+         (want nil))
+    (dotimes (_ 10)
+      (let ((file (and alias (expand-file-name (concat "alias/" alias) nvm-dir))))
+        (if (and file (file-regular-p file))
+            (setq want (string-trim (with-temp-buffer
+                                      (insert-file-contents file)
+                                      (buffer-string)))
+                  alias want)
+          (setq alias nil))))
+    (let* ((v (and want (not (member want '("node" "stable")))
+                   (string-remove-prefix "v" want)))
+           (matches (if v
+                        (seq-filter (lambda (x)
+                                      (let ((n (substring x 1)))
+                                        (or (equal n v) (string-prefix-p (concat v ".") n))))
+                                    installed)
+                      installed))
+           (pick (car (last (or matches installed)))))
+      (when pick
+        (expand-file-name (concat pick "/bin") versions-dir)))))
+
 
 (my-load-path "~/.emacs.d/lisp")
 
@@ -526,8 +558,7 @@ Usage:
                   ;; Cargo
                   (concat user-profile-dir "/.cargo/bin")
                   ;; NVM (Windows user)
-                  (concat user-profile-dir "/.nvm/versions/node/v18.17.1/bin")
-                  (concat user-profile-dir "/.nvm/versions/node/v22.21.1/bin")
+                  (my/nvm-node-bin (concat user-profile-dir "/.nvm"))
                   ;; Pyenv
                   (concat user-profile-dir "/.pyenv/shims")
                   ;; Go
@@ -539,8 +570,7 @@ Usage:
                  ;; NVM
                  (when msys-home-dir
                    (list
-                    (concat msys-home-dir "/.nvm/versions/node/v18.17.1/bin")
-                    (concat msys-home-dir "/.nvm/versions/node/v22.21.1/bin")))))))
+                    (my/nvm-node-bin (concat msys-home-dir "/.nvm"))))))))
 
     ;; Update exec-path for Emacs
     (setq exec-path (append new-paths exec-path))
@@ -569,7 +599,7 @@ Usage:
 
 ;; Linux Configuration
 (when (eq system-type 'gnu/linux)
-  (let* ((nvm-path "/home/mkusper/.nvm/versions/node/v22.21.1/bin")
+  (let* ((nvm-path (my/nvm-node-bin))
          (cargo-path (expand-file-name "~/.cargo/bin"))
          (go-home-bin (expand-file-name "~/go/bin"))
          ;; 1. Dynamically find the latest system Go bin (e.g., /usr/lib/go-1.25/bin)
@@ -3442,7 +3472,7 @@ Comments:
 * File: inits/60-shim.el
 #+begin_src emacs-lisp :tangle inits/60-shim.el
 ;;; -*- lexical-binding: t -*-
-;; shim applies pyenv, jenv, goenv, nodenv, etc
+;; shim applies jenv and goenv per project; Node comes from nvm (see my/nvm-node-bin)
 (use-package shim
   :straight (:host github :repo "twlz0ne/shim.el")
   :demand t
@@ -3458,11 +3488,12 @@ Comments:
   :config
   ;; (shim-init-ruby)
   ;; (shim-init-python)
-  (shim-init-node)
-  (shim-init-java)
-  (shim-init-go)
-  (shim-register-mode 'java 'kotlin-mode)
-  (shim-register-mode 'node 'js2-mode))
+  ;; Each init errors when its version manager is missing, which aborts the
+  ;; rest of :config, so only init the ones on exec-path.
+  (when (executable-find "jenv")
+    (shim-init-java)
+    (shim-register-mode 'java 'kotlin-mode))
+  (when (executable-find "goenv") (shim-init-go)))
 
 
 (provide '60-shim)
