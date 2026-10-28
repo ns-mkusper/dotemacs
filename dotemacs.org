@@ -456,15 +456,6 @@ Usage:
   (forward-sexp)
   )
 
-(defun my/stop-debugging-mode ()
-  (interactive)
-  (dap-delete-all-sessions)
-  (dap-mode 0)
-  (dap-ui-mode 0)
-  (dap-ui-controls-mode 0)
-  (delete-other-windows) ;; hide all the dap UI. I might want to delete the buffers as well.
-  )
-
 (defun my/get-ppi ()
   "Get display PPI.  Do not run this function in non-graphic mode."
   (setq my-disp-attrs (car (display-monitor-attributes-list)))
@@ -1255,39 +1246,8 @@ Matches the behavior and window management of `my-proj/shell`."
 ;; https://github.com/krzysztof-magosa/company-ansible
 (use-package company-ansible :straight t)
 
-;; Auto-completion for C/C++ headers using Company
-;; https://github.com/randomphrase/company-c-headers
-(use-package company-c-headers
-  :straight t
-  :init
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (when (derived-mode-p 'c-mode 'c++-mode)
-                (add-to-list 'company-backends 'company-c-headers)))))
-
-;; company-mode completion back-end for irony-mode
-;; https://github.com/Sarcasm/company-irony
-(use-package company-irony
-  :straight t
-  :init
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (when (derived-mode-p 'c-mode 'c++-mode)
-                (progn
-                  (add-to-list 'company-backends 'company-irony)
-                  (irony-mode))))))
-
-;; Python auto-completion for Emacs
-;; http://tkf.github.io/emacs-jedi/latest/
-;; Requires: `pip install jedi`
-;; Company backend for Python jedi
-;; https://github.com/syohex/emacs-company-jedi
-(use-package company-jedi
-  :straight t
-  :init
-  (setq-default
-   jedi:complete-on-dot t
-   jedi:get-in-function-call-delay 0.2))
+;; C/C++ and Python completion comes from clangd and Pyright through Eglot
+;; (company-capf), so there are no per-language company backends here.
 
 (use-package company-lua :straight t)
 
@@ -1380,7 +1340,9 @@ Matches the behavior and window management of `my-proj/shell`."
 
   (setq eldoc-echo-area-use-multiline-p t)
   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode)
+                 . ("clangd" "--background-index" "--clang-tidy" "--header-insertion=never")))
   (add-to-list 'eglot-server-programs '(toml-mode . ("taplo" "lsp")))
   (add-to-list 'eglot-server-programs '(toml-ts-mode . ("taplo" "lsp")))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
@@ -1811,10 +1773,6 @@ Matches the behavior and window management of `my-proj/shell`."
            (stringp my-gemini-api-key)
            (not (string-empty-p my-gemini-api-key)))
       (progn
-        ;; DEBUG: Print the last 4 chars of the key to the Messages buffer to prove which one is loaded
-        (message "✅ Agent-Shell: Configuring with key ending in ...%s"
-                 (substring my-gemini-api-key -4))
-
         ;; 1. Configure Authentication using your secret variable
         (setq agent-shell-google-authentication
               (agent-shell-google-make-authentication :api-key my-gemini-api-key))
@@ -2192,6 +2150,239 @@ Never overrides a variable that is already set in the environment."
 )
 
 (provide '60-csv)
+
+#+end_src
+
+* File: inits/60-debug.el
+#+begin_src emacs-lisp :tangle inits/60-debug.el
+;;; -*- lexical-binding: t -*-
+;; Native and Python debugging on the built-in GUD frontends (no DAP),
+;; plus profiling and clangd build-database helpers.  Everything lives
+;; under C-c d.  Run artifacts go to var/debug-runs/<project>/<time>/.
+
+(use-package gdb-mi
+  :straight nil
+  :custom
+  (gdb-many-windows t)                  ; locals, stack, breakpoints, threads, I/O
+  (gdb-show-main t)
+  (gdb-restore-window-configuration-after-quit t)
+  (gdb-debuginfod-enable-setting t))    ; fetch distro debug symbols without asking
+
+(use-package gud
+  :straight nil
+  :custom
+  (gud-highlight-current-line t))
+
+(defvar my/debug-runs-directory
+  (expand-file-name "var/debug-runs/" user-emacs-directory)
+  "Where profiler output, dumps and run records are kept.")
+
+(defun my/debug--root ()
+  "Current project root, or `default-directory' outside a project."
+  (if-let* ((project (project-current)))
+      (expand-file-name (project-root project))
+    default-directory))
+
+(defun my/debug--run-dir (tool)
+  "Create and return a fresh artifact directory for TOOL in this project."
+  (let ((dir (expand-file-name
+              (format "%s/%s-%s/"
+                      (file-name-nondirectory (directory-file-name (my/debug--root)))
+                      (format-time-string "%Y%m%d-%H%M%S")
+                      tool)
+              my/debug-runs-directory)))
+    (make-directory dir t)
+    dir))
+
+(defun my/debug-open-runs ()
+  "Open this project's run artifacts in Dired."
+  (interactive)
+  (let ((dir (expand-file-name
+              (file-name-nondirectory (directory-file-name (my/debug--root)))
+              my/debug-runs-directory)))
+    (make-directory dir t)
+    (dired dir)
+    (revert-buffer)))
+
+(defun my/debug--python ()
+  "Real interpreter for this buffer's environment.
+Asks Python for `sys.executable' so pyenv shims and wrapper scripts
+resolve to the binary gdb can load."
+  (let ((python (or (executable-find "python") (executable-find "python3")
+                    (user-error "No python on exec-path"))))
+    (string-trim
+     (shell-command-to-string
+      (format "%s -c 'import sys; print(sys.executable)'"
+              (shell-quote-argument python))))))
+
+(defun my/debug--pytest-node ()
+  "Pytest node id for point: file::Class::test, or just the file."
+  (when buffer-file-name
+    (let ((file (file-relative-name buffer-file-name (my/debug--root)))
+          (def (and (derived-mode-p 'python-base-mode) (python-info-current-defun))))
+      (if def (concat file "::" (string-replace "." "::" def)) file))))
+
+(defun my/debug--read-node ()
+  (read-string "pytest node: " (my/debug--pytest-node)))
+
+(defun my/debug--ptrace-restricted-p ()
+  "Non-nil when attaching to a non-child process needs root (Yama)."
+  (let ((f "/proc/sys/kernel/yama/ptrace_scope"))
+    (and (file-readable-p f)
+         (> (string-to-number (with-temp-buffer (insert-file-contents f) (buffer-string))) 0))))
+
+(defun my/debug--read-pid (&optional pattern)
+  "Pick a running process matching PATTERN (default python)."
+  (let* ((lines (process-lines-ignore-status "pgrep" "-a" "-f" (or pattern "python")))
+         (lines (seq-remove (lambda (l) (string-match-p "\\`[0-9]+ pgrep " l)) lines))
+         (choice (completing-read "Process: " lines nil t)))
+    (string-to-number (car (split-string choice)))))
+
+;;;; Debuggers
+
+(defun my/debug-pytest-gdb (node)
+  "Run pytest NODE inside gdb, so a native crash stops in the debugger.
+After the stop, `bt' is the native stack and `continue' lets Python's
+faulthandler print the Python stack.  `py-bt' also works where CPython's
+gdb helpers can read the frames (not Ubuntu's optimized 3.13 build)."
+  (interactive (list (my/debug--read-node)))
+  (let ((default-directory (my/debug--root)))
+    ;; GUD splits its command with `split-string-and-unquote', so quote for
+    ;; that.  It also cds to the first file argument (the interpreter), so
+    ;; pin gdb's directory to the project root.
+    (let ((process-environment (cons "PYTHONFAULTHANDLER=1" process-environment)))
+      (gdb (combine-and-quote-strings
+            (list "gdb" "-i=mi" (concat "--cd=" default-directory)
+                  "--args" (my/debug--python) "-m" "pytest" "-x" "-s" node))))))
+
+(defun my/debug-pytest-pdb (node)
+  "Run pytest NODE under pdb, stopping at the start of the test."
+  (interactive (list (my/debug--read-node)))
+  (let ((default-directory (my/debug--root)))
+    (pdb (combine-and-quote-strings
+          (list (my/debug--python) "-m" "pytest" "--trace" "-x" "-s" node)))))
+
+(defun my/debug-gdb-attach (pid)
+  "Attach gdb to running process PID (uses sudo when ptrace is restricted)."
+  (interactive (list (my/debug--read-pid "")))
+  (gdb (format "%sgdb -i=mi -p %d"
+               (if (my/debug--ptrace-restricted-p) "sudo -E " "") pid)))
+
+(defun my/debug-py-spy-dump (pid)
+  "Show every thread's Python and native stack for PID, e.g. a hung test."
+  (interactive (list (my/debug--read-pid)))
+  (compile (format "%s%s dump --native --locals --pid %d"
+                   (if (my/debug--ptrace-restricted-p) "sudo " "")
+                   (shell-quote-argument (or (executable-find "py-spy")
+                                             (user-error "py-spy not installed")))
+                   pid)
+           t))
+
+;;;; Profilers
+
+(defvar my/debug-profile-history nil)
+
+(defun my/debug--read-command (prompt)
+  (read-shell-command prompt (car my/debug-profile-history) 'my/debug-profile-history))
+
+(defun my/debug--on-success (buffer fn)
+  "Call FN once the compilation in BUFFER finishes successfully."
+  (with-current-buffer buffer
+    (add-hook 'compilation-finish-functions
+              (lambda (_buf msg) (when (string-prefix-p "finished" msg) (funcall fn)))
+              nil t)))
+
+(defun my/debug-perf-record (command)
+  "Record COMMAND with perf call graphs, then show the report.
+Unprivileged perf is off on this kernel, so perf runs under sudo while
+COMMAND itself runs as you with your environment."
+  (interactive (list (my/debug--read-command "perf record: ")))
+  (let* ((default-directory (my/debug--root))
+         (out (expand-file-name "perf.data" (my/debug--run-dir "perf")))
+         (cmd (format "sudo perf record -g -o %s -- sudo -E -u %s env PATH=%s sh -c %s && sudo chown %s %s"
+                      (shell-quote-argument out) (user-login-name)
+                      (shell-quote-argument (getenv "PATH"))
+                      (shell-quote-argument command)
+                      (user-login-name) (shell-quote-argument out))))
+    (my/debug--on-success (compile cmd t) (lambda () (my/debug-perf-report out)))))
+
+(defun my/debug-perf-report (file)
+  "Show a text perf report for FILE."
+  (interactive (list (read-file-name "perf.data: " (my/debug--root) nil t)))
+  (let ((default-directory (file-name-directory file)))
+    (compile (format "perf report --stdio --no-children -i %s" (shell-quote-argument file)))))
+
+(defun my/debug-py-spy-record (command)
+  "Profile Python COMMAND with py-spy (native frames included) and open the flame graph."
+  (interactive (list (my/debug--read-command "py-spy record: ")))
+  (let* ((default-directory (my/debug--root))
+         (out (expand-file-name "profile.svg" (my/debug--run-dir "py-spy"))))
+    (my/debug--on-success
+     (compile (format "py-spy record --native -o %s -- %s" (shell-quote-argument out) command))
+     (lambda () (browse-url-of-file out)))))
+
+;;;; clangd build database
+
+(defun my/debug--find-compile-commands (root)
+  "compile_commands.json files in ROOT's usual build directories, newest first."
+  (let ((default-directory root))
+    (sort (mapcar #'expand-file-name
+                  (append (file-expand-wildcards "build*/compile_commands.json")
+                          (file-expand-wildcards "build*/*/compile_commands.json")
+                          (file-expand-wildcards "cmake-build-*/compile_commands.json")
+                          (file-expand-wildcards "out/*/compile_commands.json")))
+          (lambda (a b) (time-less-p (file-attribute-modification-time (file-attributes b))
+                                     (file-attribute-modification-time (file-attributes a)))))))
+
+(defun my/debug--reconnect-eglot (buffer)
+  (when (and (buffer-live-p buffer) (fboundp 'eglot-current-server))
+    (with-current-buffer buffer
+      (when-let* ((server (eglot-current-server)))
+        (eglot-reconnect server)))))
+
+(defun my/debug-compile-commands ()
+  "Make compile_commands.json available to clangd at the project root.
+Links an existing one from a build directory, otherwise generates it:
+CMake projects configure a Debug build in build/, anything else runs
+its build under bear.  Reconnects Eglot afterwards."
+  (interactive)
+  (let* ((root (my/debug--root))
+         (target (expand-file-name "compile_commands.json" root))
+         (source (current-buffer))
+         (default-directory root))
+    (cond
+     ((file-exists-p target)
+      (message "compile_commands.json already at %s" (abbreviate-file-name target)))
+     ((when-let* ((found (my/debug--find-compile-commands root))
+                  (pick (if (cdr found)
+                            (completing-read "Use: " (mapcar (lambda (f) (file-relative-name f root)) found) nil t)
+                          (file-relative-name (car found) root))))
+        (make-symbolic-link pick target)
+        (my/debug--reconnect-eglot source)
+        (message "Linked %s" pick)
+        t))
+     (t
+      (let ((cmd (cond
+                  ((file-exists-p "CMakeLists.txt")
+                   (format "cmake -S . -B build %s-DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && ln -sf build/compile_commands.json ."
+                           (if (executable-find "ninja") "-G Ninja " "")))
+                  ((file-exists-p "Makefile")
+                   (format "bear -- make -j%d" (num-processors)))
+                  (t (concat "bear -- " (read-shell-command "Build command to trace: "))))))
+        (my/debug--on-success (compile cmd) (lambda () (my/debug--reconnect-eglot source))))))))
+
+(define-prefix-command 'my/debug-map)
+(global-set-key (kbd "C-c d") 'my/debug-map)
+(define-key my/debug-map (kbd "g") #'my/debug-pytest-gdb)
+(define-key my/debug-map (kbd "p") #'my/debug-pytest-pdb)
+(define-key my/debug-map (kbd "a") #'my/debug-gdb-attach)
+(define-key my/debug-map (kbd "d") #'my/debug-py-spy-dump)
+(define-key my/debug-map (kbd "r") #'my/debug-perf-record)
+(define-key my/debug-map (kbd "s") #'my/debug-py-spy-record)
+(define-key my/debug-map (kbd "c") #'my/debug-compile-commands)
+(define-key my/debug-map (kbd "o") #'my/debug-open-runs)
+
+(provide '60-debug)
 
 #+end_src
 
@@ -2691,6 +2882,63 @@ These faces rely on Modus themes' custom color variables."
 
 #+end_src
 
+* File: inits/60-ir.el
+#+begin_src emacs-lisp :tangle inits/60-ir.el
+;;; -*- lexical-binding: t -*-
+;; Compiler IR files: LLVM IR via tree-sitter, MLIR via a small local mode
+;; (no packaged MLIR mode exists outside the llvm-project tree).
+
+(use-package llvm-ts-mode
+  :straight t
+  :mode "\\.ll\\'"
+  :init
+  (with-eval-after-load 'treesit
+    (add-to-list 'treesit-language-source-alist
+                 '(llvm "https://github.com/benwilliamgraham/tree-sitter-llvm")))
+  :config
+  (unless (treesit-language-available-p 'llvm)
+    (treesit-install-language-grammar 'llvm)))
+
+(defvar mlir-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?/ ". 12" table)
+    (modify-syntax-entry ?\n ">" table)
+    (modify-syntax-entry ?\" "\"" table)
+    (dolist (c '(?_ ?. ?$ ?- ?% ?@ ?^ ?# ?!))
+      (modify-syntax-entry c "_" table))
+    table))
+
+(defconst mlir-font-lock-keywords
+  `((,(rx "%" (+ (any alnum "_.$#-"))) . font-lock-variable-name-face)        ; SSA values
+    (,(rx "^" (+ (any alnum "_.$-"))) . font-lock-constant-face)              ; block labels
+    (,(rx "@" (+ (any alnum "_.$-"))) . font-lock-function-name-face)         ; symbols
+    (,(rx "!" (+ (any alnum "_.$"))) . font-lock-type-face)                   ; dialect types
+    (,(rx "#" (+ (any alnum "_.$"))) . font-lock-preprocessor-face)           ; attributes
+    (,(rx symbol-start
+          (or (seq "i" (+ digit)) (seq "si" (+ digit)) (seq "ui" (+ digit))
+              "f8E4M3FN" "f8E5M2" "bf16" "f16" "f32" "f64" "index" "none"
+              "tensor" "memref" "vector" "tuple" "complex")
+          symbol-end)
+     . font-lock-type-face)
+    (,(rx symbol-start (or "module" "func" "return" "loc" "attributes" "dense" "unit" "true" "false") symbol-end)
+     . font-lock-builtin-face)
+    (,(rx symbol-start (any lower "_") (* (any alnum "_")) (+ "." (+ (any alnum "_"))) symbol-end)
+     . font-lock-keyword-face)))                                              ; dialect.op
+
+(define-derived-mode mlir-mode prog-mode "MLIR"
+  "Major mode for MLIR textual IR."
+  (setq-local comment-start "// ")
+  (setq-local comment-start-skip "//+\\s-*")
+  (setq-local font-lock-defaults '(mlir-font-lock-keywords))
+  (setq-local imenu-generic-expression
+              '((nil "func\\.func\\s-+\\(?:[a-z]+\\s-+\\)?@\\([[:alnum:]_.$-]+\\)" 1))))
+
+(add-to-list 'auto-mode-alist '("\\.mlir\\'" . mlir-mode))
+
+(provide '60-ir)
+
+#+end_src
+
 * File: inits/60-kotlin.el
 #+begin_src emacs-lisp :tangle inits/60-kotlin.el
 ;;; -*- lexical-binding: t -*-
@@ -2721,6 +2969,113 @@ These faces rely on Modus themes' custom color variables."
 #+begin_src emacs-lisp :tangle inits/60-mermaid.el
 ;;; -*- lexical-binding: t -*-
 (use-package mermaid-mode)
+
+#+end_src
+
+* File: inits/60-ml-debug.el
+#+begin_src emacs-lisp :tangle inits/60-ml-debug.el
+;;; -*- lexical-binding: t -*-
+;; C-c d m: run the test at point or the current file with PyTorch / JAX /
+;; XLA / Python debug switches.  Output lands in a compilation buffer, so
+;; tracebacks are clickable.  Each run gets its own artifact directory
+;; (compile-debug output, HLO dumps, a run.txt record of the exact command).
+
+
+(defvar my/ml-debug--last nil
+  "Plist of the last run: :root :command :args.")
+
+(defconst my/ml-debug--joiners '(("TORCH_LOGS" . ",") ("XLA_FLAGS" . " "))
+  "Variables whose values from several switches combine instead of overriding.")
+
+(defun my/ml-debug--environment (args dir)
+  "Turn transient ARGS into environment strings, with artifacts under DIR."
+  (let (env)
+    (dolist (arg args)
+      (pcase arg
+        ("XLA_DUMP" (push (cons "XLA_FLAGS" (concat "--xla_dump_to=" dir "xla")) env))
+        ("TORCH_COMPILE_DEBUG=1"
+         (push (cons "TORCH_COMPILE_DEBUG" "1") env)
+         (push (cons "TORCH_COMPILE_DEBUG_DIR" (concat dir "torch")) env))
+        ((rx bos (let var (+ (not "="))) "=" (let val (* anything)) eos)
+         (let ((old (assoc var env))
+               (joiner (cdr (assoc var my/ml-debug--joiners))))
+           (if (and old joiner)
+               (setcdr old (concat (cdr old) joiner val))
+             (push (cons var val) env))))))
+    (mapcar (lambda (c) (concat (car c) "=" (cdr c))) (nreverse env))))
+
+(defun my/ml-debug--write-record (dir root command env)
+  (with-temp-file (expand-file-name "run.txt" dir)
+    (insert "cwd: " root "\n"
+            "git: " (string-trim (shell-command-to-string
+                                  (format "git -C %s rev-parse --short HEAD 2>/dev/null; git -C %s status --porcelain 2>/dev/null | wc -l | sed 's/$/ dirty files/'"
+                                          (shell-quote-argument root) (shell-quote-argument root))))
+            "\nenv:\n" (mapconcat (lambda (e) (concat "  " e)) env "\n")
+            "\ncommand: " command "\n")))
+
+(defun my/ml-debug--run (root command args)
+  (let* ((default-directory root)
+         (dir (my/debug--run-dir "ml"))
+         (env (my/ml-debug--environment args dir))
+         (compilation-environment env))
+    (setq my/ml-debug--last (list :root root :command command :args args))
+    (my/ml-debug--write-record dir root command env)
+    (with-current-buffer (compile command)
+      (rename-buffer "*ml-debug*" t)
+      (message "Artifacts: %s" (abbreviate-file-name dir)))))
+
+(defun my/ml-debug-run-test (args)
+  "Run the pytest node at point with ARGS."
+  (interactive (list (transient-args 'my/ml-debug)))
+  (my/ml-debug--run (my/debug--root)
+                    (format "%s -m pytest -x -s %s" (my/debug--python)
+                            (shell-quote-argument (my/debug--read-node)))
+                    args))
+
+(defun my/ml-debug-run-file (args)
+  "Run the current Python file with ARGS."
+  (interactive (list (transient-args 'my/ml-debug)))
+  (unless buffer-file-name (user-error "Buffer is not visiting a file"))
+  (my/ml-debug--run (my/debug--root)
+                    (format "%s %s" (my/debug--python)
+                            (shell-quote-argument (file-relative-name buffer-file-name (my/debug--root))))
+                    args))
+
+(defun my/ml-debug-rerun (args)
+  "Rerun the last command; ARGS replace its switches."
+  (interactive (list (transient-args 'my/ml-debug)))
+  (unless my/ml-debug--last (user-error "Nothing run yet"))
+  (my/ml-debug--run (plist-get my/ml-debug--last :root)
+                    (plist-get my/ml-debug--last :command)
+                    args))
+
+(transient-define-prefix my/ml-debug ()
+  "Run Python with framework debug switches.  C-x s saves the current switches."
+  :value '("PYTHONFAULTHANDLER=1")
+  [["PyTorch"
+    ("-g" "graph breaks, recompiles, guards" "TORCH_LOGS=graph_breaks,recompiles,guards")
+    ("-d" "dynamo + inductor logs" "TORCH_LOGS=+dynamo,+inductor")
+    ("-c" "compile debug artifacts" "TORCH_COMPILE_DEBUG=1")
+    ("-s" "C++ stack traces" "TORCH_SHOW_CPP_STACKTRACES=1")
+    ("-b" "synchronous CUDA launches" "CUDA_LAUNCH_BLOCKING=1")]
+   ["JAX / XLA"
+    ("-j" "disable jit" "JAX_DISABLE_JIT=1")
+    ("-n" "fail on NaNs" "JAX_DEBUG_NANS=1")
+    ("-l" "log compiles" "JAX_LOG_COMPILES=1")
+    ("-t" "unfiltered tracebacks" "JAX_TRACEBACK_FILTERING=off")
+    ("-x" "dump HLO" "XLA_DUMP")]
+   ["Python"
+    ("-f" "faulthandler" "PYTHONFAULTHANDLER=1")
+    ("-v" "dev mode" "PYTHONDEVMODE=1")]]
+  [["Run"
+    ("t" "test at point" my/ml-debug-run-test)
+    ("f" "current file" my/ml-debug-run-file)
+    ("r" "rerun last" my/ml-debug-rerun)
+    ("o" "open artifacts" my/debug-open-runs)]])
+
+(define-key my/debug-map (kbd "m") #'my/ml-debug)
+
+(provide '60-ml-debug)
 
 #+end_src
 
