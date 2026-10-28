@@ -2158,7 +2158,9 @@ Never overrides a variable that is already set in the environment."
 ;;; -*- lexical-binding: t -*-
 ;; Native and Python debugging on the built-in GUD frontends (no DAP),
 ;; plus profiling and clangd build-database helpers.  Everything lives
-;; under C-c d.  Run artifacts go to var/debug-runs/<project>/<time>/.
+;; under C-c d.  Run artifacts go to var/debug-runs/<project>/<time>/;
+;; C-c d = compares two runs and C-c d n notes an experiment against the
+;; latest one.
 
 (use-package gdb-mi
   :straight nil
@@ -2177,6 +2179,9 @@ Never overrides a variable that is already set in the environment."
   (expand-file-name "var/debug-runs/" user-emacs-directory)
   "Where profiler output, dumps and run records are kept.")
 
+(defvar my/debug-last-run-dir nil
+  "Artifact directory of the most recent run.")
+
 (defun my/debug--root ()
   "Current project root, or `default-directory' outside a project."
   (if-let* ((project (project-current)))
@@ -2185,30 +2190,65 @@ Never overrides a variable that is already set in the environment."
 
 (defun my/debug--run-dir (tool)
   "Create and return a fresh artifact directory for TOOL in this project."
-  (let ((dir (expand-file-name
-              (format "%s/%s-%s/"
-                      (file-name-nondirectory (directory-file-name (my/debug--root)))
-                      (format-time-string "%Y%m%d-%H%M%S")
-                      tool)
-              my/debug-runs-directory)))
+  (let* ((base (expand-file-name
+                (format "%s/%s-%s"
+                        (file-name-nondirectory (directory-file-name (my/debug--root)))
+                        (format-time-string "%Y%m%d-%H%M%S")
+                        tool)
+                my/debug-runs-directory))
+         (dir base)
+         (n 1))
+    ;; Two runs in the same second must not share (and overwrite) a directory.
+    (while (file-exists-p dir)
+      (setq n (1+ n) dir (format "%s-%d" base n)))
+    (make-directory dir t)
+    (setq my/debug-last-run-dir (file-name-as-directory dir))))
+
+(defun my/debug--project-runs-dir ()
+  (let ((dir (file-name-as-directory
+              (expand-file-name
+               (file-name-nondirectory (directory-file-name (my/debug--root)))
+               my/debug-runs-directory))))
     (make-directory dir t)
     dir))
 
 (defun my/debug-open-runs ()
   "Open this project's run artifacts in Dired."
   (interactive)
-  (let ((dir (expand-file-name
-              (file-name-nondirectory (directory-file-name (my/debug--root)))
-              my/debug-runs-directory)))
-    (make-directory dir t)
-    (dired dir)
-    (revert-buffer)))
+  (dired (my/debug--project-runs-dir))
+  (revert-buffer))
+
+(defun my/debug-compare-runs (a b)
+  "Ediff the artifact directories of runs A and B: command, env, output, reports."
+  (interactive
+   (let* ((root (my/debug--project-runs-dir))
+          (runs (reverse (directory-files root nil "\\`[0-9]")))
+          (a (completing-read "Baseline run: " runs nil t nil nil (cadr runs)))
+          (b (completing-read "Compare with: " (remove a runs) nil t nil nil (car runs))))
+     (list (expand-file-name a root) (expand-file-name b root))))
+  (ediff-directories a b nil))
+
+(defun my/debug--keep-output (buffer dir)
+  "Save BUFFER's compilation output to DIR/output.log when it finishes."
+  (with-current-buffer buffer
+    (add-hook 'compilation-finish-functions
+              (lambda (buf _msg)
+                (with-current-buffer buf
+                  (write-region nil nil (expand-file-name "output.log" dir) nil 'silent)))
+              nil t))
+  buffer)
 
 (defun my/debug--python ()
   "Real interpreter for this buffer's environment.
-Asks Python for `sys.executable' so pyenv shims and wrapper scripts
-resolve to the binary gdb can load."
-  (let ((python (or (executable-find "python") (executable-find "python3")
+Prefers a venv enclosing the file (pyvenv.cfg) or a project .venv, then
+exec-path.  Asks Python for `sys.executable' so pyenv shims and wrapper
+scripts resolve to the binary gdb can load."
+  (let ((python (or (when-let* ((venv (locate-dominating-file default-directory "pyvenv.cfg"))
+                                (bin (expand-file-name "bin/python" venv)))
+                      (and (file-executable-p bin) bin))
+                    (when-let* ((dir (locate-dominating-file default-directory ".venv/bin/python")))
+                      (expand-file-name ".venv/bin/python" dir))
+                    (executable-find "python") (executable-find "python3")
                     (user-error "No python on exec-path"))))
     (string-trim
      (shell-command-to-string
@@ -2304,7 +2344,8 @@ COMMAND itself runs as you with your environment."
                       (shell-quote-argument (getenv "PATH"))
                       (shell-quote-argument command)
                       (user-login-name) (shell-quote-argument out))))
-    (my/debug--on-success (compile cmd t) (lambda () (my/debug-perf-report out)))))
+    (my/debug--on-success (my/debug--keep-output (compile cmd t) (file-name-directory out))
+                          (lambda () (my/debug-perf-report out)))))
 
 (defun my/debug-perf-report (file)
   "Show a text perf report for FILE."
@@ -2318,7 +2359,9 @@ COMMAND itself runs as you with your environment."
   (let* ((default-directory (my/debug--root))
          (out (expand-file-name "profile.svg" (my/debug--run-dir "py-spy"))))
     (my/debug--on-success
-     (compile (format "py-spy record --native -o %s -- %s" (shell-quote-argument out) command))
+     (my/debug--keep-output
+      (compile (format "py-spy record --native -o %s -- %s" (shell-quote-argument out) command))
+      (file-name-directory out))
      (lambda () (browse-url-of-file out)))))
 
 ;;;; clangd build database
@@ -2371,7 +2414,54 @@ its build under bear.  Reconnects Eglot afterwards."
                   (t (concat "bear -- " (read-shell-command "Build command to trace: "))))))
         (my/debug--on-success (compile cmd) (lambda () (my/debug--reconnect-eglot source))))))))
 
-(define-prefix-command 'my/debug-map)
+;;;; Finished-run notifications and experiment notes
+
+(defvar my/debug-notify-after 15
+  "Notify when a compilation that ran at least this many seconds ends unfocused.")
+
+(defvar-local my/debug--compile-start nil)
+
+(defun my/debug--note-start (_proc)
+  (setq my/debug--compile-start (float-time)))
+
+(defun my/debug--notify-finish (buffer msg)
+  (when-let* ((start (buffer-local-value 'my/debug--compile-start buffer))
+              ((>= (- (float-time) start) my/debug-notify-after))
+              ((not (eq (frame-focus-state) t))))
+    (require 'notifications)
+    (notifications-notify :app-name "Emacs"
+                          :title (format "%s %s" (buffer-name buffer) (string-trim msg))
+                          :body (abbreviate-file-name
+                                 (buffer-local-value 'default-directory buffer)))))
+
+(add-hook 'compilation-start-hook #'my/debug--note-start)
+(add-hook 'compilation-finish-functions #'my/debug--notify-finish)
+
+(defvar my/experiments-file (expand-file-name "~/drive/org/experiments.org")
+  "Org file collecting experiment notes from `my/debug-note-experiment'.")
+
+(defun my/debug--last-run-link ()
+  (if my/debug-last-run-dir
+      (format "[[file:%s][%s]]" my/debug-last-run-dir
+              (file-name-nondirectory (directory-file-name my/debug-last-run-dir)))
+    "none"))
+
+(with-eval-after-load 'org-capture
+  (add-to-list 'org-capture-templates
+               `("e" "Experiment" entry (file ,my/experiments-file)
+                 "* %^{What changed}  %U\n:PROPERTIES:\n:RUN: %(my/debug--last-run-link)\n:END:\n** Hypothesis\n%?\n** Change\n** Result\n** Why\n"
+                 :empty-lines 1)))
+
+(defun my/debug-note-experiment ()
+  "Capture an experiment note linked to the latest run."
+  (interactive)
+  (require 'org-capture)
+  (org-capture nil "e"))
+
+;; defvar, not define-prefix-command, so reloading this file keeps the keys
+;; other files add to the map.
+(defvar my/debug-map (make-sparse-keymap) "Keymap under C-c d.")
+(fset 'my/debug-map my/debug-map)
 (global-set-key (kbd "C-c d") 'my/debug-map)
 (define-key my/debug-map (kbd "g") #'my/debug-pytest-gdb)
 (define-key my/debug-map (kbd "p") #'my/debug-pytest-pdb)
@@ -2381,9 +2471,10 @@ its build under bear.  Reconnects Eglot afterwards."
 (define-key my/debug-map (kbd "s") #'my/debug-py-spy-record)
 (define-key my/debug-map (kbd "c") #'my/debug-compile-commands)
 (define-key my/debug-map (kbd "o") #'my/debug-open-runs)
+(define-key my/debug-map (kbd "=") #'my/debug-compare-runs)
+(define-key my/debug-map (kbd "n") #'my/debug-note-experiment)
 
 (provide '60-debug)
-
 #+end_src
 
 * File: inits/60-devdocs.el
@@ -2885,8 +2976,9 @@ These faces rely on Modus themes' custom color variables."
 * File: inits/60-ir.el
 #+begin_src emacs-lisp :tangle inits/60-ir.el
 ;;; -*- lexical-binding: t -*-
-;; Compiler IR files: LLVM IR via tree-sitter, MLIR via a small local mode
-;; (no packaged MLIR mode exists outside the llvm-project tree).
+;; Compiler output: LLVM IR via tree-sitter, MLIR via a small local mode (no
+;; packaged MLIR mode exists outside the llvm-project tree), generated
+;; assembly via rmsbolt, and C++ symbol demangling.
 
 (use-package llvm-ts-mode
   :straight t
@@ -2898,6 +2990,16 @@ These faces rely on Modus themes' custom color variables."
   :config
   (unless (treesit-language-available-p 'llvm)
     (treesit-install-language-grammar 'llvm)))
+
+;; Local Compiler Explorer: live assembly for the current C/C++ buffer.
+(use-package rmsbolt
+  :straight t
+  :commands (rmsbolt rmsbolt-mode))
+
+;; Show readable C++ names for mangled symbols in logs and tool output.
+(use-package demangle-mode
+  :straight t
+  :commands (demangle-mode))
 
 (defvar mlir-mode-syntax-table
   (let ((table (make-syntax-table)))
@@ -2936,7 +3038,6 @@ These faces rely on Modus themes' custom color variables."
 (add-to-list 'auto-mode-alist '("\\.mlir\\'" . mlir-mode))
 
 (provide '60-ir)
-
 #+end_src
 
 * File: inits/60-kotlin.el
@@ -2978,7 +3079,8 @@ These faces rely on Modus themes' custom color variables."
 ;; C-c d m: run the test at point or the current file with PyTorch / JAX /
 ;; XLA / Python debug switches.  Output lands in a compilation buffer, so
 ;; tracebacks are clickable.  Each run gets its own artifact directory
-;; (compile-debug output, HLO dumps, a run.txt record of the exact command).
+;; (compile-debug output, HLO dumps, output.log and a run.txt record of the
+;; exact command).
 
 
 (defvar my/ml-debug--last nil
@@ -3020,7 +3122,7 @@ These faces rely on Modus themes' custom color variables."
          (compilation-environment env))
     (setq my/ml-debug--last (list :root root :command command :args args))
     (my/ml-debug--write-record dir root command env)
-    (with-current-buffer (compile command)
+    (with-current-buffer (my/debug--keep-output (compile command) dir)
       (rename-buffer "*ml-debug*" t)
       (message "Artifacts: %s" (abbreviate-file-name dir)))))
 
@@ -3076,7 +3178,6 @@ These faces rely on Modus themes' custom color variables."
 (define-key my/debug-map (kbd "m") #'my/ml-debug)
 
 (provide '60-ml-debug)
-
 #+end_src
 
 * File: inits/60-multiple-cursors.el
@@ -4031,6 +4132,69 @@ Set this from private machine-local config to avoid committing LAN details.")
   :custom
   (tramp-copy-size-limit (* 1024 1024)))
 
+#+end_src
+
+* File: inits/60-tt-lang.el
+#+begin_src emacs-lisp :tangle inits/60-tt-lang.el
+;;; -*- lexical-binding: t -*-
+;; TT-Lang functional simulator: TT-Lang kernels are plain Python files that
+;; run in a pure-Python simulator, no hardware needed.  M-x
+;; my/tt-lang-sim-setup builds the venv and copies the bundled tutorials
+;; into it; C-c d k runs the current kernel and C-c d K steps it in pdb.
+
+(defvar my/tt-lang-sim-directory (expand-file-name "~/tt-kernels/")
+  "Venv for the TT-Lang simulator; tutorials are copied into it.")
+
+(defun my/tt-lang-sim--bin (name)
+  (expand-file-name (concat "bin/" name) my/tt-lang-sim-directory))
+
+(defun my/tt-lang-sim-setup ()
+  "Create the simulator venv (Python 3.12), install tt-lang-sim, copy the tutorials.
+Safe to rerun: it reuses the venv and upgrades the package."
+  (interactive)
+  (let* ((dir (directory-file-name my/tt-lang-sim-directory))
+         (default-directory (file-name-directory dir))
+         (venv (cond ((file-executable-p (my/tt-lang-sim--bin "python")) "true")
+                     ((executable-find "uv")
+                      (format "uv venv --seed --python 3.12 %s" (shell-quote-argument dir)))
+                     (t (format "python3.12 -m venv %s" (shell-quote-argument dir))))))
+    (my/debug--on-success
+     ;; The simulator is pure Python, so take PyTorch's CPU-only wheels and
+     ;; skip the multi-GB CUDA stack.  tt-lang-setup imports `packaging'
+     ;; without declaring it (1.1.6), so install that too.
+     (compile (format "%s && %s install -q -U --extra-index-url https://download.pytorch.org/whl/cpu tt-lang-sim packaging && cd %s && %s"
+                      venv (shell-quote-argument (my/tt-lang-sim--bin "pip"))
+                      (shell-quote-argument dir)
+                      (shell-quote-argument (my/tt-lang-sim--bin "tt-lang-setup"))))
+     (lambda ()
+       ;; Point Pyright at the venv so the tutorials' imports resolve.
+       (with-temp-file (expand-file-name "pyrightconfig.json" dir)
+         (insert (json-encode `((venvPath . ,(file-name-directory dir))
+                                (venv . ,(file-name-nondirectory dir))))))
+       (dired (expand-file-name "tutorials/" dir))))))
+
+(defun my/tt-lang-sim--kernel ()
+  (or buffer-file-name (read-file-name "Kernel: " nil nil t)))
+
+(defun my/tt-lang-sim-run (file)
+  "Run TT-Lang kernel FILE in the simulator."
+  (interactive (list (my/tt-lang-sim--kernel)))
+  (let ((default-directory (file-name-directory file)))
+    (compile (combine-and-quote-strings
+              (list (my/tt-lang-sim--bin "tt-lang-sim") file)))))
+
+(defun my/tt-lang-sim-debug (file)
+  "Step through TT-Lang kernel FILE in pdb under the simulator."
+  (interactive (list (my/tt-lang-sim--kernel)))
+  (let ((default-directory (file-name-directory file)))
+    (pdb (combine-and-quote-strings
+          (list (my/tt-lang-sim--bin "python") "-m" "pdb"
+                (my/tt-lang-sim--bin "tt-lang-sim") file)))))
+
+(define-key my/debug-map (kbd "k") #'my/tt-lang-sim-run)
+(define-key my/debug-map (kbd "K") #'my/tt-lang-sim-debug)
+
+(provide '60-tt-lang)
 #+end_src
 
 * File: inits/60-typescript.el
