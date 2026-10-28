@@ -131,7 +131,7 @@ Tangle with:
   :straight t
   :config
   (setq init-loader-show-log-after-init nil)
-  (init-loader-load "~/.emacs.d/inits"))
+  (init-loader-load (expand-file-name "inits" user-emacs-directory)))
 
 ;; Load the feature no-littering as early as possible in your init file. Make sure you load it at least before you change any path variables using some other method.
 ;; see: https://github.com/emacscollective/no-littering
@@ -139,7 +139,12 @@ Tangle with:
   :straight t
   :init
   (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  ;; Keep lock files out of the visited file's directory as well, so editing a
+  ;; file on a slow or FUSE-mounted path never writes through that mount.
+  (make-directory (no-littering-expand-var-file-name "lock-files/") t)
+  (setq lock-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "lock-files/") t))))
 
 ;; fontify all buffers
 (global-font-lock-mode  t)
@@ -789,6 +794,7 @@ back to the newest installed version when no default alias resolves."
 ;;; -*- lexical-binding: t -*-
 (use-package envrc
   :straight t
+  :if (executable-find "direnv")
   :hook (after-init . envrc-global-mode))
 
 #+end_src
@@ -1217,10 +1223,9 @@ Matches the behavior and window management of `my-proj/shell`."
 
 (use-package company
   :diminish company-mode
-  :after eglot
   :straight t
+  :hook (after-init . global-company-mode)
   :config
-  (add-hook 'after-init-hook 'global-company-mode)
   ;; Disable company-mode if in a remote shell due to slow performance
   (add-hook 'shell-mode-hook 'my-shell-mode-setup-function)
   (add-to-list 'company-backends 'company-capf)
@@ -1823,7 +1828,7 @@ Matches the behavior and window management of `my-proj/shell`."
                :inherit-env t)))
 
     ;; Fallback: Warn if the variable is missing
-    (warn "❌ Agent-Shell Error: 'my-gemini-api-key' is empty or missing in secrets.el!")))
+    (message "Agent-Shell: 'my-gemini-api-key' is empty or missing in secrets.el; Gemini backend not configured")))
 
 #+end_src
 
@@ -3391,27 +3396,8 @@ Comments:
 * File: inits/60-shell.el
 #+begin_src emacs-lisp :tangle inits/60-shell.el
 ;;; -*- lexical-binding: t -*-
-;; bash
-;; format bash
-(use-package shfmt
-  :straight (shfmt :host github
-                   :repo "amake/shfmt.el"
-                   :local-repo "amake/shfmt.el"
-                   :branch "master"
-                   )
-  :hook (sh-mode . shfmt-on-save-mode)
-  )
-(use-package flycheck-shfmt
-  :straight (flycheck-shfmt :host github
-                            :repo "amake/shfmt.el"
-                            :local-repo "amake/shfmt.el"
-                            :files ("flycheck-shfmt.el")
-                            :branch "master"
-                            )
-  :config
-  (flycheck-shfmt-setup)
-  )
-
+;; Shell scripts are formatted on save by apheleia, which maps both sh-mode
+;; and bash-ts-mode to shfmt (see 60-apheleia.el).
 
 ;;; WINDOWS
 (use-package fakecygpty
