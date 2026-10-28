@@ -2385,6 +2385,28 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 
 #+end_src
 
+* File: inits/60-ghostel.el
+#+begin_src emacs-lisp :tangle inits/60-ghostel.el
+;;; -*- lexical-binding: t -*-
+;; Terminal emulator built on libghostty-vt (the Ghostty VT engine).
+;; Coexists with vterm; open one with M-x ghostel.
+(use-package ghostel
+  ;; Explicit recipe mirrors MELPA's so the native module's sources ship too.
+  :straight (ghostel :host github :repo "dakra/ghostel"
+                     :files (:defaults "etc" "src" "vendor"
+                                       "build.zig" "build.zig.zon" "symbols.map"))
+  :commands (ghostel)
+  :custom
+  ;; Fetch the prebuilt native module on first use instead of prompting.
+  (ghostel-module-auto-install 'download)
+  ;; Keep the module outside straight's build dir so a rebuild can't delete
+  ;; it while Emacs has it loaded.
+  (ghostel-module-directory (expand-file-name "var/ghostel/" user-emacs-directory)))
+
+(provide '60-ghostel)
+
+#+end_src
+
 * File: inits/60-git.el
 #+begin_src emacs-lisp :tangle inits/60-git.el
 ;;; -*- lexical-binding: t -*-
