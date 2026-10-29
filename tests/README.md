@@ -9,6 +9,7 @@ latest Emacs release (31.x); the container run below is the reference environmen
 - `tests/tangle-config.sh`: tangles `dotemacs.org` into a target directory (repo root by default).
 - `tests/emacs-compat-check.el`: checks the tangled config against the running Emacs (see below).
 - `tests/run-emacs-latest-container.sh`: runs the batteries inside the prebuilt `silex/emacs:31-ci` image.
+- `tests/ghostel-interrupt-test.el`: opens a ghostel terminal with the config's shell settings and checks that C-c interrupts a running program without killing the shell (see below).
 
 ## Top-level suites
 - `core-static`: literate tangle step, shell syntax checks for tracked `*.sh`, plus Emacs Lisp parse checks over generated and tracked `*.el`. Runs on the Linux/macOS/Windows matrix with whatever Emacs the OS ships, so it only exercises tangling and syntax.
@@ -47,6 +48,17 @@ warm one under a minute).
 
 ```bash
 docker run --rm -v "$PWD:/repo:ro" silex/emacs:31-ci bash /repo/tests/perf/run-perf.sh
+```
+
+## Ghostel C-c check
+`.github/workflows/ghostel-ci.yml` runs `tests/ghostel-interrupt-test.el` on Ubuntu and Windows.
+On Windows it uses the runner's MSYS2 install with zsh, the same `ghostel-shell` the config sets,
+and interrupts both an MSYS2 program (`sleep`) and a native console program (`ping.exe`).
+It needs a ghostel checkout; the native module is downloaded on first run.
+
+```bash
+GHOSTEL_DIR=~/.emacs.d/straight/repos/ghostel TANGLE_DIR=/tmp/tangled \
+  emacs -Q --batch -l tests/ghostel-interrupt-test.el
 ```
 
 ## Real host integration (manual CI)

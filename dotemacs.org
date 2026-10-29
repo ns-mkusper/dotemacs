@@ -76,7 +76,6 @@ Tangle with:
 ;; TODO: run only when stale
 ;; (setq package-check-signature nil) ;; use in case of gpg key corruption
 ;; (package-refresh-contents) ;; can be disabled and ran manually to speed up boot
-(package-initialize) ;; no longer needed after package was removed?
 
 (use-package straight
   :custom (straight-use-package-by-default t))
@@ -90,12 +89,12 @@ Tangle with:
   :straight t )
 (use-package use-package)
 
-;; Add additional repos
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
-(add-to-list 'package-archives
-             '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
+;; Add additional repos (only matters if package.el gets loaded on demand)
+(with-eval-after-load 'package
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives
+               '("elpa" .  "https://elpa.gnu.org/packages/" ) t))
 
 ;; =========================================================
 ;; WINDOWS FIXES
@@ -224,16 +223,16 @@ that directory."
         (+error! "Cannot create directory %s" parent-dir)))
     path))
 
-(defun my/vterm-codex-paste-image ()
+(defun my/term-codex-paste-image ()
   "Dump X11 clipboard image to the current project root and pass the /workspace path to the codex container.
 
    usage:
 
-   (define-key vterm-mode-map (kbd \"C-c C-y\") 'my/vterm-codex-paste-image)
+   (define-key ghostel-mode-map (kbd \"C-c C-y\") 'my/term-codex-paste-image)
    "
   (interactive)
-  (unless (eq major-mode 'vterm-mode)
-    (error "Not in a vterm buffer"))
+  (unless (memq major-mode '(ghostel-mode vterm-mode))
+    (error "Not in a ghostel or vterm buffer"))
 
   (let* ((filename (format "mockup-%s.png" (format-time-string "%H%M%S")))
          ;; Dynamically find the Git repo root (matches standard `docker run -v "$(pwd)":/workspace` from root)
@@ -250,7 +249,10 @@ that directory."
     (if (and (file-exists-p host-path) (> (nth 7 (file-attributes host-path)) 0))
         (progn
           (message "Saved %s to %s" filename target-dir)
-          (vterm-insert (format "\"%s\" " container-path)))
+          (let ((text (format "\"%s\" " container-path)))
+            (if (eq major-mode 'ghostel-mode)
+                (ghostel-send-string text)
+              (vterm-insert text))))
       (error "Paste failed: clipboard is empty or not image data"))))
 
 
@@ -719,7 +721,7 @@ back to the newest installed version when no default alias resolves."
            ;; ("C-c c" . my/open-canvas-buffer)
            ("C-c t" . my/open-text-buffer)
            ("C-c RET" . my-proj/shell)
-           ("C-c v RET" . my-proj/vterm)
+           ("C-c v RET" . my-proj/ghostel)
            ("C-x C-b" . ibuffer)
            ("C-M-n" . forward-paragraph)
            ("C-M-p" . backward-paragraph)
@@ -1065,18 +1067,18 @@ When not in a project, prompt for one."
            (project-root (project-current 'maybe-prompt))))
       (magit-status-setup-buffer)))
 
-  (defun my-proj/vterm (&optional arg)
-    "Launch or switch to a vterm session in current project.
+  (defun my-proj/ghostel (&optional arg)
+    "Launch or switch to a ghostel session in current project.
 With numeric prefix argument ARG, launch or switch to a numbered
-vterm session.  With `\\[universal-argument]' prefix argument
-ARG, launch a new vterm session.  When not in a project, prompt
+ghostel session.  With `\\[universal-argument]' prefix argument
+ARG, launch a new ghostel session.  When not in a project, prompt
 for one."
     (interactive "P")
     ;; Dynamic variables
-    (defvar vterm-buffer-name)
+    (defvar ghostel-buffer-name)
     (let* ((default-directory (project-root (project-current 'maybe-prompt)))
-           (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
-      (vterm arg)))
+           (ghostel-buffer-name (project-prefixed-buffer-name "ghostel")))
+      (ghostel arg)))
 
   ;; `project-eshell' doesn't launch or switch to numbered eshell
   ;; sessions
@@ -1122,33 +1124,35 @@ for one."
           (rename-buffer shell-buffer-name)))
       ))
 
-  (defun my-proj/vterm ()
-    "Open or switch to a vterm dedicated to the current project or file.
+  (defun my-proj/ghostel ()
+    "Open or switch to a ghostel dedicated to the current project or file.
 Matches the behavior and window management of `my-proj/shell`."
     (interactive)
+    ;; Dynamic variables
+    (defvar ghostel-buffer-name)
     (let* ((proj (project-current 'maybe-prompt))
            (default-directory (if proj (project-root proj) default-directory))
-           (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
+           (ghostel-buffer-name (project-prefixed-buffer-name "ghostel"))
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
            (current-buffer-directory (or (file-name-directory (or (buffer-file-name) ""))
                                          default-directory)))
-      (if-let* ((vterm-buffer (get-buffer vterm-buffer-name)))
+      (if-let* ((ghostel-buffer (get-buffer ghostel-buffer-name)))
           ;; Is it already the active buffer in the selected window?
-          (if (eq vterm-buffer-name (buffer-name (window-buffer (selected-window))))
-              (select-window (get-buffer-window vterm-buffer))
+          (if (eq ghostel-buffer-name (buffer-name (window-buffer (selected-window))))
+              (select-window (get-buffer-window ghostel-buffer))
             (progn
               ;; If only one window is open, split vertically
               (if (<= (length (window-list)) 1) (split-window-right))
               (other-window 1)
-              (switch-to-buffer vterm-buffer-name)))
+              (switch-to-buffer ghostel-buffer-name)))
         ;; Buffer doesn't exist, create it
         (progn
           (if (<= current-open-and-visible-frames 1)
               (select-window (split-window-right))
             (other-window 1))
-          ;; Set the directory context before launching vterm
+          ;; Set the directory context before launching ghostel
           (let ((default-directory current-buffer-directory))
-            (vterm vterm-buffer-name))))))
+            (ghostel))))))
 
 
 
@@ -1178,7 +1182,7 @@ Matches the behavior and window management of `my-proj/shell`."
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
-   ("t" . my-proj/vterm)
+   ("t" . my-proj/ghostel)
    ("e" . my-proj/eshell)
    ("s" . my-proj/eshell))
 
@@ -1189,7 +1193,7 @@ Matches the behavior and window management of `my-proj/shell`."
           (project-find-dir "Find directory")
           (project-switch-to-buffer "Buffer")
           (my-proj/magit-status "Magit")
-          (my-proj/vterm "Vterm")
+          (my-proj/ghostel "Ghostel")
           (my-proj/eshell "Eshell")
           (my-proj/shell "Shell"))))
 
@@ -1772,8 +1776,7 @@ Matches the behavior and window management of `my-proj/shell`."
 #+begin_src emacs-lisp :tangle inits/60-agent-shell.el
 ;;; -*- lexical-binding: t -*-
 (use-package agent-shell
-  :straight
-  :ensure t
+  :straight t
   :init
   ;; Load secrets.el (don't error if missing)
   (load (expand-file-name "secrets.el" user-emacs-directory) t)
@@ -2682,7 +2685,8 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 #+begin_src emacs-lisp :tangle inits/60-ghostel.el
 ;;; -*- lexical-binding: t -*-
 ;; Terminal emulator built on libghostty-vt (the Ghostty VT engine).
-;; Coexists with vterm; open one with M-x ghostel.
+;; Default terminal for the project commands (C-c v RET, C-x p t); vterm
+;; stays installed for aidermacs and M-x vterm.
 (use-package ghostel
   ;; Explicit recipe mirrors MELPA's so the native module's sources ship too.
   :straight (ghostel :host github :repo "dakra/ghostel"
@@ -2690,11 +2694,24 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
                                        "build.zig" "build.zig.zon" "symbols.map"))
   :commands (ghostel)
   :custom
+  ;; Bytes, not lines: ~100MB is roughly the 100k lines vterm kept.
+  (ghostel-max-scrollback (* 100 1024 1024))
   ;; Fetch the prebuilt native module on first use instead of prompting.
   (ghostel-module-auto-install 'download)
   ;; Keep the module outside straight's build dir so a rebuild can't delete
   ;; it while Emacs has it loaded.
-  (ghostel-module-directory (expand-file-name "var/ghostel/" user-emacs-directory)))
+  (ghostel-module-directory (expand-file-name "var/ghostel/" user-emacs-directory))
+  :config
+  ;; Windows: run MSYS2 zsh directly.  ghostel talks to it through ConPTY,
+  ;; which delivers C-c as SIGINT, so the fakecygpty `f_zsh.exe' wrapper
+  ;; vterm needed isn't required.  tests/ghostel-interrupt-test.el checks this.
+  (when (eq system-type 'windows-nt)
+    (setq ghostel-shell '("C:/msys64/usr/bin/zsh.exe" "--login" "-i")
+          ghostel-environment '("MSYSTEM=UCRT64"
+                                ;; Stay in the project dir instead of $HOME
+                                "CHERE_INVOKING=1"
+                                ;; Keep the Windows PATH (python, git, ...)
+                                "MSYS2_PATH_TYPE=inherit"))))
 
 (provide '60-ghostel)
 
