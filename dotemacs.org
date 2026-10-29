@@ -1175,7 +1175,7 @@ Matches the behavior and window management of `my-proj/shell`."
 
   :config
   ;; (add-to-list 'project-find-functions #'project-find-root)
-  (setq project-vc-extra-root-markers     '("Cargo.toml" "compile_commands.json" "compile_flags.txt" "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml"))
+  (setq project-vc-extra-root-markers     '("Cargo.toml" "compile_commands.json" "compile_flags.txt" "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml" "pyrightconfig.json"))
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
@@ -4142,22 +4142,38 @@ Set this from private machine-local config to avoid committing LAN details.")
 ;; my/tt-lang-sim-setup builds the venv and copies the bundled tutorials
 ;; into it; C-c d k runs the current kernel and C-c d K steps it in pdb.
 
-(defvar my/tt-lang-sim-directory (expand-file-name "~/tt-kernels/")
+(defvar my/tt-lang-sim-directory (expand-file-name "~/git/tt-kernels/")
   "Venv for the TT-Lang simulator; tutorials are copied into it.")
+
+(defvar my/tt-lang-sim-python "3.14"
+  "Python version for the simulator venv.
+Pinned rather than \"newest\" so a new release can't outrun PyTorch wheels.")
 
 (defun my/tt-lang-sim--bin (name)
   (expand-file-name (concat "bin/" name) my/tt-lang-sim-directory))
 
+(defun my/tt-lang-sim--venv-version ()
+  "Major.minor of the existing simulator venv, or nil if there is none."
+  (let ((python (my/tt-lang-sim--bin "python")))
+    (when (file-executable-p python)
+      (car (process-lines-ignore-status
+            python "-c" "import sys; print('%d.%d' % sys.version_info[:2])")))))
+
 (defun my/tt-lang-sim-setup ()
-  "Create the simulator venv (Python 3.12), install tt-lang-sim, copy the tutorials.
-Safe to rerun: it reuses the venv and upgrades the package."
+  "Create the simulator venv, install tt-lang-sim, copy the tutorials.
+Uses Python `my/tt-lang-sim-python'.  Safe to rerun: it reuses the venv
+and upgrades the package.  A venv built with another Python is left alone,
+since your kernels live in the same directory."
   (interactive)
   (let* ((dir (directory-file-name my/tt-lang-sim-directory))
          (default-directory (file-name-directory dir))
-         (venv (cond ((file-executable-p (my/tt-lang-sim--bin "python")) "true")
+         (have (my/tt-lang-sim--venv-version))
+         (venv (cond ((equal have my/tt-lang-sim-python) "true")
+                     (have (user-error "%s is a Python %s venv, not %s; move your work out and delete it to rebuild"
+                                       (abbreviate-file-name dir) have my/tt-lang-sim-python))
                      ((executable-find "uv")
-                      (format "uv venv --seed --python 3.12 %s" (shell-quote-argument dir)))
-                     (t (format "python3.12 -m venv %s" (shell-quote-argument dir))))))
+                      (format "uv venv --seed --python %s %s" my/tt-lang-sim-python (shell-quote-argument dir)))
+                     (t (format "python%s -m venv %s" my/tt-lang-sim-python (shell-quote-argument dir))))))
     (my/debug--on-success
      ;; The simulator is pure Python, so take PyTorch's CPU-only wheels and
      ;; skip the multi-GB CUDA stack.  tt-lang-setup imports `packaging'
@@ -4167,10 +4183,16 @@ Safe to rerun: it reuses the venv and upgrades the package."
                       (shell-quote-argument dir)
                       (shell-quote-argument (my/tt-lang-sim--bin "tt-lang-setup"))))
      (lambda ()
-       ;; Point Pyright at the venv so the tutorials' imports resolve.
+       ;; Point Pyright at the venv (relative, so moving the directory is
+       ;; fine; the file also marks the project root).  Kernels import
+       ;; `ttnn', which only exists at run time: the simulator swaps in
+       ;; ttl.sim.ttnnsim, so a stub sends Pyright there for hover and M-.
        (with-temp-file (expand-file-name "pyrightconfig.json" dir)
-         (insert (json-encode `((venvPath . ,(file-name-directory dir))
-                                (venv . ,(file-name-nondirectory dir))))))
+         (insert "{\"venvPath\": \".\", \"venv\": \".\", \"stubPath\": \"typings\", \"reportMissingModuleSource\": \"none\"}\n"))
+       (make-directory (expand-file-name "typings/ttnn" dir) t)
+       (with-temp-file (expand-file-name "typings/ttnn/__init__.pyi" dir)
+         (insert "# Under tt-lang-sim, `ttnn` is the simulator module (see ttl/sim/ttlang_sim.py).\n"
+                 "from ttl.sim.ttnnsim import *\n"))
        (dired (expand-file-name "tutorials/" dir))))))
 
 (defun my/tt-lang-sim--kernel ()
