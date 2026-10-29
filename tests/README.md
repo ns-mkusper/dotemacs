@@ -46,7 +46,7 @@ touches `dotemacs.org`, caching straight's packages between runs (a cold run tak
 warm one under a minute).
 
 ```bash
-docker run --rm -v "$PWD:/repo:ro" silex/emacs:31-ci /repo/tests/perf/run-perf.sh
+docker run --rm -v "$PWD:/repo:ro" silex/emacs:31-ci bash /repo/tests/perf/run-perf.sh
 ```
 
 ## Real host integration (manual CI)

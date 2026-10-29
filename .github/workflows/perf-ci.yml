@@ -54,7 +54,7 @@ jobs:
             -e PERF_SCALE=2 \
             -e PERF_OUT_DIR=/results \
             silex/emacs:31-ci \
-            bash -c 'git config --global --add safe.directory /repo && /repo/tests/perf/run-perf.sh'
+            bash -c 'git config --global --add safe.directory /repo && bash /repo/tests/perf/run-perf.sh'
 
       # Files written in the container are root-owned; the cache step needs to read them.
       - name: Fix ownership of container output

@@ -59,7 +59,7 @@ case "${SUITE}" in
     run_emacs_compat
     ;;
   perf)
-    "${ROOT_DIR}/perf/run-perf.sh"
+    bash "${ROOT_DIR}/perf/run-perf.sh"
     ;;
   tramp-ci-direct)
     TRAMP_TEST_CASE=ci-direct "${ROOT_DIR}/tramp/test-battery.sh"
