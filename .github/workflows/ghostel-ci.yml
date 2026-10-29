@@ -1,0 +1,105 @@
+name: ghostel-ci
+
+# Checks that C-c interrupts programs in a ghostel terminal and leaves the
+# shell running, using the shell settings from inits/60-ghostel.el.  The
+# Windows job runs MSYS2 zsh under ConPTY, the setup that previously needed
+# the fakecygpty f_zsh.exe wrapper under vterm.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - dotemacs.org
+      - tests/ghostel-interrupt-test.el
+      - .github/workflows/ghostel-ci.yml
+  pull_request:
+    paths:
+      - dotemacs.org
+      - tests/ghostel-interrupt-test.el
+      - .github/workflows/ghostel-ci.yml
+  workflow_dispatch:
+
+concurrency:
+  group: ghostel-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  interrupt:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Chocolatey packages
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: C:\ProgramData\chocolatey\cache
+          key: ${{ runner.os }}-choco-emacs-v2
+          restore-keys: |
+            ${{ runner.os }}-choco-emacs-
+
+      - name: Install Emacs and zsh (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y emacs-nox zsh
+
+      - name: Install Emacs (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -Path 'C:\ProgramData\chocolatey\cache' -ItemType Directory -Force | Out-Null
+          choco config set cacheLocation C:\ProgramData\chocolatey\cache
+          choco install emacs --yes --no-progress
+
+      # The runner ships MSYS2 at C:\msys64, the path the config points at.
+      - name: Install zsh into MSYS2 (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          release: false
+          install: zsh
+
+      - name: Show versions
+        shell: bash
+        run: |
+          emacs --version | head -1
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            /c/msys64/usr/bin/zsh.exe --version
+            /c/msys64/usr/bin/bash.exe -lc 'uname -a; pacman -Q msys2-runtime'
+          else
+            zsh --version
+          fi
+
+      - name: Tangle config
+        shell: bash
+        run: bash tests/tangle-config.sh "$RUNNER_TEMP/tangled"
+
+      - name: Fetch ghostel
+        shell: bash
+        run: |
+          git clone --depth 1 https://github.com/dakra/ghostel.git "$RUNNER_TEMP/ghostel"
+          git -C "$RUNNER_TEMP/ghostel" log -1 --format='ghostel %h %s'
+
+      # The runner has no ~/.zshrc and group-writable completion dirs, so
+      # zsh would stop at its new-user menu and compinit's security prompt.
+      - name: Quiet zsh startup prompts (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          touch ~/.zshrc
+          zsh -c 'autoload -U compaudit; compaudit' | xargs -r sudo chmod g-w,o-w
+
+      - name: Run C-c interrupt test
+        shell: bash
+        env:
+          # Linux has no ghostel-shell override; use the shell users run.
+          SHELL: /usr/bin/zsh
+        run: |
+          export GHOSTEL_DIR="$RUNNER_TEMP/ghostel" TANGLE_DIR="$RUNNER_TEMP/tangled"
+          emacs -Q --batch -l tests/ghostel-interrupt-test.el
