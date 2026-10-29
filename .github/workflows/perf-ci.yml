@@ -1,0 +1,70 @@
+name: perf-ci
+
+# Boots the full config in Emacs 31 and checks everyday operations against
+# timing budgets and the compilation pop-up layout (tests/perf/).  Catches
+# regressions such as init scanning a slow org directory, per-buffer hooks
+# walking whole projects, or output windows taking over the frame.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - dotemacs.org
+      - tests/perf/**
+      - tests/tangle-config.sh
+      - .github/workflows/perf-ci.yml
+  pull_request:
+    paths:
+      - dotemacs.org
+      - tests/perf/**
+      - tests/tangle-config.sh
+      - .github/workflows/perf-ci.yml
+  workflow_dispatch:
+
+concurrency:
+  group: perf-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # straight clones and builds every package on a cold start; reuse them.
+      # Keyed on dotemacs.org so package changes refresh it, falling back to
+      # the newest cache so only the difference is fetched.
+      - name: Cache straight packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/straight
+          key: perf-straight-${{ hashFiles('dotemacs.org') }}
+          restore-keys: |
+            perf-straight-
+
+      - name: Run perf checks in the Emacs 31 container
+        run: |
+          mkdir -p "${RUNNER_TEMP}/straight" "${RUNNER_TEMP}/perf-results"
+          docker run --rm \
+            -v "${GITHUB_WORKSPACE}:/repo:ro" \
+            -v "${RUNNER_TEMP}/straight:/root/.emacs.d/straight" \
+            -v "${RUNNER_TEMP}/perf-results:/results" \
+            -e PERF_SCALE=2 \
+            -e PERF_OUT_DIR=/results \
+            silex/emacs:31-ci \
+            bash -c 'git config --global --add safe.directory /repo && /repo/tests/perf/run-perf.sh'
+
+      # Files written in the container are root-owned; the cache step needs to read them.
+      - name: Fix ownership of container output
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" "${RUNNER_TEMP}/straight" "${RUNNER_TEMP}/perf-results"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-results
+          path: ${{ runner.temp }}/perf-results
+          retention-days: 14
