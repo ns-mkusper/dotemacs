@@ -628,7 +628,6 @@ back to the newest installed version when no default alias resolves."
 (setq use-short-answers t)
 ;; silence bell, see: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Beep-sound.html
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on) ;; colorize shell
-(setq compilation-window-height 45)
 (setq debug-on-error nil) ;; ignore errors in emacs
 (mouse-avoidance-mode 'jump)
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -1632,7 +1631,19 @@ Matches the behavior and window management of `my-proj/shell`."
 (use-package popwin
   :straight t
   :config
+  ;; Compilation output (builds, tests, C-c d runs) pops up at the bottom
+  ;; without taking focus, at 30% of the frame instead of a fixed size.
+  (setf (alist-get 'compilation-mode popwin:special-display-config)
+        '(:noselect t :height 0.3))
   (popwin-mode 1))
+
+(defun my/compilation-shrink-window (buffer _msg)
+  "Once a compilation finishes, shrink its window to the output (never grow it)."
+  (when-let* ((win (get-buffer-window buffer)))
+    (unless (window-full-height-p win)
+      (fit-window-to-buffer win (window-total-height win) 6))))
+
+(add-hook 'compilation-finish-functions #'my/compilation-shrink-window)
 
 (provide '40-popwin)
 
