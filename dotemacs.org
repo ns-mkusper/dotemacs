@@ -3685,6 +3685,12 @@ Comments:
   :commands (pet-mode)
   :init (add-hook 'python-base-mode-hook 'pet-mode -10)
   :config
+  ;; The last-resort search lists every file in the project, once per config
+  ;; file pet looks for, on every Python buffer.  In a directory holding a
+  ;; venv (thousands of files) that took 11s per open.  The root and
+  ;; dominating-file searches cover real project layouts.
+  (setq pet-find-file-functions
+        (remove 'pet-find-file-from-project-root-recursively pet-find-file-functions))
   ;; Pyright requires specific config to find our virtual environment
   ;; see: https://robbmann.io/posts/emacs-eglot-pyrightconfig/
   (defun my/pyrightconfig-write (virtualenv)
@@ -4184,11 +4190,14 @@ since your kernels live in the same directory."
                       (shell-quote-argument (my/tt-lang-sim--bin "tt-lang-setup"))))
      (lambda ()
        ;; Point Pyright at the venv (relative, so moving the directory is
-       ;; fine; the file also marks the project root).  Kernels import
+       ;; fine; the file also marks the project root).  Exclude the venv's
+       ;; own directories, or Pyright treats the whole root as a venv and
+       ;; analyzes none of the kernels.  Kernels import
        ;; `ttnn', which only exists at run time: the simulator swaps in
        ;; ttl.sim.ttnnsim, so a stub sends Pyright there for hover and M-.
        (with-temp-file (expand-file-name "pyrightconfig.json" dir)
-         (insert "{\"venvPath\": \".\", \"venv\": \".\", \"stubPath\": \"typings\", \"reportMissingModuleSource\": \"none\"}\n"))
+         (insert "{\"venvPath\": \".\", \"venv\": \".\", \"stubPath\": \"typings\", \"reportMissingModuleSource\": \"none\",\n"
+                 " \"exclude\": [\"bin\", \"include\", \"lib\", \"lib64\", \"share\"]}\n"))
        (make-directory (expand-file-name "typings/ttnn" dir) t)
        (with-temp-file (expand-file-name "typings/ttnn/__init__.pyi" dir)
          (insert "# Under tt-lang-sim, `ttnn` is the simulator module (see ttl/sim/ttlang_sim.py).\n"
