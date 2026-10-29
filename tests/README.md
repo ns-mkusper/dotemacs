@@ -13,6 +13,7 @@ latest Emacs release (31.x); the container run below is the reference environmen
 ## Top-level suites
 - `core-static`: literate tangle step, shell syntax checks for tracked `*.sh`, plus Emacs Lisp parse checks over generated and tracked `*.el`. Runs on the Linux/macOS/Windows matrix with whatever Emacs the OS ships, so it only exercises tangling and syntax.
 - `emacs-compat`: tangle, then run `tests/emacs-compat-check.el` under the current Emacs. Meant to run under Emacs 31 (the container job); older Emacsen will report options that have since been renamed.
+- `perf`: install the full config (packages and all) and check it against timing budgets and window layout; see below.
 - `tramp-ci-direct`: run TRAMP direct scenario battery.
 - `tramp-ci-bastion`: run TRAMP bastion scenario battery.
 
@@ -25,6 +26,27 @@ offline in a bare Emacs.
 
 ```bash
 emacs --batch -Q -l tests/emacs-compat-check.el -- early-init.el init.el inits/*.el
+```
+
+## Performance regressions
+`tests/perf/run-perf.sh` tangles the config into a fresh Emacs directory, boots it once to fetch and
+build packages, then runs two checks against the loaded config:
+
+- `tests/perf/perf-check.el` (batch): startup time, org-roam staying unloaded at startup, opening empty
+  and 1 MB JSON files, and opening Python files in a project that holds a 15,000-file venv. Each has a
+  budget a few times above current timings, so noise passes and 10x regressions fail.
+- `tests/perf/window-check.el` (`emacs -nw` in a 60x200 terminal): compilation output opens at about 30%
+  of the frame without taking focus, shrinks when short, and stays capped when long.
+
+Fixtures are generated on the fly. `tests/perf/no-prompts.el` declines every prompt (vterm's module
+build, grammar installs) so unattended runs never block. `PERF_SCALE` multiplies all budgets (CI uses 2),
+and `PERF_AFTER_INIT` loads a file after the config, which is how to confirm a check fails when a
+regression is reintroduced. The `perf-ci` workflow runs this in the Emacs 31 container on every PR that
+touches `dotemacs.org`, caching straight's packages between runs (a cold run takes about 8 minutes, a
+warm one under a minute).
+
+```bash
+docker run --rm -v "$PWD:/repo:ro" silex/emacs:31-ci bash /repo/tests/perf/run-perf.sh
 ```
 
 ## Real host integration (manual CI)
