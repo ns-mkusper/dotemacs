@@ -1150,9 +1150,16 @@ Matches the behavior and window management of `my-proj/shell`."
           (if (<= current-open-and-visible-frames 1)
               (select-window (split-window-right))
             (other-window 1))
-          ;; Set the directory context before launching ghostel
-          (let ((default-directory current-buffer-directory))
-            (ghostel))))))
+          ;; Set the directory context before launching ghostel.
+          ;; `ghostel' finds its terminal by identity, not name, so it
+          ;; would switch to a renamed buffer; create one under the
+          ;; default name instead, in the next free slot.
+          (require 'ghostel)
+          (let* ((default-directory current-buffer-directory)
+                 (context `((kind . term) (name . ,ghostel-buffer-name))))
+            (ghostel-create ghostel-buffer-name
+                            display-buffer--same-window-action
+                            `(,@context (instance . ,(ghostel--next-instance context)))))))))
 
 
 
@@ -1356,6 +1363,31 @@ Matches the behavior and window management of `my-proj/shell`."
   :straight (:build t)
   :hook (prog-mode . eldoc-box-hover-at-point-mode)
   :after eldoc
+  :config
+  ;; eldoc-box hides the popup on every command, but eldoc skips the
+  ;; next request when point lands back where the last one was made,
+  ;; so returning to a symbol quickly never brings the popup back.
+  (defun my/eldoc-box-forget-last-request (&rest _)
+    (setq eldoc--last-request-state nil))
+  (advice-add 'eldoc-box-quit-frame :after #'my/eldoc-box-forget-last-request)
+
+  ;; eldoc-box measures height before clamping the width, so a doc
+  ;; that then wraps gets a frame one line tall.  Re-measure at the
+  ;; final width and grow the frame to fit.
+  (defun my/eldoc-box-fit-wrapped-height (frame window)
+    (let* ((max-height (min (if (functionp eldoc-box-max-pixel-height)
+                                (funcall eldoc-box-max-pixel-height)
+                              eldoc-box-max-pixel-height)
+                            (- (frame-pixel-height (frame-parent frame)) 32)))
+           (height (min max-height
+                        (cdr (window-text-pixel-size window nil nil nil max-height t)))))
+      (when (> height (frame-text-height frame))
+        (let ((frame-resize-pixelwise t)
+              (width (frame-text-width frame)))
+          (set-frame-size frame width height t)
+          (let ((pos (funcall eldoc-box-position-function width height)))
+            (set-frame-position frame (car pos) (cdr pos)))))))
+  (advice-add 'eldoc-box--update-childframe-geometry :after #'my/eldoc-box-fit-wrapped-height)
   ;; TODO: figure out why keybinding scroll on box doesn't work
   ;; :general
   ;; (defun eldoc-box-scroll-up ()
