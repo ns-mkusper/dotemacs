@@ -3593,12 +3593,14 @@ Comments:
   :defer t
   :custom
   (org-roam-directory (expand-file-name "drive/org/roam/" (getenv "HOME")))
-  ;; intentionally not shared in remote (shared) drive
-  ;; see: https://org-roam.discourse.group/t/org-roam-db-across-multiple-machines/332
-  (org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME"))) 
   (org-roam-completion-everywhere t)
   (org-roam-v2-ack t)
   :config
+  ;; Intentionally not shared in the remote (shared) drive, see:
+  ;; https://org-roam.discourse.group/t/org-roam-db-across-multiple-machines/332
+  ;; Set here rather than in :custom: no-littering loads after the inits and
+  ;; sets this variable first, so a :custom value never applies.
+  (setq org-roam-db-location (expand-file-name ".emacs.d/org-roam.db" (getenv "HOME")))
   ;; Enabling autosync runs a full `org-roam-db-sync', which reads every file
   ;; in the roam directory. That directory is on a Google Drive mount, so the
   ;; scan downloads each file and can block Emacs for minutes. Keep the
@@ -4752,7 +4754,7 @@ since your kernels live in the same directory."
   :after erc
   :hook (erc-mode . erc-hl-nicks-mode))
 
-(provide 'erc)
+(provide '70-erc)
 
 #+end_src
 
