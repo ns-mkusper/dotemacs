@@ -3379,7 +3379,6 @@ Comments:
 (use-package ox-slack)
 
 (use-package org
-  :pin gnu
   :hook
   (org-mode . my-org-setup)
   (org-mode . my-prettify-symbols-setup)
