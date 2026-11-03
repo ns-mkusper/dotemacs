@@ -11,11 +11,13 @@ on:
     paths:
       - dotemacs.org
       - tests/ghostel-interrupt-test.el
+      - tests/mingw-sleep.c
       - .github/workflows/ghostel-ci.yml
   pull_request:
     paths:
       - dotemacs.org
       - tests/ghostel-interrupt-test.el
+      - tests/mingw-sleep.c
       - .github/workflows/ghostel-ci.yml
   workflow_dispatch:
 
@@ -64,7 +66,19 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           release: false
-          install: zsh
+          msystem: UCRT64
+          install: zsh mingw-w64-ucrt-x86_64-gcc
+
+      # A native MinGW program, the kind C-c never stopped under vterm.
+      - name: Build MinGW test program (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          out="$(cygpath -u "$RUNNER_TEMP")/mingw-sleep.exe"
+          gcc -O2 -o "$out" tests/mingw-sleep.c
+          # Show it links Windows DLLs only, not msys-2.0.dll.
+          objdump -p "$out" | grep 'DLL Name'
+          echo "MINGW_SLEEP=$(cygpath -m "$out")" >> "$(cygpath -u "$GITHUB_ENV")"
 
       - name: Show versions
         shell: bash

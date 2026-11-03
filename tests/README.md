@@ -53,7 +53,8 @@ docker run --rm -v "$PWD:/repo:ro" silex/emacs:31-ci bash /repo/tests/perf/run-p
 ## Ghostel C-c check
 `.github/workflows/ghostel-ci.yml` runs `tests/ghostel-interrupt-test.el` on Ubuntu and Windows.
 On Windows it uses the runner's MSYS2 install with zsh, the same `ghostel-shell` the config sets,
-and interrupts both an MSYS2 program (`sleep`) and a native console program (`ping.exe`).
+and interrupts an MSYS2 program (`sleep`), a native console program (`ping.exe`) and a
+program built with MinGW-w64 from `tests/mingw-sleep.c` (set `MINGW_SLEEP` to its path to run that case).
 It needs a ghostel checkout; the native module is downloaded on first run.
 
 ```bash

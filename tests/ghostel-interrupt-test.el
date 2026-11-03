@@ -4,8 +4,9 @@
 ;; are the ones the config ships), opens a ghostel terminal, starts a
 ;; long-running program, presses C-c C-c and checks that the program
 ;; stops while the shell keeps running.  On Windows this is the case
-;; fakecygpty used to be needed for; it also interrupts a native console
-;; program (ping.exe) there.
+;; fakecygpty used to be needed for; it also interrupts native console
+;; programs there: ping.exe and, when MINGW_SLEEP names it, a program
+;; built with MinGW-w64 (tests/mingw-sleep.c, built by the CI job).
 ;;
 ;; Usage:
 ;;   GHOSTEL_DIR=/path/to/ghostel TANGLE_DIR=/path/to/tangled \
@@ -112,6 +113,16 @@ Each check echoes arithmetic so the typed command line itself can't match."
 ;; A native Windows console program run from the MSYS2 shell.
 (when (eq system-type 'windows-nt)
   (my-test-interrupt "ping" "ping -n 60 127.0.0.1 > /dev/null"))
+
+;; A native program built with MinGW-w64, the case vterm never stopped.
+(when (eq system-type 'windows-nt)
+  (let ((exe (getenv "MINGW_SLEEP")))
+    (cond ((null exe)
+           (message "skip: mingw (MINGW_SLEEP not set)"))
+          ((not (file-exists-p exe))
+           (my-test-fail "MINGW_SLEEP %s does not exist" exe))
+          (t
+           (my-test-interrupt "mingw" (format "'%s' 60" exe))))))
 
 (message "PASS")
 (kill-emacs 0)
