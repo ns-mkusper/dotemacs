@@ -3608,6 +3608,15 @@ Comments:
   ;; by hand after changes made on another machine.
   (cl-letf (((symbol-function 'org-roam-db-sync) #'ignore))
     (org-roam-db-autosync-mode 1))
+  ;; `org-roam-file-p' runs from `find-file-hook' for every file opened or
+  ;; reverted, and calls `file-truename' on `org-roam-directory'.  That
+  ;; directory is on the Drive mount, so any rclone stall froze Emacs even
+  ;; when opening unrelated local files.  Rule those out with a string check.
+  (define-advice org-roam-file-p (:before-while (&optional file) my/skip-outside-roam-dir)
+    (let ((path (or file (buffer-file-name (buffer-base-buffer)))))
+      (and path
+           (string-prefix-p (expand-file-name org-roam-directory)
+                            (expand-file-name path)))))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
