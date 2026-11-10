@@ -1186,6 +1186,11 @@ Matches the behavior and window management of `my-proj/shell`."
   :config
   ;; (add-to-list 'project-find-functions #'project-find-root)
   (setq project-vc-extra-root-markers     '("Cargo.toml" "compile_commands.json" "compile_flags.txt" "project.clj" ".git" "deps.edn" "shadow-cljs.edn" "pyproject.toml" "pyrightconfig.json"))
+  ;; Untracked files are listed too, so hide dependency/cache trees that
+  ;; repos often forget to gitignore (e.g. 70k files under .pnpm-store).
+  (setq project-vc-ignores
+        '("node_modules/" ".pnpm-store/" ".venv*/" "__pycache__/"
+          ".mypy_cache/" ".pytest_cache/" ".ruff_cache/" ".tox/"))
   (bind-keys
    :map project-prefix-map
    ("m" . my-proj/magit-status)
