@@ -4218,87 +4218,121 @@ Set this from private machine-local config to avoid committing LAN details.")
 * File: inits/60-tt-lang.el
 #+begin_src emacs-lisp :tangle inits/60-tt-lang.el
 ;;; -*- lexical-binding: t -*-
-;; TT-Lang functional simulator: TT-Lang kernels are plain Python files that
-;; run in a pure-Python simulator, no hardware needed.  M-x
-;; my/tt-lang-sim-setup builds the venv and copies the bundled tutorials
-;; into it; C-c d k runs the current kernel and C-c d K steps it in pdb.
+;; TT-Lang functional simulator: kernels are plain Python files run by a
+;; pure-Python simulator, no hardware needed.  The project lives in
+;; `my/tt-lang-sim-directory' (course notes in README.org there).
+;;
+;; C-c d k  run the kernel; trace, stats and report saved as a run (C-c d o, C-c d =)
+;;          C-u: extra options, e.g. TTK_SIZE=1024 --grid 4,4 --scheduler fair
+;; C-c d K  debug in pdb, stopping at the line at point
+;;          C-u: break only when a condition holds, e.g. ttk_node() == 4
+;; C-c d D  structure-only dry run: buffer protocol and deadlocks, no math
+;; C-c d C  check every kernel and practice bug in the project
+;; M-x my/tt-lang-sim-setup  (re)build .venv, patch the simulator, refresh upstream/
 
 (defvar my/tt-lang-sim-directory (expand-file-name "~/git/tt-kernels/")
-  "Venv for the TT-Lang simulator; tutorials are copied into it.")
+  "TT-Lang project: .venv, tools/, kernels/, bugs/, upstream/ tutorials.")
 
-(defvar my/tt-lang-sim-python "3.14"
-  "Python version for the simulator venv.
-Pinned rather than \"newest\" so a new release can't outrun PyTorch wheels.")
+(defun my/tt-lang-sim--path (name)
+  (expand-file-name name my/tt-lang-sim-directory))
 
-(defun my/tt-lang-sim--bin (name)
-  (expand-file-name (concat "bin/" name) my/tt-lang-sim-directory))
-
-(defun my/tt-lang-sim--venv-version ()
-  "Major.minor of the existing simulator venv, or nil if there is none."
-  (let ((python (my/tt-lang-sim--bin "python")))
-    (when (file-executable-p python)
-      (car (process-lines-ignore-status
-            python "-c" "import sys; print('%d.%d' % sys.version_info[:2])")))))
+(defun my/tt-lang-sim--python ()
+  (my/tt-lang-sim--path ".venv/bin/python"))
 
 (defun my/tt-lang-sim-setup ()
-  "Create the simulator venv, install tt-lang-sim, copy the tutorials.
-Uses Python `my/tt-lang-sim-python'.  Safe to rerun: it reuses the venv
-and upgrades the package.  A venv built with another Python is left alone,
-since your kernels live in the same directory."
+  "Build the simulator venv, patch it, and copy the tutorials to upstream/.
+`uv sync' installs what pyproject.toml pins.  fix_sim_diagnostics.py works
+around tenstorrent/tt-lang#1192, without which every kernel error shows up
+as a FileNotFoundError.  upstream/ keeps Tenstorrent's tutorials untouched;
+your working copies are in kernels/.  Safe to rerun."
   (interactive)
-  (let* ((dir (directory-file-name my/tt-lang-sim-directory))
-         (default-directory (file-name-directory dir))
-         (have (my/tt-lang-sim--venv-version))
-         (venv (cond ((equal have my/tt-lang-sim-python) "true")
-                     (have (user-error "%s is a Python %s venv, not %s; move your work out and delete it to rebuild"
-                                       (abbreviate-file-name dir) have my/tt-lang-sim-python))
-                     ((executable-find "uv")
-                      (format "uv venv --seed --python %s %s" my/tt-lang-sim-python (shell-quote-argument dir)))
-                     (t (format "python%s -m venv %s" my/tt-lang-sim-python (shell-quote-argument dir))))))
-    (my/debug--on-success
-     ;; The simulator is pure Python, so take PyTorch's CPU-only wheels and
-     ;; skip the multi-GB CUDA stack.  tt-lang-setup imports `packaging'
-     ;; without declaring it (1.1.6), so install that too.
-     (compile (format "%s && %s install -q -U --extra-index-url https://download.pytorch.org/whl/cpu tt-lang-sim packaging && cd %s && %s"
-                      venv (shell-quote-argument (my/tt-lang-sim--bin "pip"))
-                      (shell-quote-argument dir)
-                      (shell-quote-argument (my/tt-lang-sim--bin "tt-lang-setup"))))
-     (lambda ()
-       ;; Point Pyright at the venv (relative, so moving the directory is
-       ;; fine; the file also marks the project root).  Exclude the venv's
-       ;; own directories, or Pyright treats the whole root as a venv and
-       ;; analyzes none of the kernels.  Kernels import
-       ;; `ttnn', which only exists at run time: the simulator swaps in
-       ;; ttl.sim.ttnnsim, so a stub sends Pyright there for hover and M-.
-       (with-temp-file (expand-file-name "pyrightconfig.json" dir)
-         (insert "{\"venvPath\": \".\", \"venv\": \".\", \"stubPath\": \"typings\", \"reportMissingModuleSource\": \"none\",\n"
-                 " \"exclude\": [\"bin\", \"include\", \"lib\", \"lib64\", \"share\"]}\n"))
-       (make-directory (expand-file-name "typings/ttnn" dir) t)
-       (with-temp-file (expand-file-name "typings/ttnn/__init__.pyi" dir)
-         (insert "# Under tt-lang-sim, `ttnn` is the simulator module (see ttl/sim/ttlang_sim.py).\n"
-                 "from ttl.sim.ttnnsim import *\n"))
-       (dired (expand-file-name "tutorials/" dir))))))
+  (let ((default-directory my/tt-lang-sim-directory))
+    (unless (file-exists-p "pyproject.toml")
+      (user-error "No pyproject.toml in %s" (abbreviate-file-name default-directory)))
+    (compile "uv sync && .venv/bin/python tools/fix_sim_diagnostics.py && .venv/bin/tt-lang-setup-tutorials -t upstream --force")))
 
 (defun my/tt-lang-sim--kernel ()
   (or buffer-file-name (read-file-name "Kernel: " nil nil t)))
 
-(defun my/tt-lang-sim-run (file)
-  "Run TT-Lang kernel FILE in the simulator."
-  (interactive (list (my/tt-lang-sim--kernel)))
-  (let ((default-directory (file-name-directory file)))
-    (compile (combine-and-quote-strings
-              (list (my/tt-lang-sim--bin "tt-lang-sim") file)))))
+(defvar my/tt-lang-sim-args-history nil)
 
-(defun my/tt-lang-sim-debug (file)
-  "Step through TT-Lang kernel FILE in pdb under the simulator."
-  (interactive (list (my/tt-lang-sim--kernel)))
+(defun my/tt-lang-sim--read-args ()
+  "Extra simulator options; leading VAR=value words become environment."
+  (read-string "Options (VAR=x ... --opt ...): " (car my/tt-lang-sim-args-history)
+               'my/tt-lang-sim-args-history))
+
+(defun my/tt-lang-sim--command (file &rest args)
+  "Shell command running FILE through tools/ttsim.py with ARGS.
+The last arg may be the user's option string from `my/tt-lang-sim--read-args'."
+  (let* ((extra (split-string-and-unquote (or (car (last args)) "")))
+         (env (seq-take-while (lambda (w) (string-match-p "\\`[A-Za-z_][A-Za-z0-9_]*=" w)) extra))
+         (opts (nthcdr (length env) extra)))
+    (combine-and-quote-strings
+     (append (when env (cons "env" env))
+             (list (my/tt-lang-sim--python) (my/tt-lang-sim--path "tools/ttsim.py") file)
+             (butlast args) opts))))
+
+(defun my/tt-lang-sim-run (file &optional options)
+  "Run TT-Lang kernel FILE in the simulator and report on its trace.
+The trace, tt-lang-sim-stats tables and tools/trace_report.py output are
+kept as a run, so C-c d o lists runs and C-c d = diffs two of them.  With a
+prefix argument, read OPTIONS such as TTK_SIZE=1024 --grid 4,4."
+  (interactive (list (my/tt-lang-sim--kernel)
+                     (when current-prefix-arg (my/tt-lang-sim--read-args))))
+  (let* ((default-directory (file-name-directory file))
+         (dir (my/debug--run-dir "ttsim"))
+         (trace (expand-file-name "trace.jsonl" dir)))
+    (my/debug--keep-output
+     (compile (my/tt-lang-sim--command file "--report" "--trace" trace options))
+     dir)))
+
+(defun my/tt-lang-sim-dry-run (file &optional options)
+  "Run FILE's buffer protocol only: no math, no data, no result asserts.
+Catches deadlocks and out-of-order reserve/push/wait/pop in seconds at any
+size, so TTK_SIZE=8192 is fine here."
+  (interactive (list (my/tt-lang-sim--kernel)
+                     (when current-prefix-arg (my/tt-lang-sim--read-args))))
   (let ((default-directory (file-name-directory file)))
+    ;; -O drops the final `assert pcc > ...', which fails on dry-run zeros.
+    (compile (concat "PYTHONOPTIMIZE=1 " (my/tt-lang-sim--command file "--dry-run" options)))))
+
+(defun my/tt-lang-sim-debug (file &optional condition)
+  "Debug kernel FILE in pdb, stopping at the line at point.
+Each kernel runs in its own greenlet, so breakpoints in kernel code stop
+there, `n' steps over a blocking wait()/reserve() while the other kernels
+run, and `w' shows the kernel's stack.  On a grid every node runs the same
+code; with a prefix argument, read a CONDITION such as ttk_node() == 4 (see
+tools/ttsim.py for ttk_node and ttk_kernel)."
+  (interactive (list (my/tt-lang-sim--kernel)
+                     (when current-prefix-arg
+                       (read-string "Break when: " "ttk_node() == "))))
+  (let* ((default-directory (file-name-directory file))
+         (here (and buffer-file-name (string= (expand-file-name buffer-file-name) (expand-file-name file))))
+         (break (when here
+                  (format "b %s:%d%s" (expand-file-name file) (line-number-at-pos)
+                          (if (and condition (not (string-blank-p condition)))
+                              (concat ", " condition) "")))))
     (pdb (combine-and-quote-strings
-          (list (my/tt-lang-sim--bin "python") "-m" "pdb"
-                (my/tt-lang-sim--bin "tt-lang-sim") file)))))
+          (append (list (my/tt-lang-sim--python) "-m" "pdb")
+                  (when break (list "-c" break "-c" "continue"))
+                  (list (my/tt-lang-sim--path "tools/ttsim.py") file))))))
+
+(defun my/tt-lang-sim-check ()
+  "Run every kernel (must pass) and practice bug (must fail as documented)."
+  (interactive)
+  (let ((default-directory my/tt-lang-sim-directory))
+    (compile "tools/check.sh")))
+
+;; Simulator diagnostics point at the kernel line like rustc: "  --> file.py:101:28".
+(with-eval-after-load 'compile
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(tt-lang "^ +--> \\([^:\n]+\\.py\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3))
+  (add-to-list 'compilation-error-regexp-alist 'tt-lang))
 
 (define-key my/debug-map (kbd "k") #'my/tt-lang-sim-run)
 (define-key my/debug-map (kbd "K") #'my/tt-lang-sim-debug)
+(define-key my/debug-map (kbd "D") #'my/tt-lang-sim-dry-run)
+(define-key my/debug-map (kbd "C") #'my/tt-lang-sim-check)
 
 (provide '60-tt-lang)
 #+end_src
