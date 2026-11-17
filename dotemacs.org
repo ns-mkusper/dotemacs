@@ -22,6 +22,11 @@ Tangle with:
 ;; lsp-mode optimization
 ;; see: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
 ;; (setenv "LSP_USE_PLISTS" "true")
+;; Let frames and windows take any pixel size, not whole character cells, so
+;; tiling window managers (Amethyst on macOS, cortile on X) can fill the tile
+;; exactly instead of leaving a strip at the bottom and right edge.
+(setq frame-resize-pixelwise t
+      window-resize-pixelwise t)
 
 #+end_src
 
