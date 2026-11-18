@@ -1006,12 +1006,12 @@ For local directories, prefer `project-current' without prompting."
           resolved))))
 
   (defun my-proj/shell-buffer-name (root)
-    "Build a stable shell buffer name for ROOT."
+    "Build a stable shell buffer name for ROOT.
+Outside a project, use the shared default `*shell*' buffer."
     (if-let* ((project (project-current nil root)))
         (let ((default-directory (project-root project)))
           (project-prefixed-buffer-name "shell"))
-      (format "*shell:%s*"
-              (my-proj/determine-name root))))
+      "*shell*"))
 
   (defun my-proj/locate-configs (name &optional buffer prompt)
     "Locate configuration files of project for BUFFER.
@@ -1125,14 +1125,18 @@ for one."
       ))
 
   (defun my-proj/ghostel ()
-    "Open or switch to a ghostel dedicated to the current project or file.
-Matches the behavior and window management of `my-proj/shell`."
+    "Open or switch to a ghostel dedicated to the current project.
+Outside a project, open or switch to the shared default `*ghostel*'
+buffer instead of prompting for a project.  Matches the behavior and
+window management of `my-proj/shell`."
     (interactive)
     ;; Dynamic variables
     (defvar ghostel-buffer-name)
-    (let* ((proj (project-current 'maybe-prompt))
+    (let* ((proj (project-current nil))
            (default-directory (if proj (project-root proj) default-directory))
-           (ghostel-buffer-name (project-prefixed-buffer-name "ghostel"))
+           (ghostel-buffer-name (if proj
+                                    (project-prefixed-buffer-name "ghostel")
+                                  "*ghostel*"))
            (current-open-and-visible-frames (length (cl-remove-if-not #'window-live-p (window-list))))
            (current-buffer-directory (or (file-name-directory (or (buffer-file-name) ""))
                                          default-directory)))
