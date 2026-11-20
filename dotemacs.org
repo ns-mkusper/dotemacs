@@ -669,6 +669,9 @@ back to the newest installed version when no default alias resolves."
 (setq tab-always-indent 'complete)
 (setq font-lock-maximum-decoration t) ;; enable bold-italic styles
 (setq select-enable-clipboard t) ;; combine clipboards
+;; Middle-click pastes exactly what C-y does (top of the kill ring, which tracks
+;; the system clipboard) at the click position, instead of the PRIMARY selection.
+(global-set-key [mouse-2] #'mouse-yank-at-click)
 ;; `gui-selection-value' (the default since Emacs 25) handles X, Wayland/pgtk,
 ;; macOS and Windows; `x-selection-value' is obsolete and absent on pgtk builds.
 (setq truncate-partial-width-windows nil)
