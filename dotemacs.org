@@ -2753,7 +2753,23 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
   ;; Keep the module outside straight's build dir so a rebuild can't delete
   ;; it while Emacs has it loaded.
   (ghostel-module-directory (expand-file-name "var/ghostel/" user-emacs-directory))
+  :bind (:map ghostel-mode-map
+              ;; Middle-click pastes what C-y does (the kill ring, which tracks
+              ;; the system clipboard), like the global mouse-2 binding in
+              ;; 00-my.el.  ghostel's default pastes PRIMARY, which on macOS
+              ;; and Windows is only Emacs's own last selection.  The middle
+              ;; button is never sent to programs with mouse reporting on
+              ;; (Claude Code, htop, ...), so it pastes there too.
+              ([down-mouse-2] . ignore)
+              ([mouse-2] . my/ghostel-mouse-yank))
   :config
+  (defun my/ghostel-mouse-yank (event)
+    "Paste the top of the kill ring (the system clipboard) into the clicked terminal.
+Like `ghostel-mouse-paste-primary-or-release', but with the kill ring
+instead of PRIMARY, and it pastes even when the program has mouse reporting on."
+    (interactive "e")
+    (select-window (posn-window (event-start event)))
+    (ghostel-yank))
   ;; Windows: run MSYS2 zsh directly.  ghostel talks to it through ConPTY,
   ;; which delivers C-c as SIGINT, so the fakecygpty `f_zsh.exe' wrapper
   ;; vterm needed isn't required.  tests/ghostel-interrupt-test.el checks this.
