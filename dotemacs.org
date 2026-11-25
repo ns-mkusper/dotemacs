@@ -2758,6 +2758,11 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
   ;; Keep the module outside straight's build dir so a rebuild can't delete
   ;; it while Emacs has it loaded.
   (ghostel-module-directory (expand-file-name "var/ghostel/" user-emacs-directory))
+  ;; Shadow `ssh' in ghostel buffers with `ghostel_ssh', which pushes the
+  ;; xterm-ghostty terminfo to each new host on first contact (falling back
+  ;; to TERM=xterm-256color if it can't).  Without it, hosts lacking that
+  ;; terminfo get a readline that can't redraw: backspace just rings the bell.
+  (ghostel-ssh-install-terminfo t)
   :bind (:map ghostel-mode-map
               ;; Middle-click pastes what C-y does (the kill ring, which tracks
               ;; the system clipboard), like the global mouse-2 binding in
