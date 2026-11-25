@@ -1814,6 +1814,11 @@ window management of `my-proj/shell`."
   :straight t
   :init
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  ;; Only this frame's windows.  AeroSpace hides frames on other workspaces
+  ;; by parking them off-screen, so Emacs still counts them as visible; with
+  ;; the default `global' scope ace-window labels their windows too, and
+  ;; picking one focuses that frame and AeroSpace jumps to its workspace.
+  (setq aw-scope 'frame)
   :bind (("C-x o" . ace-window))
 
   ;; :config
