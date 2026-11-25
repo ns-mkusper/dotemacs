@@ -1766,6 +1766,21 @@ window management of `my-proj/shell`."
   (treesit-auto-add-to-auto-mode-alist '(rust go toml python elisp csharp c cmake typescript r html js css cpp bash astro))
   (global-treesit-auto-mode))
 
+;; On every file visit treesit-auto asks `treesit-language-available-p' about
+;; each of its ~60 languages.  The answer is never cached, and on macOS each
+;; check of a missing grammar is a slow dlopen: ~1.4 s per file opened
+;; (`org-roam-db-sync' took 5.5 min for 75 notes).  Remember the answers;
+;; installing a grammar clears them.
+(defvar my/treesit-available-cache (make-hash-table :test 'equal))
+(define-advice treesit-language-available-p (:around (fn lang &optional detail) my/cache)
+  (let* ((key (cons lang (and detail t)))
+         (v (gethash key my/treesit-available-cache 'unset)))
+    (if (eq v 'unset)
+        (puthash key (funcall fn lang detail) my/treesit-available-cache)
+      v)))
+(define-advice treesit-install-language-grammar (:after (&rest _) my/clear-available-cache)
+  (clrhash my/treesit-available-cache))
+
 (provide '40-tree-sitter)
 
 #+end_src
@@ -3419,7 +3434,11 @@ Comments:
   ;; (centered-cursor-mode) ;; Enable centered cursor mode
   (smartparens-mode 0) ;; Disable smartparents
   (hl-prog-extra-mode)  ;; Highlighting with regexps
-  (flyspell-mode)
+  ;; Only with a spell checker installed (brew install aspell); otherwise
+  ;; every org buffer logs "Error enabling Flyspell mode".
+  (require 'ispell)
+  (when (executable-find ispell-program-name)
+    (flyspell-mode))
   )
 
 (use-package ox-slack)
@@ -3670,18 +3689,6 @@ Comments:
          ("C-c n c" . org-roam-capture)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)))
-
-(use-package org-roam-ui
-  :after org-roam ;; or :after org
-  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-  ;;         a hookable mode anymore, you're advised to pick something yourself
-  ;;         if you don't care about startup time, use
-  ;;  :hook (after-init . org-roam-ui-mode)
-  :custom
-  (org-roam-ui-sync-theme t)
-  (org-roam-ui-follow t)
-  (org-roam-ui-update-on-save t)
-  (org-roam-ui-open-on-start t))
 
 (use-package org-roam-ui
   :after org-roam ;; or :after org
