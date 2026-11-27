@@ -4217,13 +4217,8 @@ Set this from private machine-local config to avoid committing LAN details.")
   (setq remote-file-name-inhibit-locks t)
   (setq remote-file-name-inhibit-auto-save-visited t)
   (setq tramp-use-scp-direct-remote-copying t)
-  (when (boundp 'tramp-use-connection-share)
-    (setq tramp-use-connection-share t))
   (when (boundp 'tramp-direct-async-process)
     (setq tramp-direct-async-process nil))
-  (when (boundp 'tramp-ssh-controlmaster-options)
-    (setq tramp-ssh-controlmaster-options
-          "-o ControlMaster=auto -o ControlPath='~/.ssh/cm-%%C' -o ControlPersist=600"))
   (my/tramp-configure-default-endpoints)
 
   ;; Keep backups/autosaves local and avoid extra remote churn.
@@ -4269,7 +4264,148 @@ Set this from private machine-local config to avoid committing LAN details.")
 (use-package tramp-sh
   :straight nil
   :custom
-  (tramp-copy-size-limit (* 1024 1024)))
+  (tramp-copy-size-limit (* 1024 1024))
+  (tramp-use-connection-share t)
+  :config
+  ;; Share masters with plain ssh when ~/.ssh/config multiplexes into
+  ;; ~/.ssh/sockets, so a workspace already open in a terminal connects at once.
+  (setq tramp-ssh-controlmaster-options
+        (format "-o ControlMaster=auto -o ControlPath='%s' -o ControlPersist=600"
+                (if (file-directory-p "~/.ssh/sockets")
+                    "~/.ssh/sockets/%%r@%%h:%%p"
+                  "~/.ssh/cm-%%C"))))
+
+;; Coder workspaces over ssh.  `coder config-ssh' adds "Host coder.*" to
+;; ~/.ssh/config, so /ssh:coder.WORKSPACE:~/ works with dired, magit and
+;; compile.  M-x my/coder-find-file picks a workspace from `coder list'.
+;; A fresh connection waits 15-20s for coder's tunnel, so coder hosts get a
+;; longer timeout and later connections reuse the ssh ControlMaster.
+(defvar my/coder-host-regexp
+  (rx bos (or (: "coder." (+ nonl)) (: (+ nonl) ".coder")) eos)
+  "Hosts that ~/.ssh/config routes through a coder ProxyCommand.")
+
+(defvar my/coder-connection-timeout 60
+  "Seconds TRAMP waits for a new connection to a coder workspace.")
+
+(defvar my/coder-workspaces-ttl 300
+  "Seconds before the cached `coder list' result is refreshed.")
+
+(defvar my/coder-workspaces-cache nil
+  "Cons of (TIME . WORKSPACE-NAMES) from the last `coder list'.")
+
+(defun my/coder-refresh-workspaces (&optional wait)
+  "Refresh `my/coder-workspaces-cache' from `coder list' in the background.
+With WAIT, block for up to 5 seconds until the list arrives."
+  (when-let* ((coder (executable-find "coder"))
+              (default-directory temporary-file-directory)
+              (out (generate-new-buffer " *coder-list*"))
+              (err (generate-new-buffer " *coder-list-stderr*"))
+              (proc
+               (make-process
+                :name "coder-list" :buffer out :stderr err :noquery t
+                :connection-type 'pipe
+                :command (list coder "list" "--output" "json")
+                :sentinel
+                (lambda (proc _event)
+                  (unless (process-live-p proc)
+                    (let ((names
+                           (and (zerop (process-exit-status proc))
+                                (ignore-errors
+                                  (with-current-buffer out
+                                    (mapcar (lambda (ws) (alist-get 'name ws))
+                                            (json-parse-string
+                                             (buffer-string)
+                                             :object-type 'alist
+                                             :array-type 'list)))))))
+                      (setq my/coder-workspaces-cache
+                            (cons (current-time)
+                                  (or names (cdr my/coder-workspaces-cache)))))
+                    (kill-buffer out)
+                    (kill-buffer err))))))
+    (when wait
+      (with-timeout (5 (delete-process proc))
+        (while (process-live-p proc)
+          (accept-process-output proc 0.1))))))
+
+(defun my/coder-workspaces ()
+  "Return cached coder workspace names, refreshing them when stale."
+  (let ((time (car my/coder-workspaces-cache)))
+    (cond ((null time) (my/coder-refresh-workspaces t))
+          ((> (float-time (time-since time)) my/coder-workspaces-ttl)
+           (my/coder-refresh-workspaces))))
+  (cdr my/coder-workspaces-cache))
+
+(defun my/coder-tramp-completion (_method)
+  "Return coder workspaces as TRAMP (USER HOST) completion entries."
+  (mapcar (lambda (ws) (list nil (concat "coder." ws)))
+          (my/coder-workspaces)))
+
+(defun my/coder-find-file (workspace)
+  "Find a file in coder WORKSPACE, starting from its home directory."
+  (interactive
+   (list (completing-read "Coder workspace: " (my/coder-workspaces) nil t)))
+  (let ((default-directory (format "/ssh:coder.%s:~/" workspace)))
+    (call-interactively #'find-file)))
+
+(with-eval-after-load 'tramp
+  ;; Host lines such as "coder.*" and "*.coder" are patterns, but
+  ;; `tramp-parse-sconfig' strips the "*" and offers "coder." and ".coder"
+  ;; as hosts; "Host *" turns into a nil host.
+  (defun my/tramp-drop-pattern-hosts (entries)
+    "Drop ENTRIES that `tramp-parse-sconfig' made from wildcard Host lines."
+    (seq-filter (lambda (entry)
+                  (let ((host (cadr entry)))
+                    (and host
+                         (not (string-prefix-p "." host))
+                         (not (string-suffix-p "." host)))))
+                entries))
+  (advice-add 'tramp-parse-sconfig :filter-return #'my/tramp-drop-pattern-hosts)
+
+  (tramp-set-completion-function
+   "ssh" (append (tramp-get-completion-function "ssh")
+                 '((my/coder-tramp-completion "ssh"))))
+
+  ;; Async processes (magit, compile, eglot) get their own multiplexed ssh
+  ;; instead of a TRAMP shell, which saves a dozen round trips per process.
+  (connection-local-set-profile-variables
+   'my/coder-tramp-profile '((tramp-direct-async-process . t)))
+  (defvar my/coder--profiled-hosts nil
+    "Coder hosts already given `my/coder-tramp-profile'.")
+
+  (define-advice tramp-maybe-open-connection
+      (:around (fn vec) my/coder-connection)
+    "Give coder hosts a longer connect timeout and `my/coder-tramp-profile'."
+    (let* ((host (or (tramp-file-name-host vec) ""))
+           (coder (string-match-p my/coder-host-regexp host))
+           (tramp-connection-timeout
+            (if coder
+                (max tramp-connection-timeout my/coder-connection-timeout)
+              tramp-connection-timeout)))
+      (when (and coder (not (member host my/coder--profiled-hosts)))
+        (push host my/coder--profiled-hosts)
+        (connection-local-set-profiles
+         `(:application tramp :protocol "ssh" :machine ,host)
+         'my/coder-tramp-profile))
+      (funcall fn vec)))
+
+  (when (executable-find "coder")
+    (run-with-idle-timer 5 nil #'my/coder-refresh-workspaces)))
+
+;; In counsel-find-file at /, TAB on a method such as "ssh:" otherwise opens
+;; "/ssh:/", an ssh connection to the local machine; ask for the host instead.
+(with-eval-after-load 'ivy
+  (define-advice ivy--directory-done (:around (fn) my/tramp-method-host)
+    "Pick a host after TAB on a bare TRAMP method in /."
+    (let ((cand (ivy-state-current ivy-last)))
+      (if (and (equal ivy--directory "/")
+               (stringp cand)
+               (string-match "\\`\\([[:alnum:]-]+\\):\\'" cand)
+               (assoc (match-string 1 cand) tramp-methods))
+          (progn
+            (ivy-set-text cand)
+            (string-match "\\`\\([^/]+?\\):\\(?:\\(.*\\)@\\)?\\(.*\\)\\'" ivy-text)
+            (ivy--tramp-candidates))
+        (funcall fn)))))
 
 #+end_src
 
