@@ -2859,6 +2859,17 @@ instead of PRIMARY, and it pastes even when the program has mouse reporting on."
                                              extra-args search-regexp-pcre directory)))))
 
 
+;; Review a branch or the selected commits as a PR-style review file
+;; see: https://github.com/xiaoxinghu/diff-review
+(use-package diff-review
+  :straight (diff-review :type git :host github :repo "xiaoxinghu/diff-review")
+  :commands (diff-review-branch diff-review-find-file diff-review-magit-commits)
+  :init
+  ;; worktree PRs in magit-status, and `d v' to review the selection
+  (with-eval-after-load 'magit
+    (diff-review-magit-mode)))
+
+
 ;; Migrated to diff-hl
 ;; see: https://github.com/dgutov/diff-hl
 
